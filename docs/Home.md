@@ -25,7 +25,14 @@ Coding agents also read ../AGENTS.md and ../frontend/AGENTS.md. Keep rules synch
 Reference: [Obsidian vaults](https://obsidian.md/help/vault), [internal links](https://obsidian.md/help/links).
 
 - [[System Design]] - service boundaries, data ownership and enterprise release gates.
-- [[GitHub Setup]] - settings and deployment layout for wepapp-socrates-code.
+- [[GitHub Setup]] - settings and deployment layout for wepapp-socratescode.
 
 ## Original requirements
 Baseline copies are preserved in [[reference/PRD]], [[reference/TRD]] and [[reference/Rules]]. Current decisions override older versions and brand details.
+
+## Daily development
+- [[Engineering Standards]] - accepted DDIA, security, motion and error UX rules.
+- [[Security Audit]] - current routes and future release gates.
+- [[Feature Catalog]] - scope, status and acceptance criteria.
+- [[Delivery]] - CI, release and rollback runbook.
+- [[templates/Decision]] and [[templates/Incident]] - decisions and operational learning.

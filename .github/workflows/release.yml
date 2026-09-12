@@ -1,0 +1,120 @@
+name: Verified production release
+on:
+  workflow_call:
+    inputs:
+      commit:
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  candidate:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    environment:
+      name: Staging
+      url: ${{ steps.deploy.outputs.url }}
+    outputs:
+      url: ${{ steps.deploy.outputs.url }}
+    env:
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+      RELEASE_SHA: ${{ inputs.commit }}
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ inputs.commit }}
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: ops/package-lock.json
+      - run: npm ci --ignore-scripts
+        working-directory: ops
+      - name: Build production candidate
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          node scripts/release-policy.mjs environment
+          node ops/node_modules/vercel/dist/vc.js pull --yes --environment=production --token="$VERCEL_TOKEN"
+          node ops/node_modules/vercel/dist/vc.js build --prod --token="$VERCEL_TOKEN"
+      - name: Stage without assigning production domains
+        id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          node ops/node_modules/vercel/dist/vc.js deploy --prebuilt --prod --skip-domain --meta githubCommitSha="$RELEASE_SHA" --token="$VERCEL_TOKEN" > "$RUNNER_TEMP/deployment-url.txt"
+          node scripts/release-policy.mjs capture "$RUNNER_TEMP/deployment-url.txt"
+      - name: Verify project ownership and smoke-test candidate
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          node scripts/release-policy.mjs ownership
+          node scripts/smoke.mjs
+      - name: Verify the deployed learning journey
+        env:
+          WEB_APP_URL: ${{ steps.deploy.outputs.url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+          TEST_ARTIFACT_DIR: ${{ github.workspace }}/test-results/candidate
+        run: |
+          npm ci --prefix frontend
+          npm exec --prefix frontend -- playwright install --with-deps chromium
+          node frontend/tests/browser.mjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: release-evidence-${{ inputs.commit }}-${{ github.run_attempt }}
+          path: |
+            release.json
+            test-results/
+          retention-days: 30
+          if-no-files-found: warn
+  promote:
+    needs: candidate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    concurrency:
+      group: production-release
+      cancel-in-progress: false
+    environment:
+      name: Production
+      url: ${{ vars.PRODUCTION_URL }}
+    env:
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+      DEPLOYMENT_URL: ${{ needs.candidate.outputs.url }}
+      RELEASE_SHA: ${{ inputs.commit }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ inputs.commit }}
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts
+        working-directory: ops
+      - name: Reject obsolete or unrelated releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          node scripts/release-policy.mjs current-main
+          node scripts/release-policy.mjs ownership
+      - name: Promote the verified candidate
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: node ops/node_modules/vercel/dist/vc.js promote "$DEPLOYMENT_URL" --timeout=5m --token="$VERCEL_TOKEN"
+      - name: Verify the public production URL
+        env:
+          DEPLOYMENT_URL: ${{ vars.PRODUCTION_URL }}
+        run: node scripts/smoke.mjs
+      - name: Record release
+        run: |
+          printf '### Production release\nCommit: %s\nCandidate: %s\n' "$RELEASE_SHA" "$DEPLOYMENT_URL" >> "$GITHUB_STEP_SUMMARY"

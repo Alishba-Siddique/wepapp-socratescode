@@ -29,3 +29,6 @@ The backend services will need a separate runtime; a frontend deployment does no
 - [GitHub rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets)
 - [Available branch rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets)
 - [Vercel build settings](https://vercel.com/docs/builds/configure-a-build)
+
+## Configuration applied 2026-09-12
+Vercel root corrected to frontend, framework Next.js, npm ci and npm run build; framework output defaults retained. Staging and Production environments restrict deployments to main. Both contain an encrypted project-scoped Vercel CI token expiring 2026-12-11; Staging has an automation bypass secret. Repository deployment variables are configured and VERCEL_DEPLOY_ENABLED is true. Production uses automatic promotion after candidate verification while there is one maintainer; no mandatory human review is configured. Main protection and remote workflow verification are tracked in Session Log.

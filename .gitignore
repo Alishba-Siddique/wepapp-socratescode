@@ -19,3 +19,8 @@ __pycache__/
 docs/.obsidian/workspace*.json
 docs/.obsidian/cache/
 docs/.trash/
+
+.tools/
+release.json
+frontend-build*
+build-commit.txt

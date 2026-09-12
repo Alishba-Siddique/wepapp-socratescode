@@ -17,3 +17,6 @@ Open http://localhost:3001. Run `npm test`, `npm run lint`, `npm run typecheck` 
 Open `docs/` as a vault in Obsidian. Start with [Home](docs/Home.md), [System Design](docs/System%20Design.md), [Build Plan](docs/Build%20Plan.md) and [GitHub Setup](docs/GitHub%20Setup.md).
 
 For `wepapp-socratescode`, use this folder's contents as the repository root. The CI workflow is in `.github/workflows/frontend.yml`; Vercel's frontend root is `frontend`. The web-app is maintained in its own Git repository; the parent landing-page checkout keeps its own configuration.
+
+## Engineering and delivery
+Start with [Engineering Standards](docs/Engineering%20Standards.md), the [route audit](docs/Security%20Audit.md), [feature catalog](docs/Feature%20Catalog.md), and [release/rollback runbook](docs/Delivery.md). These are linked Obsidian notes maintained with each change. The original user mandate is preserved in docs/reference/Engineering Mandate.md.

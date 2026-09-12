@@ -1,0 +1,47 @@
+name: Roll back production
+on:
+  workflow_dispatch:
+    inputs:
+      deployment_url:
+        description: Previous successful production deployment URL, copied from release evidence
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  rollback:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    concurrency:
+      group: production-release
+      cancel-in-progress: false
+    environment:
+      name: Production
+      url: ${{ vars.PRODUCTION_URL }}
+    env:
+      DEPLOYMENT_URL: ${{ inputs.deployment_url }}
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts
+        working-directory: ops
+      - name: Validate rollback target
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: node scripts/release-policy.mjs ownership
+      - name: Restore previous production deployment
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: node ops/node_modules/vercel/dist/vc.js rollback "$DEPLOYMENT_URL" --timeout=5m --token="$VERCEL_TOKEN"
+      - name: Verify production after rollback
+        env:
+          DEPLOYMENT_URL: ${{ vars.PRODUCTION_URL }}
+        run: node scripts/smoke.mjs
