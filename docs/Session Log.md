@@ -19,3 +19,5 @@
 
 ## 2026-09-12 - Delivery and engineering mandate
 Added pinned CI, dependency review, CodeQL, three-browser artifact verification, staged Vercel releases and rollback. Added the user engineering mandate, route/cost audit, linked feature acceptance notes and runbooks to the Obsidian vault. Fixed Vercel frontend root and provisioned project-scoped encrypted deployment credentials. Release-policy tests passed (2); deployment tooling audit reports zero vulnerabilities. New workflows await their first remote run; this note does not claim deployment completion.
+
+Main commit 96f0bcd passed domain/lint/types/build, workflow validation, CodeQL and all three browser journeys on GitHub (run 34703681097). Dependency review passed on PR #1 after enabling the repository dependency graph. Main protection now requires PRs, resolved conversations, linear history and frontend-checks, and blocks force pushes/deletion. Release scheduling needed an explicit successful-gate condition because the PR-only dependency job is skipped on main.
