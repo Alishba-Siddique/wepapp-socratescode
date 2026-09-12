@@ -1,12 +1,26 @@
-import { chromium } from "@playwright/test";
+import { chromium, firefox, webkit } from "@playwright/test";
 import path from "node:path";
-import os from "node:os";
+import { mkdirSync } from "node:fs";
 import assert from "node:assert/strict";
 const baseURL = process.env.WEB_APP_URL || "http://localhost:3001";
+const artifactDir = path.resolve(process.env.TEST_ARTIFACT_DIR || "test-results/local");
+mkdirSync(artifactDir, {recursive:true});
+const engine = {chromium,firefox,webkit}[process.env.BROWSER || "chromium"];
+if (!engine) throw new Error("Unsupported browser");
 (async () => {
- const browser = await chromium.launch({ channel: process.platform === "win32" ? "msedge" : undefined, headless: true });
+ const browser = await engine.launch({ channel: engine === chromium && process.platform === "win32" ? "msedge" : undefined, headless: true });
+ const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+ const bypass=process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+ if(bypass){
+  const origin=new URL(baseURL);
+  if(origin.protocol!=="https:" || !origin.hostname.endsWith(".vercel.app"))throw new Error("Unsupported protected preview host");
+  await context.route(origin.origin+"/**",route=>route.continue({headers:{...route.request().headers(),"x-vercel-protection-bypass":bypass}}));
+ }
+ // Authenticated preview traces can contain protection headers; never persist them.
+ if(!bypass)await context.tracing.start({screenshots:true,snapshots:true});
+ const page=await context.newPage();
  try {
-  const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+
   const errors=[];page.on("pageerror",e=>errors.push(e.message));
   await page.goto(baseURL);
   await page.getByRole("link",{name:/Start your first lab/}).click();
@@ -44,7 +58,7 @@ const baseURL = process.env.WEB_APP_URL || "http://localhost:3001";
   await page.getByRole("searchbox",{name:"Find a lab"}).fill("nothing");
   await page.getByText(/No labs match/).waitFor();
   await page.goto(baseURL);
-  await page.screenshot({path:path.join(os.tmpdir(),"socrates-app-dashboard.png")});
+  await page.screenshot({path:path.join(artifactDir,"socrates-app-dashboard.png")});
   for(const width of [390,320,768]) {
    await page.setViewportSize({width,height:844});
    await page.goto(baseURL + "/learn/a-running-total");
@@ -52,7 +66,7 @@ const baseURL = process.env.WEB_APP_URL || "http://localhost:3001";
    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),"overflow at "+width);
   }
   await page.setViewportSize({width:390,height:844});
-  await page.screenshot({path:path.join(os.tmpdir(),"socrates-app-mobile.png")});
+  await page.screenshot({path:path.join(artifactDir,"socrates-app-mobile.png")});
   const menu=page.getByRole("button",{name:"Open navigation"});
   assert(await page.locator('.sidebar').isHidden());
   await menu.focus(); await menu.press('Enter');
@@ -71,5 +85,9 @@ const baseURL = process.env.WEB_APP_URL || "http://localhost:3001";
   assert.equal(response.status(),404);
   await page.getByRole("heading",{name:"This lab is not here."}).waitFor();
   console.log("PASS: full PRIMM flow, wrong answers, saved progress, search, mobile navigation, corrupt storage, and unknown routes");
+ } catch(error) {
+  await page.screenshot({path:path.join(artifactDir,"failure.png"),fullPage:true}).catch(()=>{});
+  if(!bypass)await context.tracing.stop({path:path.join(artifactDir,"trace.zip")});
+  throw error;
  } finally { await browser.close(); }
 })().catch(error=>{console.error(error);process.exitCode=1;});

@@ -1,40 +1,199 @@
-name: Frontend checks
+name: CI
 on:
   push:
     branches: [main]
   pull_request:
+    branches: [main]
+  merge_group:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 6 * * 1'
 permissions:
   contents: read
 concurrency:
-  group: frontend-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+env:
+  CI: 'true'
+  NEXT_TELEMETRY_DISABLED: '1'
 jobs:
-  frontend-checks:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+  workflow-validation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - run: node --test scripts/release-policy.test.mjs
+      - name: Validate workflow syntax with verified actionlint
+        shell: bash
+        run: |
+          curl --fail --silent --show-error --location --retry 3 \
+            https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz \
+            --output "$RUNNER_TEMP/actionlint.tar.gz"
+          echo "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8  $RUNNER_TEMP/actionlint.tar.gz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/actionlint.tar.gz" -C "$RUNNER_TEMP" actionlint
+          "$RUNNER_TEMP/actionlint" -color
+  quality:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     defaults:
       run:
         working-directory: frontend
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
-          node-version: 24
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
       - run: npm test
       - run: npm run lint
       - run: npm run typecheck
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+      - name: Audit locked delivery tooling
+        working-directory: ops
+        run: npm audit --omit=dev --audit-level=high
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: never
+  codeql:
+    name: CodeQL (${{ matrix.language }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      security-events: write
+      packages: read
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [javascript-typescript, actions]
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: github/codeql-action/init@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+      - uses: github/codeql-action/analyze@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4
+        with:
+          category: /language:${{ matrix.language }}
+  build:
+    needs: quality
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+        working-directory: frontend
       - run: npm run build
-      - run: npx playwright install --with-deps chromium
-      - name: Verify the learning journey
+        working-directory: frontend
+      - name: Package the tested build
         run: |
-          npm run start -- --port 3001 > /tmp/socrates-frontend.log 2>&1 &
-          server_pid=$!
-          trap 'kill "$server_pid"' EXIT
-          for attempt in $(seq 1 30); do
-            if curl -fsS http://localhost:3001 > /dev/null; then break; fi
-            sleep 1
-          done
-          npm run test:browser
+          tar --exclude='.next/cache' --exclude='.next/dev' -czf frontend-build.tar.gz -C frontend .next
+          sha256sum frontend-build.tar.gz > frontend-build.sha256
+          printf '%s\n' "$GITHUB_SHA" > build-commit.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: frontend-build-${{ github.sha }}
+          path: |
+            frontend-build.tar.gz
+            frontend-build.sha256
+            build-commit.txt
+          retention-days: 7
+          if-no-files-found: error
+  browser:
+    name: Browser (${{ matrix.browser }})
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: frontend-build-${{ github.sha }}
+      - name: Verify artifact integrity and commit
+        run: |
+          sha256sum --check frontend-build.sha256
+          test "$(cat build-commit.txt)" = "$GITHUB_SHA"
+          tar -xzf frontend-build.tar.gz -C frontend
+      - run: npm ci
+        working-directory: frontend
+      - run: npx --no-install playwright install --with-deps "${{ matrix.browser }}"
+        working-directory: frontend
+      - run: node scripts/run-browser.mjs
+        env:
+          BROWSER: ${{ matrix.browser }}
+          TEST_ARTIFACT_DIR: ${{ github.workspace }}/test-results/${{ matrix.browser }}
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: browser-evidence-${{ matrix.browser }}-${{ github.run_attempt }}
+          path: test-results/
+          retention-days: 7
+          if-no-files-found: warn
+  frontend-checks:
+    if: always()
+    needs: [workflow-validation, quality, dependency-review, codeql, build, browser]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Enforce every required check
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          node --input-type=module <<'JS'
+          const results = JSON.parse(process.env.RESULTS);
+          for (const [name, job] of Object.entries(results)) {
+            if (name === 'dependency-review' && process.env.EVENT_NAME !== 'pull_request' && job.result === 'skipped') continue;
+            if (job.result !== 'success') throw new Error(name + ': ' + job.result);
+          }
+          console.log('All required checks passed.');
+          JS
+  release:
+    needs: frontend-checks
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.VERCEL_DEPLOY_ENABLED == 'true'
+    uses: ./.github/workflows/release.yml
+    with:
+      commit: ${{ github.sha }}
