@@ -31,3 +31,6 @@ Hobby plan rollback may be restricted to the previous production deployment. Do 
 
 ## Credentials
 Rotate the project-scoped CI token before expiry; update both environments, validate a candidate, then revoke the old token. Tokens and bypass values never belong in docs. Use existing account access for provisioning; do not store a broad personal CLI token in the repository.
+
+### Portable tooling lockfile
+Vercel includes optional WASM bindings whose transitive emnapi packages are omitted by npm on Windows. ops/package.json lists those three runtime packages explicitly as optional dependencies; keep them pinned until upstream lockfile generation is portable. The quality gate now runs a clean ops install on Linux before allowing a release.

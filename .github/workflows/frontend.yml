@@ -59,6 +59,9 @@ jobs:
       - run: npm run typecheck
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
+      - name: Verify portable delivery install
+        working-directory: ops
+        run: npm ci --ignore-scripts
       - name: Audit locked delivery tooling
         working-directory: ops
         run: npm audit --omit=dev --audit-level=high
