@@ -1,0 +1,4 @@
+# Personal Obsidian layout state
+.obsidian/workspace*.json
+.obsidian/cache/
+.trash/

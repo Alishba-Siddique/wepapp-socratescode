@@ -1,0 +1,68 @@
+import { chromium } from "@playwright/test";
+import path from "node:path";
+import os from "node:os";
+import assert from "node:assert/strict";
+const baseURL = process.env.WEB_APP_URL || "http://localhost:3001";
+(async () => {
+ const browser = await chromium.launch({ channel: process.platform === "win32" ? "msedge" : undefined, headless: true });
+ try {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+  const errors=[];page.on("pageerror",e=>errors.push(e.message));
+  await page.goto(baseURL);
+  await page.getByRole("link",{name:/Start your first lab/}).click();
+  await page.getByRole("button",{name:/Continue to Run/}).click();
+  await page.getByRole("status").filter({hasText:/whole-number prediction/}).waitFor();
+  assert(await page.locator(".stage-navigation button").nth(1).isDisabled());
+  await page.getByLabel("What will total print?").fill("7");
+  await page.getByRole("button",{name:/Continue to Run/}).click();
+  await page.getByRole("heading",{name:"Make every step visible."}).waitFor();
+  for(let i=0;i<4;i++)await page.getByRole("button",{name:/Next trace step/}).click();
+  await page.getByText("The trace prints 6.",{exact:false}).waitFor();
+  await page.getByRole("button",{name:/Continue to Investigate/}).click();
+  await page.getByLabel("print changes the value").check();
+  await page.getByRole("button",{name:/Continue to Modify/}).click();
+  await page.getByRole("status").filter({hasText:/Where is total first assigned/}).waitFor();
+  await page.getByLabel("total is initialized before the loop").check();
+  await page.getByRole("button",{name:/Continue to Modify/}).click();
+  await page.getByLabel("Predict the new printed total").fill("99");
+  await page.getByRole("button",{name:/Continue to Make/}).click();
+  await page.getByRole("status").filter({hasText:/Follow each pass/}).waitFor();
+  await page.getByLabel("Predict the new printed total").fill("10");
+  await page.getByRole("button",{name:/Continue to Make/}).click();
+  await page.getByLabel("Choose the inclusive upper bound").selectOption("5");
+  await page.getByLabel("What helped you reach that target?").fill("The loop adds each value from one through five, giving fifteen.");
+  await page.getByRole("button",{name:"Complete this lab"}).click();
+  await page.getByRole("heading",{name:"A small problem. A new insight."}).waitFor();
+  await page.reload();
+  await page.getByRole("link",{name:/View my progress/}).click();
+  await page.getByRole("heading",{name:"Your progress, earned."}).waitFor();
+  assert((await page.locator(".lab-card").count()) === 1);
+  await page.getByText("The loop adds each value from one through five, giving fifteen.").waitFor();
+  await page.goto(baseURL + "/curriculum");
+  await page.getByRole("searchbox",{name:"Find a lab"}).fill("evens");
+  assert.equal(await page.locator(".lab-card").count(),1);
+  await page.getByRole("searchbox",{name:"Find a lab"}).fill("nothing");
+  await page.getByText(/No labs match/).waitFor();
+  await page.goto(baseURL);
+  await page.screenshot({path:path.join(os.tmpdir(),"socrates-app-dashboard.png")});
+  for(const width of [390,320,768]) {
+   await page.setViewportSize({width,height:844});
+   await page.goto(baseURL + "/learn/a-running-total");
+   await page.getByRole("heading",{name:"A running total",exact:true}).waitFor();
+   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),"overflow at "+width);
+  }
+  await page.setViewportSize({width:390,height:844});
+  await page.screenshot({path:path.join(os.tmpdir(),"socrates-app-mobile.png")});
+  await page.getByRole("button",{name:"Open navigation"}).click();
+  await page.getByRole("link",{name:/Learning path/}).first().click();
+  await page.getByRole("heading",{name:"Your learning path."}).waitFor();
+  await page.evaluate(()=>localStorage.setItem("socratescode:lessons:v1","broken json"));
+  await page.reload();
+  await page.getByRole("heading",{name:"Your learning path."}).waitFor();
+  assert.equal(errors.length,0,errors.join("\n"));
+  const response=await page.goto(baseURL + "/learn/missing-lab");
+  assert.equal(response.status(),404);
+  await page.getByRole("heading",{name:"This lab is not here."}).waitFor();
+  console.log("PASS: full PRIMM flow, wrong answers, saved progress, search, mobile navigation, corrupt storage, and unknown routes");
+ } finally { await browser.close(); }
+})().catch(error=>{console.error(error);process.exitCode=1;});
