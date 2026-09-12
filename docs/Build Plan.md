@@ -2,7 +2,7 @@
 [[Home]] - [[Architecture]] - [[Product Rules]]
 
 ## Increment 1 - Guest learning workspace
-Status: implemented and locally verified. GitHub CI has not run yet.
+Status: implemented and locally verified. The initial GitHub CI run passed.
 
 - [x] Replace starter with the branded dashboard and navigation.
 - [x] Offer a small curriculum of runnable guided exercises.

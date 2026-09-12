@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 export function Mark() {
   return (
     <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
@@ -16,17 +16,24 @@ export function Mark() {
 export function Shell({ children }: { children: ReactNode }) {
   const path = usePathname();
   const [open, setOpen] = useState(false);
+  const navigation = useRef<HTMLElement>(null);
+  const menu = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (open) navigation.current?.querySelector<HTMLAnchorElement>("nav a")?.focus();
+  }, [open]);
   const links = [
     { href: "/", label: "Overview", symbol: "01" },
     { href: "/curriculum", label: "Learning path", symbol: "02" },
     { href: "/progress", label: "My progress", symbol: "03" },
   ];
   return (
-    <div className="app-shell">
+    <div className="app-shell" onKeyDown={(event) => {
+      if (event.key === "Escape" && open) { setOpen(false); menu.current?.focus(); }
+    }}>
       <a className="skip-link" href="#content">
         Skip to content
       </a>
-      <aside className={"sidebar " + (open ? "is-open" : "")}>
+      <aside id="workspace-navigation" ref={navigation} className={"sidebar " + (open ? "is-open" : "")}>
         <Link href="/" className="brand" onClick={() => setOpen(false)}>
           <span className="brand-mark">
             <Mark />
@@ -73,7 +80,9 @@ export function Shell({ children }: { children: ReactNode }) {
       <div className="app-main">
         <header className="topbar">
           <button
+            ref={menu}
             className="menu-button"
+            aria-controls="workspace-navigation"
             onClick={() => setOpen((value) => !value)}
             aria-label={open ? "Close navigation" : "Open navigation"}
             aria-expanded={open}

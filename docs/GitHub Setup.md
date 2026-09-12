@@ -16,7 +16,7 @@ Do not upload node_modules, .next, Python venv, __pycache__, .env files, credent
 5. Enable Dependabot alerts and secret scanning/push protection where available. Review updates through pull requests. Never put runtime secrets into source files.
 6. Use separate staging and production environments when deployment is added. Restrict production deployment branches and add an approval reviewer when a second maintainer exists.
 
-The prepared workflow belongs at `.github/workflows/frontend.yml`, not `github/workflows/main.yml`. It installs locked dependencies and runs domain tests, lint, TypeScript, a production build and browser checks. Workflow execution is not verified until the repository runs it.
+The prepared workflow belongs at `.github/workflows/frontend.yml`, not `github/workflows/main.yml`. It installs locked dependencies and runs domain tests, lint, TypeScript, a production build and browser checks. The first GitHub Actions run passed on Ubuntu: https://github.com/Alishba-Siddique/wepapp-socratescode/actions/runs/34688468722.
 
 ## Vercel frontend preview
 Import wepapp-socratescode. If web-app contents are at the repository root, set Root Directory to `frontend`. Framework Preset: Next.js. Build Command: `npm run build`. Install Command: `npm ci`. Leave Output Directory on the framework default; do not point Vercel at a .next directory in the repository root. No environment secrets are needed for the guest-only increment.

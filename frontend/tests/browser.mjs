@@ -53,7 +53,14 @@ const baseURL = process.env.WEB_APP_URL || "http://localhost:3001";
   }
   await page.setViewportSize({width:390,height:844});
   await page.screenshot({path:path.join(os.tmpdir(),"socrates-app-mobile.png")});
-  await page.getByRole("button",{name:"Open navigation"}).click();
+  const menu=page.getByRole("button",{name:"Open navigation"});
+  assert(await page.locator('.sidebar').isHidden());
+  await menu.focus(); await menu.press('Enter');
+  assert.equal(await page.evaluate(()=>document.activeElement?.textContent?.includes('Overview')),true);
+  await page.keyboard.press('Escape');
+  assert(await page.locator('.sidebar').isHidden());
+  assert.equal(await page.evaluate(()=>document.activeElement?.getAttribute('aria-label')),'Open navigation');
+  await menu.click();
   await page.getByRole("link",{name:/Learning path/}).first().click();
   await page.getByRole("heading",{name:"Your learning path."}).waitFor();
   await page.evaluate(()=>localStorage.setItem("socratescode:lessons:v1","broken json"));

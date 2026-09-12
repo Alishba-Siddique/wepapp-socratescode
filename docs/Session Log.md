@@ -10,5 +10,9 @@
 - Fixed a UTF-8 BOM that broke the CSS compiler and replaced corrupted UI symbols.
 - Verified four domain tests, browser completion with wrong-answer handling, persistence after refresh, search, unknown routes, corrupted storage, and mobile widths 320/390/768.
 - Lint and the production build (including TypeScript) pass.
-- Added System Design, GitHub Setup, the standalone repository README and the frontend-checks workflow. GitHub CI has not run remotely.
+- Added System Design, GitHub Setup, the standalone repository README and the frontend-checks workflow. The initial GitHub CI run passed on Ubuntu, including browser checks.
 - Backend authentication, database persistence, runtime execution and tutoring remain planned.
+
+- Published the working app to Alishba-Siddique/wepapp-socratescode on main.
+- Verified the production server locally and the first remote CI run.
+- Added mobile navigation focus, Escape handling and hidden-state keyboard checks.
