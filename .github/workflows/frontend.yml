@@ -191,6 +191,7 @@ jobs:
   release:
     needs: frontend-checks
     if: >-
+      !cancelled() && needs.frontend-checks.result == 'success' &&
       github.ref == 'refs/heads/main' &&
       (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
       vars.VERCEL_DEPLOY_ENABLED == 'true'
