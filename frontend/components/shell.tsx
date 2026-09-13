@@ -25,6 +25,7 @@ export function Shell({ children }: { children: ReactNode }) {
     { href: "/", label: "Overview", symbol: "01" },
     { href: "/curriculum", label: "Learning path", symbol: "02" },
     { href: "/progress", label: "My progress", symbol: "03" },
+    { href: "/patterns", label: "Pattern library", symbol: "04" },
   ];
   return (
     <div className="app-shell" onKeyDown={(event) => {
@@ -34,7 +35,7 @@ export function Shell({ children }: { children: ReactNode }) {
         Skip to content
       </a>
       <aside id="workspace-navigation" ref={navigation} className={"sidebar " + (open ? "is-open" : "")}>
-        <Link href="/" className="brand" onClick={() => setOpen(false)}>
+        <Link prefetch={false} href="/" className="brand" onClick={() => setOpen(false)}>
           <span className="brand-mark">
             <Mark />
           </span>
@@ -43,7 +44,7 @@ export function Shell({ children }: { children: ReactNode }) {
         <p className="sidebar-label">YOUR THINKING SPACE</p>
         <nav aria-label="Workspace navigation">
           {links.map((link) => (
-            <Link
+            <Link prefetch={false}
               key={link.href}
               href={link.href}
               aria-current={

@@ -31,8 +31,6 @@ jobs:
         with:
           node-version-file: .node-version
           package-manager-cache: false
-      - run: npm ci --ignore-scripts
-        working-directory: ops
       - name: Validate rollback target
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -40,7 +38,7 @@ jobs:
       - name: Restore previous production deployment
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: node ops/node_modules/vercel/dist/vc.js rollback "$DEPLOYMENT_URL" --timeout=5m --token="$VERCEL_TOKEN"
+        run: node scripts/vercel-release.mjs rollback
       - name: Verify production after rollback
         env:
           DEPLOYMENT_URL: ${{ vars.PRODUCTION_URL }}

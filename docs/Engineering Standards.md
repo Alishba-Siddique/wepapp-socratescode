@@ -5,7 +5,7 @@ updated: 2026-09-12
 ---
 # Engineering standards
 [[Home]] ? [[Security Audit]] ? [[System Design]] ? [[Delivery]]
-The user's [[reference/Engineering Mandate]] is the baseline. Apply controls to real entry points and label future architecture clearly. Earlier requests for always-on animation are superseded by the mandate's reduced-motion requirement.
+The user's [[reference/Engineering Mandate]] is the baseline. Apply controls to real entry points and label future architecture clearly. The September 14 user request explicitly overrides the marketing motion preference: keep Lenis and animation on and remove the settings button. The learning workspace retains its native scrolling and reduced-motion styles.
 
 ## Reliability and data
 PostgreSQL is authoritative. The NestJS gateway owns transactions; never dual-write PostgreSQL and RabbitMQ or a search index. Persist an outbox row in the same transaction as the domain change, publish with confirms, and mark delivery afterward. Consumers deduplicate by event ID and acknowledge only after committing the effect. Delivery is at least once; there is no exactly-once claim.
@@ -32,7 +32,7 @@ Execution is isolated, ephemeral, non-root, network-denied and resource-bounded.
 - No raw secrets or private learner code in ordinary logs. Append-only audit events contain references, prompt versions and redacted metadata; separately authorized evaluation samples have retention/deletion controls.
 
 ## Motion
-Lenis is for marketing; code editors and the learning workspace keep native scrolling. One RAF loop, ResizeObserver, cleanup of listeners/frames/instances, native touch pass-through, and live reduced-motion preference changes. No React state per scroll frame. Mobile drawers prevent background scrolling. Essential content is visible with motion disabled.
+Lenis is for marketing; code editors and the learning workspace keep native scrolling. One RAF loop, ResizeObserver, cleanup of listeners/frames/instances, native touch pass-through, and visibility-aware scheduling. No React state per scroll frame. Mobile drawers prevent background scrolling. Essential content is visible with motion disabled.
 
 ## Definition of done
 A feature spec with acceptance criteria, changed route audit, contract and tests where relevant, green CI, operational configuration, accessible failure states, and updated verification evidence. "Implemented", "configured", "verified" and "planned" are distinct. A scaffold is not a deployed service.

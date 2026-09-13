@@ -112,7 +112,7 @@ export function Workspace({ puzzle }: { puzzle: Puzzle }) {
   return (
     <div className="workspace page-enter">
       <div className="lesson-top">
-        <Link href="/curriculum">Back to learning path</Link>
+        <Link prefetch={false} href="/curriculum">Back to learning path</Link>
         <span>
           {puzzle.topic} <i /> GUIDED PYTHON LAB
         </span>
@@ -386,7 +386,7 @@ export function Workspace({ puzzle }: { puzzle: Puzzle }) {
               <p>
                 You completed all five activities and recorded a reflection.
               </p>
-              <Link href="/progress" className="button primary">
+              <Link prefetch={false} href="/progress" className="button primary">
                 View my progress
               </Link>
             </div>

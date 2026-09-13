@@ -104,7 +104,7 @@ export function Dashboard({
               <span>{active.minutes} min guide</span>
               <span>Python</span>
             </div>
-            <Link className="button primary" href={"/learn/" + active.slug}>
+            <Link prefetch={false} className="button primary" href={"/learn/" + active.slug}>
               {progress[active.slug]?.completed ? "Review this lab" : progress[active.slug]
                 ? "Continue learning"
                 : completed.length ? "Start your next lab" : "Start your first lab"}{" "}
@@ -132,7 +132,7 @@ export function Dashboard({
           <span className="empty-symbol">?</span>
           <h2>Your first insight belongs here.</h2>
           <p>Complete a guided lab to see your progress and reflection.</p>
-          <Link href={"/learn/" + active.slug} className="button primary">
+          <Link prefetch={false} href={"/learn/" + active.slug} className="button primary">
             Start a lab
           </Link>
         </section>
@@ -158,7 +158,7 @@ export function Dashboard({
           </div>
           <div className="lab-grid">
             {(view === "progress" ? completed : filtered).map((p, index) => (
-              <Link href={"/learn/" + p.slug} className="lab-card" key={p.slug}>
+              <Link prefetch={false} href={"/learn/" + p.slug} className="lab-card" key={p.slug}>
                 <div className="lab-card-top">
                   <span>0{index + 1} / FOUNDATION</span>
                   <span aria-hidden="true">&#8599;</span>
