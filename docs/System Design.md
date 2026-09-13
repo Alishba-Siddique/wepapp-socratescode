@@ -32,6 +32,8 @@ The gateway validates identity and organization membership, enforces policy, exe
 | Local progress adapter | Validated browser persistence, no account synchronization | Implemented |
 | NestJS gateway | Identity, authorization, attempts, progress, organizations, audit events | Planned |
 | PostgreSQL / Prisma | Durable relational data and transactional updates | Planned |
+| PostgreSQL outbox / RabbitMQ | Commit domain events atomically, publish with confirms, consume with deduplication | Planned |
+| Valkey | Shared admission limits, concurrency and budget reservations | Planned |
 | Go execution service | Schedule isolated runs, enforce resource limits, return traces | Planned |
 | Python tutor | Ask constrained pedagogical questions from trace context | Scaffold; not connected |
 | Identity provider | Authentication; SSO later when required | Planned |
@@ -45,7 +47,7 @@ Core records: User, Organization, Membership, Lab, LabVersion, Attempt, TraceRun
 Every organization-owned query and mutation is scoped using verified membership. Never trust a browser-supplied organization ID alone. Enforce ownership in the gateway, test cross-tenant access attempts, and consider row-level security as defense in depth when designing migrations. Personal workspaces remain distinct from organization-owned data.
 
 ## Execution boundary
-Submit a run with an idempotency key, lab version, language and validated input. The gateway creates a pending run, invokes a private execution contract, and stores the bounded result. Add a durable queue and polling/subscriptions when long-running execution requires them; do not hold an HTTP request open indefinitely.
+Submit a run with an idempotency key, lab version, language and validated input. The planned gateway commits a pending run and outbox event in one PostgreSQL transaction. A publisher forwards the event to RabbitMQ with confirms; workers deduplicate deliveries and submit bounded results through a private service contract. Acknowledge only after the result is durably accepted. Polling/subscriptions report explicit run states; do not hold an HTTP request open indefinitely. This is at-least-once delivery, with application idempotency, not an exactly-once guarantee.
 
 Untrusted code runs in disposable isolation with CPU, memory, time, process-count and output limits, no outbound network, no secrets, a read-only base filesystem and an ephemeral work directory. A Go service by itself is not a sandbox. Select and validate the actual isolation mechanism before accepting arbitrary code. Cancellation, worker crashes and timeouts must leave a retriable, explicit run state.
 

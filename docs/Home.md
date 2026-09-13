@@ -36,3 +36,5 @@ Baseline copies are preserved in [[reference/PRD]], [[reference/TRD]] and [[refe
 - [[Feature Catalog]] - scope, status and acceptance criteria.
 - [[Delivery]] - CI, release and rollback runbook.
 - [[templates/Decision]] and [[templates/Incident]] - decisions and operational learning.
+
+- [[features/Interview Patterns]] - searchable pattern reference, Socratic questions and practice sources.

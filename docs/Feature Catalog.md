@@ -27,3 +27,6 @@ Clerk is the user's requested exception: open-source SDKs with a hosted propriet
 
 ## Working rhythm
 Choose one feature note -> define observable acceptance -> update contracts -> implement -> test failure paths -> update audit/decision notes -> PR with CI -> verify deployment -> record evidence. Keep tasks in Markdown checklists; no paid Obsidian plugin required.
+
+## Interview pattern library
+/patterns adds 17 searchable pattern notes, family filters, expandable authored questions and external practice links. It does not claim runtime execution, AI hints or lab completion. See [[features/Interview Patterns]].

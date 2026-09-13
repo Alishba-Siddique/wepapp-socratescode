@@ -11,6 +11,7 @@ Scope: tracked Next.js frontend and Python scaffold, plus the separate landing p
 | Route / Handler | Method | Auth | Cost Tier (1-4) | Protection | Vulnerability Risk |
 | --- | --- | --- | --- | --- | --- |
 | Web-app / | GET | Public guest | 4 | Static content; no outbound model calls | Low application cost; host volumetric protection remains a platform dependency |
+| /patterns | GET | Public guest | 4 | Bounded local catalog, text-only search, authored hints, fixed external links | No code execution or account synchronization; external practice has its own terms |
 | /curriculum | GET | Public guest | 4 | Local bounded catalog; client-side filtering | Low |
 | /learn/[slug] | GET | Public guest | 4 | Known lab IDs; unknown IDs return 404 | Low; arbitrary path inputs cannot execute code |
 | /progress | GET | Public guest | 4 | Validated browser storage; no database | User can edit their own local progress; never use as certification |
@@ -25,7 +26,7 @@ Scope: tracked Next.js frontend and Python scaffold, plus the separate landing p
 - No server-enforced auth or durable progress yet. Guest browser storage is intentionally untrusted.
 - No distributed limiter or edge custom rule is live today. Do not claim these controls exist simply because the standard requires them.
 - Deployment tooling initially included vulnerable transitive packages. The locked overrides remove all advisories in the verified install; CI must keep auditing them.
-- Landing Lenis previously ignored reduced motion. Updated to remove the instance and use readable native scrolling when the preference changes.
+- Marketing motion stays enabled per the explicit September 14 request; the learning workspace still follows device reduced-motion preferences. The decorative cursor does not intercept input and is absent on touch devices.
 - New Tier 1-3 handlers are blocked from release until their feature acceptance checks are implemented, including shared-store outage and concurrent request tests.
 
 ## Next route contracts (planned, not exposed)
