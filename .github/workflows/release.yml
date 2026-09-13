@@ -1,6 +1,11 @@
 name: Verified production release
 on:
   workflow_call:
+    secrets:
+      VERCEL_TOKEN:
+        required: false
+      VERCEL_AUTOMATION_BYPASS_SECRET:
+        required: false
     inputs:
       commit:
         required: true
