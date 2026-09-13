@@ -33,3 +33,5 @@ Select one pattern for a full PRIMM lab, with bounded trace data, authored wrong
 
 ## Verification
 2026-09-14: ESLint, TypeScript, four domain tests and the production build passed. The production-server browser journey passed all PRIMM stages, wrong answers, persistence, pattern filtering and keyboard guidance, responsive widths, corrupted storage and unknown routes. Six route smoke checks passed. Remote CI and deployment remain separate gates.
+
+Cross-browser follow-up: WebKit reported unhandled errors when background Next.js route prefetches were cancelled by navigation. Workspace links now fetch on intent with prefetch disabled, retaining client navigation and the strict page-error assertion. This bounded guest catalog does not need eager downloads of every lab.

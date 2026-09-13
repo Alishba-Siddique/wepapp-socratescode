@@ -37,21 +37,13 @@ jobs:
           node-version-file: .node-version
           cache: npm
           cache-dependency-path: ops/package-lock.json
-      - run: npm ci --ignore-scripts
-        working-directory: ops
-      - name: Build production candidate
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: |
-          node scripts/release-policy.mjs environment
-          node ops/node_modules/vercel/dist/vc.js pull --yes --environment=production --token="$VERCEL_TOKEN"
-          node ops/node_modules/vercel/dist/vc.js build --prod --token="$VERCEL_TOKEN"
-      - name: Stage without assigning production domains
+      - name: Build candidate without assigning production domains
         id: deploy
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          node ops/node_modules/vercel/dist/vc.js deploy --prebuilt --prod --skip-domain --meta githubCommitSha="$RELEASE_SHA" --token="$VERCEL_TOKEN" > "$RUNNER_TEMP/deployment-url.txt"
+          node scripts/release-policy.mjs environment
+          node scripts/vercel-release.mjs candidate > "$RUNNER_TEMP/deployment-url.txt"
           node scripts/release-policy.mjs capture "$RUNNER_TEMP/deployment-url.txt"
       - name: Verify project ownership and smoke-test candidate
         env:
@@ -103,8 +95,6 @@ jobs:
         with:
           node-version-file: .node-version
           package-manager-cache: false
-      - run: npm ci --ignore-scripts
-        working-directory: ops
       - name: Reject obsolete or unrelated releases
         env:
           GH_TOKEN: ${{ github.token }}
@@ -115,7 +105,7 @@ jobs:
       - name: Promote the verified candidate
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: node ops/node_modules/vercel/dist/vc.js promote "$DEPLOYMENT_URL" --timeout=5m --token="$VERCEL_TOKEN"
+        run: node scripts/vercel-release.mjs promote
       - name: Verify the public production URL
         env:
           DEPLOYMENT_URL: ${{ vars.PRODUCTION_URL }}

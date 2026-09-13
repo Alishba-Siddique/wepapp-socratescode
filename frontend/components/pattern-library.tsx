@@ -42,7 +42,7 @@ export function PatternLibrary() {
           first. These pattern notes extend that practice with questions and
           external exercises.
         </p>
-        <Link href="/curriculum">
+        <Link prefetch={false} href="/curriculum">
           Explore guided labs <span aria-hidden="true">→</span>
         </Link>
       </div>
