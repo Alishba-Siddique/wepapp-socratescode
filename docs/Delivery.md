@@ -1,7 +1,7 @@
 ---
 type: runbook
-status: implemented-pending-remote-verification
-updated: 2026-09-12
+status: verified-production-delivery
+updated: 2026-09-14
 ---
 # Delivery and recovery
 [[Home]] ? [[GitHub Setup]] ? [[Security Audit]]
@@ -39,3 +39,6 @@ Vercel includes optional WASM bindings whose transitive emnapi packages are omit
 Vercel CLI 59.16 pull performs an owning-team lookup which a project-scoped credential cannot authorize. The delivery adapter uses Vercel project/deployment APIs directly, retaining the existing project-only token. It pins both Git ref and SHA, validates the linked repository, requires frontend + Next.js settings, disables automatic domain assignment, waits for READY, checks ownership, and promotes the same tested candidate. Promotion and rollback wait until the project production target matches the requested deployment. No team-wide credential is provisioned. Mutations are not automatically retried after an ambiguous network failure.
 
 The Vercel remote build is separate from the checksum-verified CI build; the deployed candidate therefore gets its own route smoke tests and complete browser journey before promotion. API contract tests cover source identity, deferred domain assignment and credential destination. The current scoped token expires December 2, 2026; rotate both environment secrets before then.
+
+## Verified release
+See [[releases/2026-09-14]] for the first successful API candidate, full deployed journey and promotion. Rollback has contract tests and a workflow but has not been exercised against production; do not claim a rollback drill was completed.
