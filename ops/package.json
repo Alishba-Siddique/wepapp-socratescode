@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Locked tooling for production delivery",
   "dependencies": {
-    "vercel": "59.16.0"
+    "vercel": "59.20.0"
   },
   "overrides": {
     "@tootallnate/once": "2.0.1",
