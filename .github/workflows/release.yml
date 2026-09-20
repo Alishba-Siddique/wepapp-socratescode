@@ -62,6 +62,7 @@ jobs:
           npm ci --prefix frontend
           npm exec --prefix frontend -- playwright install --with-deps chromium
           node frontend/tests/browser.mjs
+          node frontend/tests/learning-browser.mjs
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:

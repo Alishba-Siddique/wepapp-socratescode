@@ -17,7 +17,7 @@ Read [docs/Home.md](docs/Home.md) first. The original Rules.md, PRD.md, and TRD.
 - Keep changes inside the authorized feature scope. Do not deploy, send messages, or enable external billing without existing user authorization.
 
 ## Current increment
-A guest dashboard and guided PRIMM workspace with local browser progress. Authentication, remote code execution, AI tutoring, and shared team data are later increments. See [docs/Build Plan.md](docs/Build%20Plan.md).
+Guest PRIMM labs, Socratic pattern/product lessons, Python browser practice, and design interviews. Better Auth + PostgreSQL progress is implemented behind an optional private gateway. Remote judging, live AI, organizations and Cloudflare migration remain later increments. See [docs/Build Plan.md](docs/Build%20Plan.md).
 
 ## Engineering mandate
 Read docs/Engineering Standards.md and docs/Security Audit.md before implementation. The user-provided docs/reference/Engineering Mandate.md governs data reliability, cost controls, motion accessibility and error UX. Update the route inventory and feature acceptance criteria alongside code. Do not present planned services or safeguards as live.

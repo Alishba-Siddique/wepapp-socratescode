@@ -1,29 +1,24 @@
 # Architecture
-[[Home]] - [[Engineering Rules]] - [[Decisions]]
+[[Home]] ? [[API and Data]] ? [[Security Audit]] ? [[Local Development]]
 
-## Boundaries
-| Layer | Responsibility | State |
+## Implemented boundaries
+| Component | Responsibility | Persistence |
 | --- | --- | --- |
-| Next.js frontend | Routes, accessible UI, local guided exercises | First increment |
-| NestJS GraphQL gateway | Auth validation, application use cases, Prisma access | Planned |
-| Go execution service | Isolated code execution and traces over gRPC | Planned |
-| Python tutor service | Constrained Socratic hints over gRPC | Scaffold exists; not connected |
-| Neon PostgreSQL | Durable users, puzzles, attempts | Planned |
+| Next.js 16 / React 19 frontend | Learning UI, public catalogs, same-origin account proxy | Guest storage and local drafts |
+| Monaco editor | Editing Python; syntax highlighting; simple textarea fallback | Drafts in browser storage |
+| Opaque sandbox iframe + Pyodide worker | Learner Python execution with public inputs | Ephemeral worker; no account capability |
+| NestJS 12 / Express 5 gateway | Better Auth endpoints and bounded GraphQL progress operations | Sole application owner of PostgreSQL access |
+| Better Auth | Email/password credentials, DB sessions, verification/reset via configured SMTP | Prisma-backed identity tables |
+| PostgreSQL 17 / Prisma 7 | Users, sessions, revisioned progress, imports and atomic admission counters | Authoritative account state |
 
-Browser - GraphQL gateway - gRPC services. Only the gateway accesses the database. Protobuf contracts precede service integration.
+Account requests follow browser ? Next.js `/api/*` allowlisted proxy ? private gateway ? PostgreSQL. Gateway origin must match the browser origin; do not trust arbitrary forwarded-IP headers. Auth is Better Auth HTTP; domain operations use `contracts/progress.graphql`. Shared lab definitions live in `contracts/learning.ts`.
 
-## Frontend layout
-- app/: route entry points and shared shell.
-- components/: dashboard, catalog, learning workspace, reusable UI.
-- lib/puzzles.ts: typed exercise definitions and pure trace calculation.
-- lib/progress.ts: validated local progress and React subscription.
-- public/: self-hosted fonts and approved assets.
-- tests/: behavior-focused checks.
+Code follows editor ? opaque sandboxed `/runner` iframe ? dedicated module worker ? Pyodide. It never goes to the gateway. CSP allows only runtime asset downloads, not app-service access. Parent accepts messages only from the frame with the matching run ID. The parent enforces a 60-second load deadline and 5-second execution deadline. This bounds elapsed time; it is not a hard browser memory quota or a server assessment sandbox.
 
-The installed frontend is Next.js 16.3.4; older root documentation names Next.js 15. Follow the installed framework's local documentation for APIs and preserve the intended architecture.
+## Deliberately separate state
+Guest PRIMM progress remains local. Account progress is loaded into separate tab memory and saved explicitly using optimistic revisions. Guest import is explicit and idempotent; existing account rows win. Coding/design drafts remain browser-only and are not advertised as synchronized. Pattern reflections are page-local.
 
-## Current execution model
-Guided exercises use bounded numerical inputs and pure functions. Never evaluate arbitrary user code in this increment. Introduce Monaco and a real sandbox only with a defined execution contract and resource limits.
+## Planned boundaries
+A server judge, Go execution service, Python contextual tutor, RabbitMQ outbox, Valkey admission, organizations and live inference are not connected. Define contracts and operational budgets before adding them. PostgreSQL currently provides shared atomic admission for accounts; the earlier Valkey design remains a later scaling decision.
 
-## Authentication
-Guest-first browsing requires no keys. Add Clerk with the gateway identity contract as a separate increment. Never simulate successful sign-in.
+Cloudflare is the requested hosting direction, not the verified deployment. The existing Vercel delivery workflow remains in place. A Cloudflare migration needs a compatible Next adapter/runtime, private gateway hosting, database connectivity, SMTP, asset sizing and an end-to-end candidate test. Do not promise zero hosting cost from open-source licenses.

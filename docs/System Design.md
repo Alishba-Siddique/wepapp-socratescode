@@ -9,7 +9,7 @@ Build a reliable learning product that can support individuals and organizations
 flowchart TD
   Visitor[Individual or organization member] --> Web[Next.js web-app]
   Web -->|HTTPS GraphQL| API[NestJS gateway]
-  Identity[Identity provider] -->|Verified identity| API
+  Identity[Better Auth gateway module] -->|Verified session| API
   API -->|Prisma transactions| DB[(PostgreSQL)]
   API -->|Private gRPC| Runner[Go execution service]
   Runner --> Sandbox[Disposable isolated code workers]
@@ -36,7 +36,7 @@ The gateway validates identity and organization membership, enforces policy, exe
 | Valkey | Shared admission limits, concurrency and budget reservations | Planned |
 | Go execution service | Schedule isolated runs, enforce resource limits, return traces | Planned |
 | Python tutor | Ask constrained pedagogical questions from trace context | Scaffold; not connected |
-| Identity provider | Authentication; SSO later when required | Planned |
+| Better Auth gateway module | Database sessions through PostgreSQL/Prisma; HTTP auth endpoints; SSO later when required | Planned; replaces Clerk |
 | Observability | Correlated traces, metrics, structured logs and alerts | Planned |
 
 ## Application modules and data
@@ -72,3 +72,6 @@ SSO, SCIM, regional hosting and compliance commitments require customer requirem
 3. Define protobuf contracts; implement and test isolated execution.
 4. Integrate tutoring with evaluations, budgets and failure behavior.
 5. Add organizations, scoped roles, reporting and the enterprise release gates above.
+
+## Implemented September 20 boundary
+[[Architecture]] is the current implementation map. Next.js proxies an allowlisted same-origin account API to NestJS/Better Auth/Prisma/PostgreSQL. The browser Python runner is independent and has no application-service access. PostgreSQL admission counters are the implemented shared limiter; RabbitMQ, Go, Valkey, live AI and organization services remain planned. Cloudflare migration is not configured or verified by this change.

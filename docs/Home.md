@@ -38,3 +38,16 @@ Baseline copies are preserved in [[reference/PRD]], [[reference/TRD]] and [[refe
 - [[templates/Decision]] and [[templates/Incident]] - decisions and operational learning.
 
 - [[features/Interview Patterns]] - searchable pattern reference, Socratic questions and practice sources.
+
+## Current delivery
+- [[Development Workflow]] - how the vault, implementation, tests and releases stay synchronized.
+- [[releases/2026-09-14]] - verified production release and evidence.
+
+## Learning platform implementation
+- [[Platform Guide]] ? what a learner can do and what is saved.
+- [[Learning Design]] ? zero-background teaching principles and long-term progression.
+- [[Local Development]] ? frontend, gateway, database and local email setup.
+- [[API and Data]] ? contracts, ownership and revision rules.
+- [[Content and Licensing]] ? licensed GitHub problem imports.
+- [[DSA in Products]] ? researched applications and evidence levels.
+- [[Testing]] ? browser, runtime and account verification.

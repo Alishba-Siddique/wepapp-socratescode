@@ -1,4 +1,19 @@
 # Session Log
+
+## 2026-09-20 - Independent coding and engineering practice
+Implemented nine PRIMM labs, twenty native Python problems (eight licensed Exercism imports / 88 public canonical cases), 54 external references, seventeen Socratic pattern lessons with researched product applications, and six system/database/architecture exercises with browser drafts and Markdown export. Added beginner vocabulary and explicit progression without claiming senior readiness.
+
+Implemented the optional NestJS / Better Auth / Prisma / PostgreSQL gateway, same-origin frontend proxy, email-account UI, versioned account progress, explicit idempotent guest import, ownership validation, optimistic concurrency and atomic admission. Production gateway hosting, SMTP, backup/restore evidence and Cloudflare migration remain unconfigured.
+
+Verified locally: frontend lint, TypeScript and production build (65 generated pages); nine domain checks; seven real PostgreSQL/gateway integration checks; four release-policy checks; actionlint; zero production vulnerabilities in frontend and gateway audits. Learning journeys and account journeys passed in Chromium/Edge, Firefox and WebKit. Browser coverage includes actual Python execution, wrong answers, infinite-loop cutoff and subsequent recovery, opaque origin, blocked private-API requests, design persistence/export, guest/account isolation, new-context sign-in and mobile layout.
+
+Fixed during verification: opaque-frame module-worker startup, Firefox runtime import CSP, explicit worker termination before frame removal, account request cancellation on navigation, and assertions that previously read pre-hydration fields. Monaco uses its ESM build with patched DOMPurify 3.4.15; emitted chunks were checked for the patched version. CI carries generated runtime assets with the tested frontend artifact and runs a PostgreSQL account job.
+
+Updated [[Platform Guide]], [[Learning Design]], [[Architecture]], [[Local Development]], [[API and Data]], [[Security Audit]], [[Content and Licensing]], [[DSA in Products]] and [[Testing]]. User-provided PDF and personal Obsidian settings are preserved separately from the implementation commit. Remote PR/CI evidence is recorded in GitHub; local passes are not a production deployment claim.
+
+
+## 2026-09-14 - Authentication selection
+The user selected Better Auth after discussing Cloudflare hosting. Updated the decision, architecture, build plan, feature catalog, account acceptance criteria and planned security route inventory to replace Clerk. Reviewed official license, Prisma, organization and security documentation. This is a documentation change only: auth, database sync and Cloudflare deployment are not live. Original reference requirements and historical release evidence remain preserved.
 [[Home]] - [[Build Plan]]
 
 ## 2026-09-12
@@ -30,3 +45,14 @@ Marketing motion is always on with no settings button, as explicitly requested t
 The guest product was restored at https://wepapp-socratescode.vercel.app/ using a verified main build; production routes and the full learning journey passed. PR #7 passed all checks after one WebKit rerun and merged as 4c1475c. Its main CI browser checks passed, but the candidate job received an empty deployment credential. Scoped credentials were re-verified and re-encrypted; PR #8 repairs the reusable workflow secret context. Do not report automated delivery as verified until the candidate and promotion jobs pass.
 
 Release follow-up: the reusable secret context fix exposed the credential correctly. CLI pull then failed its owning-team lookup. Implemented direct project-scoped API candidate creation, promotion and rollback with four passing release-policy/adapter tests and actionlint. No broader token was created. Remote delivery verification is pending.
+
+## 2026-09-14 - Production verified
+PR #9 merged as 6a336c4 with owner approval. CI run 34783631960 passed quality, build, security, Chromium, Firefox, WebKit, deployed candidate checks and production promotion. Deployment dpl_C7wg5iBSyvepDg8HF88LQQMRnVu9 is READY and is the project production target. The public six-route smoke check and complete PRIMM/pattern-library browser journey passed after promotion. See [[releases/2026-09-14]] and [[Development Workflow]].
+
+
+## 2026-09-20 - PR 15 CI and security repair
+Investigated GitHub run 35488756136: quality, build, dependency review, workflow validation and all three browser jobs passed. Accounts failed at npm ci because React/react-dom/scheduler peers were missing from the gateway lockfile; frontend-checks correctly propagated that failure. The local global legacy-peer-deps setting caused the mismatch. Added an explicit gateway setting, regenerated the lockfile with normal peer resolution and verified an isolated clean install.
+
+Added a standard process-local auth burst limiter before the existing shared PostgreSQL quota; retained shared admission and failure-closed behavior. Removed raw caught-error logging in the account browser runner. Added three admission regression tests; all ten gateway integration tests pass, and the gateway TypeScript build passes. Expanded candidate verification to new learning features. Remote security scan, browser rerun and release status must be verified before declaring this deployed.
+
+Local follow-up: account journeys passed in Chromium/Edge, Firefox and WebKit with the new limiter. Eleven route smoke checks, four release-policy tests and actionlint passed. The final gateway production audit reports zero vulnerabilities.
