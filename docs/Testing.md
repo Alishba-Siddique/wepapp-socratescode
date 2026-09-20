@@ -20,3 +20,8 @@ For account integration, set `DATABASE_URL` and `TEST_DATABASE_URL` to a dedicat
 CI packages generated runtime assets alongside `.next`, checks the artifact digest, then tests Chromium, Firefox and WebKit. The account job uses PostgreSQL 17. Aggregate checks fail when any required job fails; tests are not skipped to mask browser failures.
 
 See [[Session Log]] for the exact results of this change. Production SMTP, restore drills, provider delivery and Cloudflare compatibility remain separate deployment checks.
+
+## Portable installation and release regression
+The gateway commits `.npmrc` with `legacy-peer-deps=false`. Generate its lockfile with the same peer resolution used by `npm ci`; a local global legacy-peer setting previously hid missing React peers from Prisma tooling. Verify with an isolated clean install, not just an existing node_modules tree. CI continues to use `npm ci` and does not bypass peer checks.
+
+Gateway integration coverage now includes ten checks, including actual auth route throttling, shared admission and sanitized store outages. Candidate releases run both browser journey scripts, including actual Python execution and design drafts. Smoke checks include practice, solver, pattern lesson and design routes.

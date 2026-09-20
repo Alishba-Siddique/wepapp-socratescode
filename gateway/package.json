@@ -2,7 +2,11 @@
   "name": "@socratescode/gateway",
   "version": "0.2.0",
   "private": true,
-  "overrides": { "multer": "2.3.0", "deepmerge-ts": "8.0.0", "mysql2": "3.24.0" },
+  "overrides": {
+    "multer": "2.3.0",
+    "deepmerge-ts": "8.0.0",
+    "mysql2": "3.24.0"
+  },
   "type": "module",
   "engines": {
     "node": ">=22.12"
@@ -24,6 +28,7 @@
     "@prisma/client": "7.10.0",
     "better-auth": "1.7.4",
     "express": "5.2.1",
+    "express-rate-limit": "8.7.0",
     "graphql": "16.11.0",
     "nodemailer": "10.0.9",
     "pg": "8.16.3",

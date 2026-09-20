@@ -7,6 +7,7 @@ import { ExpressAdapter } from "@nestjs/platform-express";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import express, { type Request, type Response, type NextFunction } from "express";
+import { rateLimit, MemoryStore, ipKeyGenerator } from "express-rate-limit";
 import { buildSchema, execute, parse, validate, visit, specifiedRules, NoSchemaIntrospectionCustomRule, GraphQLError } from "graphql";
 import { toNodeHandler, fromNodeHeaders } from "better-auth/node";
 import { createAuth } from "./auth.js";
@@ -43,7 +44,16 @@ export async function createApp(config: Config) {
     } catch { res.set("Retry-After", "10").status(503).json({ message: "Account service is temporarily unavailable." }); }
   };
   const authHandler = toNodeHandler(auth);
-  server.all("/api/auth/*splat", protect(60, "auth"), (req, res, next) => {
+  // Cheap process-local admission precedes shared PostgreSQL admission. This
+  // limits database work under floods; it does not replace the shared quota.
+  const authBurstStore = new MemoryStore();
+  const authBurstLimit = rateLimit({
+    windowMs: 60000, limit: 60, store: authBurstStore,
+    keyGenerator: req => ipKeyGenerator(req.socket.remoteAddress ?? "unknown"),
+    standardHeaders: false, legacyHeaders: true,
+    message: { message: "Too many requests. Please wait before trying again." },
+  });
+  server.all("/api/auth/*splat", authBurstLimit, protect(60, "auth"), (req, res, next) => {
     // Preserve the stream for Better Auth; apply an absolute read deadline.
     req.setTimeout(10000);
     void Promise.resolve(authHandler(req, res)).catch(next);
@@ -81,5 +91,5 @@ export async function createApp(config: Config) {
   await app.init();
   const cleanup = setInterval(() => { void db.admissionBucket.deleteMany({ where: { resetAt: { lt: new Date(Date.now() - 3600000) } } }).catch(() => {}); }, 3600000);
   cleanup.unref();
-  return { app, db, auth, close: async () => { clearInterval(cleanup); await app.close(); await db.$disconnect(); } };
+  return { app, db, auth, close: async () => { clearInterval(cleanup); authBurstStore.shutdown(); await app.close(); await db.$disconnect(); } };
 }

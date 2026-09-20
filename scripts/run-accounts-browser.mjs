@@ -36,7 +36,7 @@ try {
     });
     if(code!==0)throw new Error(`Account browser journey failed: ${browser}`);
   }
-} catch(error) { console.error(error.message); process.exitCode=1; }
+} catch { console.error("Account browser verification failed; inspect the test evidence for the failed step."); process.exitCode=1; }
 finally {
   for(const child of services) child.kill("SIGTERM");
   for(const log of logs) log.end();

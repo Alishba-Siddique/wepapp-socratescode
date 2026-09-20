@@ -6,6 +6,12 @@ const base = process.env.WEB_APP_URL || "http://localhost:3001";
 const engine = {chromium,firefox,webkit}[process.env.BROWSER || "chromium"];
 const browser = await engine.launch({channel:engine===chromium&&process.platform==="win32"?"msedge":undefined});
 const page = await browser.newPage({viewport:{width:1440,height:1000}});
+const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+if (bypass) {
+  const origin = new URL(base);
+  if (origin.protocol !== "https:" || !origin.hostname.endsWith(".vercel.app")) throw new Error("Unsupported protected preview host");
+  await page.context().route(origin.origin + "/**", route => route.continue({ headers: { ...route.request().headers(), "x-vercel-protection-bypass": bypass } }));
+}
 const artifacts = path.resolve(process.env.TEST_ARTIFACT_DIR || "test-results/learning"); mkdirSync(artifacts,{recursive:true});
 const runtimeLog=[];
 page.on("console",message=>{if(message.type()==="error")runtimeLog.push(message.text().slice(0,1500));});

@@ -48,3 +48,11 @@ Release follow-up: the reusable secret context fix exposed the credential correc
 
 ## 2026-09-14 - Production verified
 PR #9 merged as 6a336c4 with owner approval. CI run 34783631960 passed quality, build, security, Chromium, Firefox, WebKit, deployed candidate checks and production promotion. Deployment dpl_C7wg5iBSyvepDg8HF88LQQMRnVu9 is READY and is the project production target. The public six-route smoke check and complete PRIMM/pattern-library browser journey passed after promotion. See [[releases/2026-09-14]] and [[Development Workflow]].
+
+
+## 2026-09-20 - PR 15 CI and security repair
+Investigated GitHub run 35488756136: quality, build, dependency review, workflow validation and all three browser jobs passed. Accounts failed at npm ci because React/react-dom/scheduler peers were missing from the gateway lockfile; frontend-checks correctly propagated that failure. The local global legacy-peer-deps setting caused the mismatch. Added an explicit gateway setting, regenerated the lockfile with normal peer resolution and verified an isolated clean install.
+
+Added a standard process-local auth burst limiter before the existing shared PostgreSQL quota; retained shared admission and failure-closed behavior. Removed raw caught-error logging in the account browser runner. Added three admission regression tests; all ten gateway integration tests pass, and the gateway TypeScript build passes. Expanded candidate verification to new learning features. Remote security scan, browser rerun and release status must be verified before declaring this deployed.
+
+Local follow-up: account journeys passed in Chromium/Edge, Firefox and WebKit with the new limiter. Eleven route smoke checks, four release-policy tests and actionlint passed. The final gateway production audit reports zero vulnerabilities.
