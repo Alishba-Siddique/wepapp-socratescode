@@ -10,8 +10,11 @@ import {
   type Puzzle,
 } from "@/lib/puzzles";
 import { emptyProgress, saveProgress, useProgress } from "@/lib/progress";
+import { SaveAccountProgress } from "./account-panel";
+import { useAccount } from "./account-provider";
 
 export function Workspace({ puzzle }: { puzzle: Puzzle }) {
+  const { user } = useAccount();
   const all = useProgress();
   const progress = all[puzzle.slug] || emptyProgress;
   const [selected, setSelected] = useState<number | null>(null);
@@ -91,7 +94,7 @@ export function Workspace({ puzzle }: { puzzle: Puzzle }) {
         stage: 4,
       });
       setFeedback(
-        "Lab completed. Your reflection has been saved in this browser.",
+        user ? "Lab completed. Use Save to account to keep your reflection across devices." : "Lab completed. Your reflection has been saved in this browser.",
       );
     }
   };
@@ -128,6 +131,7 @@ export function Workspace({ puzzle }: { puzzle: Puzzle }) {
             : "Stage " + (stage + 1) + " of 5"}
         </span>
       </div>
+      <SaveAccountProgress slug={puzzle.slug} />
       <nav className="stage-navigation" aria-label="Learning stages">
         {stages.map((name, n) => (
           <button

@@ -12,7 +12,7 @@ Status: implemented and locally verified. The initial GitHub CI run passed.
 - [x] Verify behavior, accessibility basics, responsive layout, lint, and build.
 
 ## Increment 2 - Accounts and durable progress
-Clerk sign-in, gateway identity validation, GraphQL progress contract, database migrations, guest-to-account migration. Do not invent team features before their requirements are defined.
+Better Auth sign-in, gateway session validation, GraphQL progress contract, PostgreSQL/Prisma migrations, guest-to-account migration. See [[Decisions]] for the replacement of Clerk. Do not invent team features before their requirements are defined.
 
 ## Increment 3 - Code editing and execution
 Monaco editor, protobuf execution contract, isolated Go service, timeout/resource limits, trace format, and failure UX.
@@ -24,3 +24,8 @@ Tutor contract, question-only output constraints, safe error handling, hint acco
 Define invitations, roles, privacy, team progress views, and genuine scoring before building a leaderboard.
 
 The independent root Tracker.md requires commits for completed checkboxes; this vault tracks working increment status separately.
+
+## September 20 implementation update
+The current branch implements nine PRIMM labs, twenty browser Python problems, seventeen Socratic product-pattern lessons, six design exercises, and optional Better Auth/PostgreSQL progress. See [[Platform Guide]], [[Testing]] and [[Security Audit]]. Earlier planned account and editor entries are superseded by this implementation; production configuration remains separate.
+
+Next curriculum work: richer misconception-specific prompts, graded scaffolding removal, implementation projects, debugging/testing/networking fundamentals, database exercises with actual SQL execution, deeper distributed-systems cases and evaluated mock interviews. Do not label this backlog complete or equate it with senior readiness.

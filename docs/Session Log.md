@@ -1,4 +1,19 @@
 # Session Log
+
+## 2026-09-20 - Independent coding and engineering practice
+Implemented nine PRIMM labs, twenty native Python problems (eight licensed Exercism imports / 88 public canonical cases), 54 external references, seventeen Socratic pattern lessons with researched product applications, and six system/database/architecture exercises with browser drafts and Markdown export. Added beginner vocabulary and explicit progression without claiming senior readiness.
+
+Implemented the optional NestJS / Better Auth / Prisma / PostgreSQL gateway, same-origin frontend proxy, email-account UI, versioned account progress, explicit idempotent guest import, ownership validation, optimistic concurrency and atomic admission. Production gateway hosting, SMTP, backup/restore evidence and Cloudflare migration remain unconfigured.
+
+Verified locally: frontend lint, TypeScript and production build (65 generated pages); nine domain checks; seven real PostgreSQL/gateway integration checks; four release-policy checks; actionlint; zero production vulnerabilities in frontend and gateway audits. Learning journeys and account journeys passed in Chromium/Edge, Firefox and WebKit. Browser coverage includes actual Python execution, wrong answers, infinite-loop cutoff and subsequent recovery, opaque origin, blocked private-API requests, design persistence/export, guest/account isolation, new-context sign-in and mobile layout.
+
+Fixed during verification: opaque-frame module-worker startup, Firefox runtime import CSP, explicit worker termination before frame removal, account request cancellation on navigation, and assertions that previously read pre-hydration fields. Monaco uses its ESM build with patched DOMPurify 3.4.15; emitted chunks were checked for the patched version. CI carries generated runtime assets with the tested frontend artifact and runs a PostgreSQL account job.
+
+Updated [[Platform Guide]], [[Learning Design]], [[Architecture]], [[Local Development]], [[API and Data]], [[Security Audit]], [[Content and Licensing]], [[DSA in Products]] and [[Testing]]. User-provided PDF and personal Obsidian settings are preserved separately from the implementation commit. Remote PR/CI evidence is recorded in GitHub; local passes are not a production deployment claim.
+
+
+## 2026-09-14 - Authentication selection
+The user selected Better Auth after discussing Cloudflare hosting. Updated the decision, architecture, build plan, feature catalog, account acceptance criteria and planned security route inventory to replace Clerk. Reviewed official license, Prisma, organization and security documentation. This is a documentation change only: auth, database sync and Cloudflare deployment are not live. Original reference requirements and historical release evidence remain preserved.
 [[Home]] - [[Build Plan]]
 
 ## 2026-09-12

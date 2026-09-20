@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Shell } from "@/components/shell";
+import { AccountProvider } from "@/components/account-provider";
 import "./globals.css";
 export const metadata: Metadata = {
   title: "socratescode | The learning lab",
@@ -14,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Shell>{children}</Shell>
+        <AccountProvider><Shell>{children}</Shell></AccountProvider>
       </body>
     </html>
   );

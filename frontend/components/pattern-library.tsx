@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { patterns } from "@/lib/patterns";
+import { getProductLesson } from "@/lib/product-lessons";
 
 const groups = [
   "All patterns",
@@ -16,7 +17,7 @@ export function PatternLibrary() {
   const visible = patterns.filter(
     (p) =>
       (group === groups[0] || p.group === group) &&
-      `${p.title} ${p.cue} ${p.question} ${p.practice.map((item) => item.title).join(" ")}`
+      `${p.title} ${p.cue} ${p.question} ${getProductLesson(p.id)?.product} ${p.practice.map((item) => item.title).join(" ")}`
         .toLowerCase()
         .includes(query.trim().toLowerCase()),
   );
@@ -31,21 +32,22 @@ export function PatternLibrary() {
             <em>Understand the why.</em>
           </h1>
           <p>
-            Seventeen ways to approach a problem. Start with a question, test
-            the assumption, then practice.
+            Learn to reason without a generated solution. Explore seventeen
+            patterns with Socratic questions, worked traces, and real product applications.
           </p>
         </div>
       </div>
       <div className="pattern-intro">
         <p>
           New to tracing code? Build your foundations in our guided PRIMM labs
-          first. These pattern notes extend that practice with questions and
-          external exercises.
+          first. Then predict a small example, investigate each decision, and
+          explain why the pattern fits before you code it yourself.
         </p>
         <Link prefetch={false} href="/curriculum">
           Explore guided labs <span aria-hidden="true">→</span>
         </Link>
       </div>
+      <p><Link prefetch={false} href="/practice">Browse the searchable practice bank →</Link></p>
       <div className="pattern-tools">
         <label>
           Find a pattern
@@ -85,6 +87,8 @@ export function PatternLibrary() {
             </div>
             <h2>{p.title}</h2>
             <p>{p.cue}</p>
+            <div className="pattern-product"><span>WHERE THIS IS USED</span><p>{getProductLesson(p.id)?.product}</p><small>{getProductLesson(p.id)?.evidence}</small></div>
+            <Link className="button primary" prefetch={false} href={`/patterns/${p.id}`}>Learn with Socrates<span className="sr-only">: {p.title}</span> →</Link>
             <div className="pattern-question">
               <span>ASK YOURSELF</span>
               <h3>{p.question}</h3>

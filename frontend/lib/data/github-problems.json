@@ -1,0 +1,839 @@
+[
+  {
+    "slug": "exercism-isogram",
+    "title": "Isogram",
+    "topic": "Sets & strings",
+    "level": "Foundation",
+    "description": "Determine if a word or phrase is an isogram.\n\nAn isogram (also known as a \"non-pattern word\") is a word or phrase without a repeating letter, however spaces and hyphens are allowed to appear multiple times.\n\nExamples of isograms:\n\n- lumberjacks\n- background\n- downstream\n- six-year-old\n\nThe word _isograms_, however, is not an isogram, because the s repeats.",
+    "contract": "Return whether data[\"phrase\"] contains no repeated letters, ignoring case, spaces and hyphens.",
+    "constraints": [
+      "Use solve(data); data is the JSON object shown in each case.",
+      "This adaptation uses the selected public canonical cases listed below.",
+      "Return a JSON-compatible value; do not print the answer instead of returning it."
+    ],
+    "hints": [
+      "Can you work through the first example using only words and a small table?",
+      "Which input detail changes the decision you make at each step?",
+      "What boundary case could disprove your first approach?"
+    ],
+    "tests": [
+      {
+        "name": "empty string",
+        "input": {
+          "phrase": ""
+        },
+        "expected": true
+      },
+      {
+        "name": "isogram with only lower case characters",
+        "input": {
+          "phrase": "isogram"
+        },
+        "expected": true
+      },
+      {
+        "name": "word with one duplicated character",
+        "input": {
+          "phrase": "eleven"
+        },
+        "expected": false
+      },
+      {
+        "name": "word with one duplicated character from the end of the alphabet",
+        "input": {
+          "phrase": "zzyzx"
+        },
+        "expected": false
+      },
+      {
+        "name": "longest reported english isogram",
+        "input": {
+          "phrase": "subdermatoglyphic"
+        },
+        "expected": true
+      },
+      {
+        "name": "word with duplicated character in mixed case",
+        "input": {
+          "phrase": "Alphabet"
+        },
+        "expected": false
+      },
+      {
+        "name": "word with duplicated character in mixed case, lowercase first",
+        "input": {
+          "phrase": "alphAbet"
+        },
+        "expected": false
+      },
+      {
+        "name": "hypothetical isogrammic word with hyphen",
+        "input": {
+          "phrase": "thumbscrew-japingly"
+        },
+        "expected": true
+      },
+      {
+        "name": "hypothetical word with duplicated character following hyphen",
+        "input": {
+          "phrase": "thumbscrew-jappingly"
+        },
+        "expected": false
+      },
+      {
+        "name": "isogram with duplicated hyphen",
+        "input": {
+          "phrase": "six-year-old"
+        },
+        "expected": true
+      },
+      {
+        "name": "made-up name that is an isogram",
+        "input": {
+          "phrase": "Emily Jung Schwartzkopf"
+        },
+        "expected": true
+      },
+      {
+        "name": "duplicated character in the middle",
+        "input": {
+          "phrase": "accentor"
+        },
+        "expected": false
+      },
+      {
+        "name": "same first and last characters",
+        "input": {
+          "phrase": "angola"
+        },
+        "expected": false
+      },
+      {
+        "name": "word with duplicated character and with two hyphens",
+        "input": {
+          "phrase": "up-to-date"
+        },
+        "expected": false
+      }
+    ],
+    "source": {
+      "name": "Exercism contributors",
+      "repository": "exercism/problem-specifications",
+      "revision": "7c8c837f6e9b41fb5a629f4bd6ea974e494fa89d",
+      "url": "https://github.com/exercism/problem-specifications/tree/7c8c837f6e9b41fb5a629f4bd6ea974e494fa89d/exercises/isogram",
+      "license": "MIT"
+    }
+  },
+  {
+    "slug": "exercism-pangram",
+    "title": "Pangram",
+    "topic": "Sets & strings",
+    "level": "Foundation",
+    "description": "Introduction\n\nYou work for a company that sells fonts through their website.\nThey'd like to show a different sentence each time someone views a font on their website.\nTo give a comprehensive sense of the font, the random sentences should use all the letters in the English alphabet.\n\nThey're running a competition to get suggestions for sentences that they can use.\nYou're in charge of checking the submissions to see if they are valid.\n\n\n\n\nYour task is to figure out if a sentence is a pangram.\n\nA pangram is a sentence using every letter of the alphabet at least once.\nIt is case insensitive, so it doesn't matter if a letter is lower-case (e.g. k) or upper-case (e.g. K).\n\nFor this exercise, a sentence is a pangram if it contains each of the 26 letters in the English alphabet.",
+    "contract": "Return whether data[\"sentence\"] contains every English alphabet letter, ignoring case.",
+    "constraints": [
+      "Use solve(data); data is the JSON object shown in each case.",
+      "This adaptation uses the selected public canonical cases listed below.",
+      "Return a JSON-compatible value; do not print the answer instead of returning it."
+    ],
+    "hints": [
+      "Can you work through the first example using only words and a small table?",
+      "Which input detail changes the decision you make at each step?",
+      "What boundary case could disprove your first approach?"
+    ],
+    "tests": [
+      {
+        "name": "empty sentence",
+        "input": {
+          "sentence": ""
+        },
+        "expected": false
+      },
+      {
+        "name": "perfect lower case",
+        "input": {
+          "sentence": "abcdefghijklmnopqrstuvwxyz"
+        },
+        "expected": true
+      },
+      {
+        "name": "only lower case",
+        "input": {
+          "sentence": "the quick brown fox jumps over the lazy dog"
+        },
+        "expected": true
+      },
+      {
+        "name": "missing the letter 'x'",
+        "input": {
+          "sentence": "a quick movement of the enemy will jeopardize five gunboats"
+        },
+        "expected": false
+      },
+      {
+        "name": "missing the letter 'h'",
+        "input": {
+          "sentence": "five boxing wizards jump quickly at it"
+        },
+        "expected": false
+      },
+      {
+        "name": "with underscores",
+        "input": {
+          "sentence": "the_quick_brown_fox_jumps_over_the_lazy_dog"
+        },
+        "expected": true
+      },
+      {
+        "name": "with numbers",
+        "input": {
+          "sentence": "the 1 quick brown fox jumps over the 2 lazy dogs"
+        },
+        "expected": true
+      },
+      {
+        "name": "missing letters replaced by numbers",
+        "input": {
+          "sentence": "7h3 qu1ck brown fox jumps ov3r 7h3 lazy dog"
+        },
+        "expected": false
+      },
+      {
+        "name": "mixed case and punctuation",
+        "input": {
+          "sentence": "\"Five quacking Zephyrs jolt my wax bed.\""
+        },
+        "expected": true
+      },
+      {
+        "name": "case insensitive",
+        "input": {
+          "sentence": "the quick brown fox jumps over with lazy FX"
+        },
+        "expected": false
+      },
+      {
+        "name": "a-m and A-M are 26 different characters but not a pangram",
+        "input": {
+          "sentence": "abcdefghijklm ABCDEFGHIJKLM"
+        },
+        "expected": false
+      }
+    ],
+    "source": {
+      "name": "Exercism contributors",
+      "repository": "exercism/problem-specifications",
+      "revision": "7c8c837f6e9b41fb5a629f4bd6ea974e494fa89d",
+      "url": "https://github.com/exercism/problem-specifications/tree/7c8c837f6e9b41fb5a629f4bd6ea974e494fa89d/exercises/pangram",
+      "license": "MIT"
+    }
+  },
+  {
+    "slug": "exercism-leap",
+    "title": "Leap year",
+    "topic": "Boolean logic",
+    "level": "Foundation",
+    "description": "Introduction\n\nA leap year (in the Gregorian calendar) occurs:\n\n- In every year that is evenly divisible by 4.\n- Unless the year is evenly divisible by 100, in which case it's only a leap year if the year is also evenly divisible by 400.\n\nSome examples:\n\n- 1997 was not a leap year as it's not divisible by 4.\n- 1900 was not a leap year as it's not divisible by 400.\n- 2000 was a leap year!\n\n\n\n\nYour task is to determine whether a given year is a leap year.",
+    "contract": "Return whether data[\"year\"] is a leap year under the Gregorian rules.",
+    "constraints": [
+      "Use solve(data); data is the JSON object shown in each case.",
+      "This adaptation uses the selected public canonical cases listed below.",
+      "Return a JSON-compatible value; do not print the answer instead of returning it."
+    ],
+    "hints": [
+      "Can you work through the first example using only words and a small table?",
+      "Which input detail changes the decision you make at each step?",
+      "What boundary case could disprove your first approach?"
+    ],
+    "tests": [
+      {
+        "name": "year not divisible by 4 in common year",
+        "input": {
+          "year": 2015
+        },
+        "expected": false
+      },
+      {
+        "name": "year divisible by 2, not divisible by 4 in common year",
+        "input": {
+          "year": 1970
+        },
+        "expected": false
+      },
+      {
+        "name": "year divisible by 4, not divisible by 100 in leap year",
+        "input": {
+          "year": 1996
+        },
+        "expected": true
+      },
+      {
+        "name": "year divisible by 4 and 5 is still a leap year",
+        "input": {
+          "year": 1960
+        },
+        "expected": true
+      },
+      {
+        "name": "year divisible by 100, not divisible by 400 in common year",
+        "input": {
+          "year": 2100
+        },
+        "expected": false
+      },
+      {
+        "name": "year divisible by 100 but not by 3 is still not a leap year",
+        "input": {
+          "year": 1900
+        },
+        "expected": false
+      },
+      {
+        "name": "year divisible by 400 is leap year",
+        "input": {
+          "year": 2000
+        },
+        "expected": true
+      },
+      {
+        "name": "year divisible by 400 but not by 125 is still a leap year",
+        "input": {
+          "year": 2400
+        },
+        "expected": true
+      },
+      {
+        "name": "year divisible by 200, not divisible by 400 in common year",
+        "input": {
+          "year": 1800
+        },
+        "expected": false
+      }
+    ],
+    "source": {
+      "name": "Exercism contributors",
+      "repository": "exercism/problem-specifications",
+      "revision": "7c8c837f6e9b41fb5a629f4bd6ea974e494fa89d",
+      "url": "https://github.com/exercism/problem-specifications/tree/7c8c837f6e9b41fb5a629f4bd6ea974e494fa89d/exercises/leap",
+      "license": "MIT"
+    }
+  },
+  {
+    "slug": "exercism-reverse-string",
+    "title": "Reverse a string",
+    "topic": "Sequences",
+    "level": "Foundation",
+    "description": "Introduction\n\nReversing strings (reading them from right to left, rather than from left to right) is a surprisingly common task in programming.\n\nFor example, in bioinformatics, reversing the sequence of DNA or RNA strings is often important for various analyses, such as finding complementary strands or identifying palindromic sequences that have biological significance.\n\n\nYour task is to reverse a given string.\n\nSome examples:\n\n- Turn \"stressed\" into \"desserts\".\n- Turn \"strops\" into \"sports\".\n- Turn \"racecar\" into \"racecar\".",
+    "contract": "Return data[\"value\"] with its characters in reverse order.",
+    "constraints": [
+      "Use solve(data); data is the JSON object shown in each case.",
+      "This adaptation uses the selected public canonical cases listed below.",
+      "Return a JSON-compatible value; do not print the answer instead of returning it."
+    ],
+    "hints": [
+      "Can you work through the first example using only words and a small table?",
+      "Which input detail changes the decision you make at each step?",
+      "What boundary case could disprove your first approach?"
+    ],
+    "tests": [
+      {
+        "name": "an empty string",
+        "input": {
+          "value": ""
+        },
+        "expected": ""
+      },
+      {
+        "name": "a word",
+        "input": {
+          "value": "robot"
+        },
+        "expected": "tobor"
+      },
+      {
+        "name": "a capitalized word",
+        "input": {
+          "value": "Ramen"
+        },
+        "expected": "nemaR"
+      },
+      {
+        "name": "a sentence with punctuation",
+        "input": {
+          "value": "I'm hungry!"
+        },
+        "expected": "!yrgnuh m'I"
+      },
+      {
+        "name": "a palindrome",
+        "input": {
+          "value": "racecar"
+        },
+        "expected": "racecar"
+      },
+      {
+        "name": "an even-sized word",
+        "input": {
+          "value": "drawer"
+        },
+        "expected": "reward"
+      },
+      {
+        "name": "wide characters",
+        "input": {
+          "value": "子猫"
+        },
+        "expected": "猫子"
+      },
+      {
+        "name": "grapheme cluster with pre-combined form",
+        "input": {
+          "value": "Würstchenstand"
+        },
+        "expected": "dnatsnehctsrüW"
+      },
+      {
+        "name": "grapheme clusters",
+        "input": {
+          "value": "ผู้เขียนโปรแกรม"
+        },
+        "expected": "มรกแรปโนยขีเผู้"
+      }
+    ],
+    "source": {
+      "name": "Exercism contributors",
+      "repository": "exercism/problem-specifications",
+      "revision": "7c8c837f6e9b41fb5a629f4bd6ea974e494fa89d",
+      "url": "https://github.com/exercism/problem-specifications/tree/7c8c837f6e9b41fb5a629f4bd6ea974e494fa89d/exercises/reverse-string",
+      "license": "MIT"
+    }
+  },
+  {
+    "slug": "exercism-raindrops",
+    "title": "Raindrops",
+    "topic": "Divisibility",
+    "level": "Foundation",
+    "description": "Introduction\n\nRaindrops is a slightly more complex version of the FizzBuzz challenge, a classic interview question.\n\n\nYour task is to convert a number into its corresponding raindrop sounds.\n\nIf a given number:\n\n- is divisible by 3, add \"Pling\" to the result.\n- is divisible by 5, add \"Plang\" to the result.\n- is divisible by 7, add \"Plong\" to the result.\n- is not divisible by 3, 5, or 7, the result should be the number as a string.\n\n\n\n- 28 is divisible by 7, but not 3 or 5, so the result would be \"Plong\".\n- 30 is divisible by 3 and 5, but not 7, so the result would be \"PlingPlang\".\n- 34 is not divisible by 3, 5, or 7, so the result would be \"34\".",
+    "contract": "Return the raindrop string for data[\"number\"] using the rules in the description.",
+    "constraints": [
+      "Use solve(data); data is the JSON object shown in each case.",
+      "This adaptation uses the selected public canonical cases listed below.",
+      "Return a JSON-compatible value; do not print the answer instead of returning it."
+    ],
+    "hints": [
+      "Can you work through the first example using only words and a small table?",
+      "Which input detail changes the decision you make at each step?",
+      "What boundary case could disprove your first approach?"
+    ],
+    "tests": [
+      {
+        "name": "the sound for 1 is 1",
+        "input": {
+          "number": 1
+        },
+        "expected": "1"
+      },
+      {
+        "name": "the sound for 3 is Pling",
+        "input": {
+          "number": 3
+        },
+        "expected": "Pling"
+      },
+      {
+        "name": "the sound for 5 is Plang",
+        "input": {
+          "number": 5
+        },
+        "expected": "Plang"
+      },
+      {
+        "name": "the sound for 7 is Plong",
+        "input": {
+          "number": 7
+        },
+        "expected": "Plong"
+      },
+      {
+        "name": "the sound for 6 is Pling as it has a factor 3",
+        "input": {
+          "number": 6
+        },
+        "expected": "Pling"
+      },
+      {
+        "name": "2 to the power 3 does not make a raindrop sound as 3 is the exponent not the base",
+        "input": {
+          "number": 8
+        },
+        "expected": "8"
+      },
+      {
+        "name": "the sound for 9 is Pling as it has a factor 3",
+        "input": {
+          "number": 9
+        },
+        "expected": "Pling"
+      },
+      {
+        "name": "the sound for 10 is Plang as it has a factor 5",
+        "input": {
+          "number": 10
+        },
+        "expected": "Plang"
+      },
+      {
+        "name": "the sound for 14 is Plong as it has a factor of 7",
+        "input": {
+          "number": 14
+        },
+        "expected": "Plong"
+      },
+      {
+        "name": "the sound for 15 is PlingPlang as it has factors 3 and 5",
+        "input": {
+          "number": 15
+        },
+        "expected": "PlingPlang"
+      },
+      {
+        "name": "the sound for 21 is PlingPlong as it has factors 3 and 7",
+        "input": {
+          "number": 21
+        },
+        "expected": "PlingPlong"
+      },
+      {
+        "name": "the sound for 25 is Plang as it has a factor 5",
+        "input": {
+          "number": 25
+        },
+        "expected": "Plang"
+      },
+      {
+        "name": "the sound for 27 is Pling as it has a factor 3",
+        "input": {
+          "number": 27
+        },
+        "expected": "Pling"
+      },
+      {
+        "name": "the sound for 35 is PlangPlong as it has factors 5 and 7",
+        "input": {
+          "number": 35
+        },
+        "expected": "PlangPlong"
+      },
+      {
+        "name": "the sound for 49 is Plong as it has a factor 7",
+        "input": {
+          "number": 49
+        },
+        "expected": "Plong"
+      },
+      {
+        "name": "the sound for 52 is 52",
+        "input": {
+          "number": 52
+        },
+        "expected": "52"
+      },
+      {
+        "name": "the sound for 105 is PlingPlangPlong as it has factors 3, 5 and 7",
+        "input": {
+          "number": 105
+        },
+        "expected": "PlingPlangPlong"
+      },
+      {
+        "name": "the sound for 3125 is Plang as it has a factor 5",
+        "input": {
+          "number": 3125
+        },
+        "expected": "Plang"
+      }
+    ],
+    "source": {
+      "name": "Exercism contributors",
+      "repository": "exercism/problem-specifications",
+      "revision": "7c8c837f6e9b41fb5a629f4bd6ea974e494fa89d",
+      "url": "https://github.com/exercism/problem-specifications/tree/7c8c837f6e9b41fb5a629f4bd6ea974e494fa89d/exercises/raindrops",
+      "license": "MIT"
+    }
+  },
+  {
+    "slug": "exercism-armstrong-numbers",
+    "title": "Armstrong numbers",
+    "topic": "Digits & arithmetic",
+    "level": "Foundation",
+    "description": "An Armstrong number is a number that is the sum of its own digits each raised to the power of the number of digits.\n\nFor example:\n\n- 9 is an Armstrong number, because 9 = 9^1 = 9\n- 10 is _not_ an Armstrong number, because 10 != 1^2 + 0^2 = 1\n- 153 is an Armstrong number, because: 153 = 1^3 + 5^3 + 3^3 = 1 + 125 + 27 = 153\n- 154 is _not_ an Armstrong number, because: 154 != 1^3 + 5^3 + 4^3 = 1 + 125 + 64 = 190\n\nWrite some code to determine whether a number is an Armstrong number.",
+    "contract": "Return whether data[\"number\"] equals the sum of each digit raised to the number of digits.",
+    "constraints": [
+      "Use solve(data); data is the JSON object shown in each case.",
+      "This adaptation uses the selected public canonical cases listed below.",
+      "Return a JSON-compatible value; do not print the answer instead of returning it."
+    ],
+    "hints": [
+      "Can you work through the first example using only words and a small table?",
+      "Which input detail changes the decision you make at each step?",
+      "What boundary case could disprove your first approach?"
+    ],
+    "tests": [
+      {
+        "name": "Zero is an Armstrong number",
+        "input": {
+          "number": 0
+        },
+        "expected": true
+      },
+      {
+        "name": "Single-digit numbers are Armstrong numbers",
+        "input": {
+          "number": 5
+        },
+        "expected": true
+      },
+      {
+        "name": "There are no two-digit Armstrong numbers",
+        "input": {
+          "number": 10
+        },
+        "expected": false
+      },
+      {
+        "name": "Three-digit number that is an Armstrong number",
+        "input": {
+          "number": 153
+        },
+        "expected": true
+      },
+      {
+        "name": "Three-digit number that is not an Armstrong number",
+        "input": {
+          "number": 100
+        },
+        "expected": false
+      },
+      {
+        "name": "Four-digit number that is an Armstrong number",
+        "input": {
+          "number": 9474
+        },
+        "expected": true
+      },
+      {
+        "name": "Four-digit number that is not an Armstrong number",
+        "input": {
+          "number": 9475
+        },
+        "expected": false
+      },
+      {
+        "name": "Seven-digit number that is an Armstrong number",
+        "input": {
+          "number": 9926315
+        },
+        "expected": true
+      },
+      {
+        "name": "Seven-digit number that is not an Armstrong number",
+        "input": {
+          "number": 9926314
+        },
+        "expected": false
+      },
+      {
+        "name": "Armstrong number containing seven zeroes",
+        "input": {
+          "number": 1.8670996100153877e+32
+        },
+        "expected": true
+      },
+      {
+        "name": "The largest and last Armstrong number",
+        "input": {
+          "number": 1.15132219018764e+38
+        },
+        "expected": true
+      }
+    ],
+    "source": {
+      "name": "Exercism contributors",
+      "repository": "exercism/problem-specifications",
+      "revision": "7c8c837f6e9b41fb5a629f4bd6ea974e494fa89d",
+      "url": "https://github.com/exercism/problem-specifications/tree/7c8c837f6e9b41fb5a629f4bd6ea974e494fa89d/exercises/armstrong-numbers",
+      "license": "MIT"
+    }
+  },
+  {
+    "slug": "exercism-hamming",
+    "title": "Hamming distance",
+    "topic": "Parallel traversal",
+    "level": "Foundation",
+    "description": "Introduction\n\nYour body is made up of cells that contain DNA.\nThose cells regularly wear out and need replacing, which they achieve by dividing into daughter cells.\nIn fact, the average human body experiences about 10 quadrillion cell divisions in a lifetime!\n\nWhen cells divide, their DNA replicates too.\nSometimes during this process mistakes happen and single pieces of DNA get encoded with the incorrect information.\nIf we compare two strands of DNA and count the differences between them, we can see how many mistakes occurred.\nThis is known as the \"Hamming distance\".\n\nThe Hamming distance is useful in many areas of science, not just biology, so it's a nice phrase to be familiar with :)\n\n\nCalculate the Hamming distance between two DNA strands.\n\nWe read DNA using the letters C, A, G and T.\nTwo strands might look like this:\n\n    GAGCCTACTAACGGGAT\n    CATCGTAATGACGGCCT\n    ^ ^ ^  ^ ^    ^^\n\nThey have 7 differences, and therefore the Hamming distance is 7.\n\n\n\nThe Hamming distance is only defined for sequences of equal length, so an attempt to calculate it between sequences of different lengths should not work.",
+    "contract": "Return the count of differing positions in data[\"strand\"]1 and data[\"strand\"]2. This adaptation includes only equal-length strands.",
+    "constraints": [
+      "Use solve(data); data is the JSON object shown in each case.",
+      "This adaptation uses the selected public canonical cases listed below.",
+      "Return a JSON-compatible value; do not print the answer instead of returning it."
+    ],
+    "hints": [
+      "Can you work through the first example using only words and a small table?",
+      "Which input detail changes the decision you make at each step?",
+      "What boundary case could disprove your first approach?"
+    ],
+    "tests": [
+      {
+        "name": "empty strands",
+        "input": {
+          "strand1": "",
+          "strand2": ""
+        },
+        "expected": 0
+      },
+      {
+        "name": "single letter identical strands",
+        "input": {
+          "strand1": "A",
+          "strand2": "A"
+        },
+        "expected": 0
+      },
+      {
+        "name": "single letter different strands",
+        "input": {
+          "strand1": "G",
+          "strand2": "T"
+        },
+        "expected": 1
+      },
+      {
+        "name": "long identical strands",
+        "input": {
+          "strand1": "GGACTGAAATCTG",
+          "strand2": "GGACTGAAATCTG"
+        },
+        "expected": 0
+      },
+      {
+        "name": "long different strands",
+        "input": {
+          "strand1": "GGACGGATTCTG",
+          "strand2": "AGGACGGATTCT"
+        },
+        "expected": 9
+      }
+    ],
+    "source": {
+      "name": "Exercism contributors",
+      "repository": "exercism/problem-specifications",
+      "revision": "7c8c837f6e9b41fb5a629f4bd6ea974e494fa89d",
+      "url": "https://github.com/exercism/problem-specifications/tree/7c8c837f6e9b41fb5a629f4bd6ea974e494fa89d/exercises/hamming",
+      "license": "MIT"
+    }
+  },
+  {
+    "slug": "exercism-scrabble-score",
+    "title": "Scrabble score",
+    "topic": "Lookup tables",
+    "level": "Foundation",
+    "description": "Introduction\n\nScrabble is a word game where players place letter tiles on a board to form words.\nEach letter has a value.\nA word's score is the sum of its letters' values.\n\n\n\n\nYour task is to compute a word's Scrabble score by summing the values of its letters.\n\nThe letters are valued as follows:\n\n| Letter                       | Value |\n| ---------------------------- | ----- |\n| A, E, I, O, U, L, N, R, S, T | 1     |\n| D, G                         | 2     |\n| B, C, M, P                   | 3     |\n| F, H, V, W, Y                | 4     |\n| K                            | 5     |\n| J, X                         | 8     |\n| Q, Z                         | 10    |\n\nFor example, the word \"cabbage\" is worth 14 points:\n\n- 3 points for C\n- 1 point for A\n- 3 points for B\n- 3 points for B\n- 1 point for A\n- 2 points for G\n- 1 point for E",
+    "contract": "Return the letter score of data[\"word\"], ignoring case.",
+    "constraints": [
+      "Use solve(data); data is the JSON object shown in each case.",
+      "This adaptation uses the selected public canonical cases listed below.",
+      "Return a JSON-compatible value; do not print the answer instead of returning it."
+    ],
+    "hints": [
+      "Can you work through the first example using only words and a small table?",
+      "Which input detail changes the decision you make at each step?",
+      "What boundary case could disprove your first approach?"
+    ],
+    "tests": [
+      {
+        "name": "lowercase letter",
+        "input": {
+          "word": "a"
+        },
+        "expected": 1
+      },
+      {
+        "name": "uppercase letter",
+        "input": {
+          "word": "A"
+        },
+        "expected": 1
+      },
+      {
+        "name": "valuable letter",
+        "input": {
+          "word": "f"
+        },
+        "expected": 4
+      },
+      {
+        "name": "short word",
+        "input": {
+          "word": "at"
+        },
+        "expected": 2
+      },
+      {
+        "name": "short, valuable word",
+        "input": {
+          "word": "zoo"
+        },
+        "expected": 12
+      },
+      {
+        "name": "medium word",
+        "input": {
+          "word": "street"
+        },
+        "expected": 6
+      },
+      {
+        "name": "medium, valuable word",
+        "input": {
+          "word": "quirky"
+        },
+        "expected": 22
+      },
+      {
+        "name": "long, mixed-case word",
+        "input": {
+          "word": "OxyphenButazone"
+        },
+        "expected": 41
+      },
+      {
+        "name": "english-like word",
+        "input": {
+          "word": "pinata"
+        },
+        "expected": 8
+      },
+      {
+        "name": "empty input",
+        "input": {
+          "word": ""
+        },
+        "expected": 0
+      },
+      {
+        "name": "entire alphabet available",
+        "input": {
+          "word": "abcdefghijklmnopqrstuvwxyz"
+        },
+        "expected": 87
+      }
+    ],
+    "source": {
+      "name": "Exercism contributors",
+      "repository": "exercism/problem-specifications",
+      "revision": "7c8c837f6e9b41fb5a629f4bd6ea974e494fa89d",
+      "url": "https://github.com/exercism/problem-specifications/tree/7c8c837f6e9b41fb5a629f4bd6ea974e494fa89d/exercises/scrabble-score",
+      "license": "MIT"
+    }
+  }
+]

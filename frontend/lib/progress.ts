@@ -29,7 +29,20 @@ export const emptyProgress: LessonProgress = {
 const key = "socratescode:lessons:v1";
 const event = "socratescode:progress";
 let memory = "{}";
+let accountId: string | null = null;
+let accountMemory = "{}";
+export function guestProgress() {
+  try { return parseProgress(localStorage.getItem(key) || memory); }
+  catch { return parseProgress(memory); }
+}
+export function selectAccountProgress(id: string | null, progress: Record<string, LessonProgress> = {}) {
+  accountId = id;
+  accountMemory = JSON.stringify(progress);
+  window.dispatchEvent(new Event(event));
+}
+export function currentProgress() { return parseProgress(snapshot()); }
 function snapshot() {
+  if (accountId) return accountMemory;
   try {
     return localStorage.getItem(key) || memory;
   } catch {
@@ -95,6 +108,11 @@ export function saveProgress(slug: string, change: Partial<LessonProgress>) {
     ...change,
     updatedAt: Date.now(),
   };
+  if (accountId) {
+    accountMemory = JSON.stringify(current);
+    window.dispatchEvent(new Event(event));
+    return;
+  }
   memory = JSON.stringify(current);
   try {
     localStorage.setItem(key, memory);

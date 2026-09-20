@@ -1,0 +1,24 @@
+# Account progress API v1. Identity always comes from the session, never input.
+type SavedProgress {
+  labSlug: String!
+  labVersion: Int!
+  revision: Int!
+  state: String!
+  updatedAt: String!
+}
+input SaveProgressInput {
+  labSlug: String!
+  labVersion: Int!
+  expectedRevision: Int!
+  state: String!
+}
+input GuestProgressInput {
+  labSlug: String!
+  labVersion: Int!
+  state: String!
+}
+type Query { myProgress: [SavedProgress!]! }
+type Mutation {
+  saveProgress(input: SaveProgressInput!): SavedProgress!
+  importGuestProgress(key: String!, entries: [GuestProgressInput!]!): [SavedProgress!]!
+}

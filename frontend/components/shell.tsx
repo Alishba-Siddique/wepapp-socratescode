@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useAccount } from "./account-provider";
 export function Mark() {
   return (
     <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
@@ -14,6 +15,7 @@ export function Mark() {
   );
 }
 export function Shell({ children }: { children: ReactNode }) {
+  const { user, loading } = useAccount();
   const path = usePathname();
   const [open, setOpen] = useState(false);
   const navigation = useRef<HTMLElement>(null);
@@ -26,6 +28,9 @@ export function Shell({ children }: { children: ReactNode }) {
     { href: "/curriculum", label: "Learning path", symbol: "02" },
     { href: "/progress", label: "My progress", symbol: "03" },
     { href: "/patterns", label: "Pattern library", symbol: "04" },
+    { href: "/practice", label: "Practice bank", symbol: "05" },
+    { href: "/design", label: "Design practice", symbol: "06" },
+    { href: "/account", label: "My account", symbol: "07" },
   ];
   return (
     <div className="app-shell" onKeyDown={(event) => {
@@ -71,10 +76,10 @@ export function Shell({ children }: { children: ReactNode }) {
           </p>
           <small>Progress begins with understanding.</small>
         </div>
-        <div className="guest-profile">
-          <span className="guest-avatar">G</span>
+        <div className="guest-profile" aria-busy={loading}>
+          <span className="guest-avatar">{user?.name.slice(0, 1).toUpperCase() || "G"}</span>
           <div>
-            Guest workspace<small>Learning at your own pace</small>
+            {user?.name || "Guest workspace"}<small>Learning at your own pace</small>
           </div>
         </div>
       </aside>
@@ -100,7 +105,7 @@ export function Shell({ children }: { children: ReactNode }) {
             </strong>
           </span>
           <span className="guest-badge">
-            <i /> GUEST EDITION
+            <i /> {user ? "ACCOUNT WORKSPACE" : "GUEST EDITION"}
           </span>
         </header>
         <main id="content" tabIndex={-1}>

@@ -1,0 +1,168 @@
+{
+  "repository": "exercism/problem-specifications",
+  "revision": "7c8c837f6e9b41fb5a629f4bd6ea974e494fa89d",
+  "license": "MIT",
+  "licenseSha256": "564d81b4e8fa0a816529287256d25d477106e540682003a718140eb7cf913601",
+  "sources": [
+    {
+      "slug": "isogram",
+      "descriptionPath": "exercises/isogram/description.md",
+      "descriptionSha256": "305c8c909e7d4c3c4aad609f4e4ecf71b7de253e7cc692fb94c32ac9dcce0b91",
+      "introductionSha256": null,
+      "canonicalSha256": "fdf198907ba98f5733607807eff65a582009201027fa51934c97131c08299626",
+      "caseIds": [
+        "a0e97d2d-669e-47c7-8134-518a1e2c4555",
+        "9a001b50-f194-4143-bc29-2af5ec1ef652",
+        "8ddb0ca3-276e-4f8b-89da-d95d5bae78a4",
+        "6450b333-cbc2-4b24-a723-0b459b34fe18",
+        "a15ff557-dd04-4764-99e7-02cc1a385863",
+        "f1a7f6c7-a42f-4915-91d7-35b2ea11c92e",
+        "14a4f3c1-3b47-4695-b645-53d328298942",
+        "423b850c-7090-4a8a-b057-97f1cadd7c42",
+        "93dbeaa0-3c5a-45c2-8b25-428b8eacd4f2",
+        "36b30e5c-173f-49c6-a515-93a3e825553f",
+        "cdabafa0-c9f4-4c1f-b142-689c6ee17d93",
+        "5fc61048-d74e-48fd-bc34-abfc21552d4d",
+        "310ac53d-8932-47bc-bbb4-b2b94f25a83e",
+        "0d0b8644-0a1e-4a31-a432-2b3ee270d847"
+      ]
+    },
+    {
+      "slug": "pangram",
+      "descriptionPath": "exercises/pangram/instructions.md",
+      "descriptionSha256": "b86ade3a947b8cd6f2091323f17c69832f7ba5253d6a5875a85e57a2d0af4e65",
+      "introductionSha256": "ee9ded9703aa7b01eb61774b87b215c31155c3d7ad59593100e690ca29cbdb73",
+      "canonicalSha256": "75f7356fcaa3f3675810795f12a17945dacb33ad7ef612fa802d46480589d924",
+      "caseIds": [
+        "64f61791-508e-4f5c-83ab-05de042b0149",
+        "74858f80-4a4d-478b-8a5e-c6477e4e4e84",
+        "61288860-35ca-4abe-ba08-f5df76ecbdcd",
+        "6564267d-8ac5-4d29-baf2-e7d2e304a743",
+        "c79af1be-d715-4cdb-a5f2-b2fa3e7e0de0",
+        "d835ec38-bc8f-48e4-9e36-eb232427b1df",
+        "8cc1e080-a178-4494-b4b3-06982c9be2a8",
+        "bed96b1c-ff95-45b8-9731-fdbdcb6ede9a",
+        "938bd5d8-ade5-40e2-a2d9-55a338a01030",
+        "2577bf54-83c8-402d-a64b-a2c0f7bb213a",
+        "7138e389-83e4-4c6e-8413-1e40a0076951"
+      ]
+    },
+    {
+      "slug": "leap",
+      "descriptionPath": "exercises/leap/instructions.md",
+      "descriptionSha256": "c75b7d21f54de2d97011662b26cca3358dc66b7ec98f381a65dbcfa85a65b6ae",
+      "introductionSha256": "4e2dcf9878dbea61faa0fa76aac7ec012e7a39f39c3b80d8b9c3df4b85ef98aa",
+      "canonicalSha256": "7df67cd020a9113be2afe2a44aff099ca089c52137a897e17af3c2eff7aa2bca",
+      "caseIds": [
+        "6466b30d-519c-438e-935d-388224ab5223",
+        "ac227e82-ee82-4a09-9eb6-4f84331ffdb0",
+        "4fe9b84c-8e65-489e-970b-856d60b8b78e",
+        "7fc6aed7-e63c-48f5-ae05-5fe182f60a5d",
+        "78a7848f-9667-4192-ae53-87b30c9a02dd",
+        "9d70f938-537c-40a6-ba19-f50739ce8bac",
+        "42ee56ad-d3e6-48f1-8e3f-c84078d916fc",
+        "57902c77-6fe9-40de-8302-587b5c27121e",
+        "c30331f6-f9f6-4881-ad38-8ca8c12520c1"
+      ]
+    },
+    {
+      "slug": "reverse-string",
+      "descriptionPath": "exercises/reverse-string/instructions.md",
+      "descriptionSha256": "c830b83b9928a3d4201fed9fd1e00c9684f980c79d0fa2967eb8567f7d8e1d08",
+      "introductionSha256": "0da78e5e9e0ad09c33a2d1e2a21f78c5721fe2ea2cb7e9e9d8ad7f473f27d0c4",
+      "canonicalSha256": "7127d2b0ba43fb375b4e840e7d564ba3fec36ba67f0a07709e580f1510fcbba0",
+      "caseIds": [
+        "c3b7d806-dced-49ee-8543-933fd1719b1c",
+        "01ebf55b-bebb-414e-9dec-06f7bb0bee3c",
+        "0f7c07e4-efd1-4aaa-a07a-90b49ce0b746",
+        "71854b9c-f200-4469-9f5c-1e8e5eff5614",
+        "1f8ed2f3-56f3-459b-8f3e-6d8d654a1f6c",
+        "b9e7dec1-c6df-40bd-9fa3-cd7ded010c4c",
+        "1bed0f8a-13b0-4bd3-9d59-3d0593326fa2",
+        "93d7e1b8-f60f-4f3c-9559-4056e10d2ead",
+        "1028b2c1-6763-4459-8540-2da47ca512d9"
+      ]
+    },
+    {
+      "slug": "raindrops",
+      "descriptionPath": "exercises/raindrops/instructions.md",
+      "descriptionSha256": "a0062bfd8e608af9c986f62cfab4724f1047d63273e058aaa183252f81a8964e",
+      "introductionSha256": "7b8bd3aa73f2ac9bca80fbbe0760405313e2f8519f7e2127da289e388227d78b",
+      "canonicalSha256": "4628e229cd1c6d916be07a4315e9e2da02160f35e3b28658a6bd47225d284fc5",
+      "caseIds": [
+        "1575d549-e502-46d4-a8e1-6b7bec6123d8",
+        "1f51a9f9-4895-4539-b182-d7b0a5ab2913",
+        "2d9bfae5-2b21-4bcd-9629-c8c0e388f3e0",
+        "d7e60daa-32ef-4c23-b688-2abff46c4806",
+        "6bb4947b-a724-430c-923f-f0dc3d62e56a",
+        "ce51e0e8-d9d4-446d-9949-96eac4458c2d",
+        "0dd66175-e3e2-47fc-8750-d01739856671",
+        "022c44d3-2182-4471-95d7-c575af225c96",
+        "37ab74db-fed3-40ff-b7b9-04acdfea8edf",
+        "31f92999-6afb-40ee-9aa4-6d15e3334d0f",
+        "ff9bb95d-6361-4602-be2c-653fe5239b54",
+        "d2e75317-b72e-40ab-8a64-6734a21dece1",
+        "a09c4c58-c662-4e32-97fe-f1501ef7125c",
+        "bdf061de-8564-4899-a843-14b48b722789",
+        "c4680bee-69ba-439d-99b5-70c5fd1a7a83",
+        "17f2bc9a-b65a-4d23-8ccd-266e8c271444",
+        "e46677ed-ff1a-419f-a740-5c713d2830e4",
+        "13c6837a-0fcd-4b86-a0eb-20572f7deb0b"
+      ]
+    },
+    {
+      "slug": "armstrong-numbers",
+      "descriptionPath": "exercises/armstrong-numbers/description.md",
+      "descriptionSha256": "b71552cf5576f340ced3632e87971db8d27e794d19bd04b0411198e75345af3e",
+      "introductionSha256": null,
+      "canonicalSha256": "e8567a19cfaa0cf711fa2a1b2d4ec92b9fcdfddf42d89b969ce32f99fcc7a1fe",
+      "caseIds": [
+        "c1ed103c-258d-45b2-be73-d8c6d9580c7b",
+        "579e8f03-9659-4b85-a1a2-d64350f6b17a",
+        "2d6db9dc-5bf8-4976-a90b-b2c2b9feba60",
+        "509c087f-e327-4113-a7d2-26a4e9d18283",
+        "7154547d-c2ce-468d-b214-4cb953b870cf",
+        "6bac5b7b-42e9-4ecb-a8b0-4832229aa103",
+        "eed4b331-af80-45b5-a80b-19c9ea444b2e",
+        "f971ced7-8d68-4758-aea1-d4194900b864",
+        "7ee45d52-5d35-4fbd-b6f1-5c8cd8a67f18",
+        "5ee2fdf8-334e-4a46-bb8d-e5c19c02c148",
+        "12ffbf10-307a-434e-b4ad-c925680e1dd4"
+      ]
+    },
+    {
+      "slug": "hamming",
+      "descriptionPath": "exercises/hamming/instructions.md",
+      "descriptionSha256": "fa4a9bb11d012e85942e0662fc76aee82e65a8c8e077839c26b510b52a3f1a4f",
+      "introductionSha256": "47fcfd8355aac433a481b354c005214e2f8fc5820de2cdb27e1ad981efe6a821",
+      "canonicalSha256": "c932d8511912c5ca2cc5a15550a266436c637d8c2af4f3a055173808b0fb0086",
+      "caseIds": [
+        "f6dcb64f-03b0-4b60-81b1-3c9dbf47e887",
+        "54681314-eee2-439a-9db0-b0636c656156",
+        "294479a3-a4c8-478f-8d63-6209815a827b",
+        "9aed5f34-5693-4344-9b31-40c692fb5592",
+        "cd2273a5-c576-46c8-a52b-dee251c3e6e5"
+      ]
+    },
+    {
+      "slug": "scrabble-score",
+      "descriptionPath": "exercises/scrabble-score/instructions.md",
+      "descriptionSha256": "307baa031c69df457280029cccc4653d7adc007dcef402b4ea2c0e7ee2e9f7c7",
+      "introductionSha256": "1ccc20ea7ac658cbd8b57b34de58f1f4f419cf5ee945e2d0e6fbfaf40fcbb184",
+      "canonicalSha256": "6ffd0f66596c6f926ae375d541fda7bce06b5ea99f24d0a283a1f626bd32a35c",
+      "caseIds": [
+        "f46cda29-1ca5-4ef2-bd45-388a767e3db2",
+        "f7794b49-f13e-45d1-a933-4e48459b2201",
+        "eaba9c76-f9fa-49c9-a1b0-d1ba3a5b31fa",
+        "f3c8c94e-bb48-4da2-b09f-e832e103151e",
+        "71e3d8fa-900d-4548-930e-68e7067c4615",
+        "d3088ad9-570c-4b51-8764-c75d5a430e99",
+        "fa20c572-ad86-400a-8511-64512daac352",
+        "9336f0ba-9c2b-4fa0-bd1c-2e2d328cf967",
+        "1e34e2c3-e444-4ea7-b598-3c2b46fd2c10",
+        "4efe3169-b3b6-4334-8bae-ff4ef24a7e4f",
+        "3b305c1c-f260-4e15-a5b5-cb7d3ea7c3d7"
+      ]
+    }
+  ]
+}

@@ -24,3 +24,6 @@ docs/.trash/
 release.json
 frontend-build*
 build-commit.txt
+gateway/dist/
+frontend/public/editor/
+frontend/public/python-runtime/

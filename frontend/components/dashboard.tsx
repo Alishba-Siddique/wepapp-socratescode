@@ -1,4 +1,5 @@
 "use client";
+import { useAccount } from "./account-provider";
 import Link from "next/link";
 import { useState } from "react";
 import { puzzles, stages } from "@/lib/puzzles";
@@ -9,6 +10,7 @@ export function Dashboard({
   view?: "overview" | "curriculum" | "progress";
 }) {
   const progress = useProgress();
+  const { user } = useAccount();
   const [query, setQuery] = useState("");
   const completed = puzzles.filter((p) => progress[p.slug]?.completed);
   const active =
@@ -49,7 +51,7 @@ export function Dashboard({
               ? "Build the habit of understanding before you run."
               : view === "curriculum"
                 ? "Small guided labs. Five ways to think through each one."
-                : "A record of the reasoning you have practiced in this browser."}
+                : user ? "Your saved reasoning and the work open in this account session." : "A record of the reasoning you have practiced in this browser."}
           </p>
         </div>
         <div className="session-tag">
@@ -61,6 +63,7 @@ export function Dashboard({
           </small>
         </div>
       </div>
+      {view === "curriculum" && <section className="product-context"><p className="eyebrow">START FROM ZERO. BUILD INDEPENDENCE.</p><h2>Your next step, not a wall of topics.</h2><ol><li><Link prefetch={false} href="/learn/a-running-total">Learn to follow a small program</Link> — predict and trace our guided labs below.</li><li><Link prefetch={false} href="/practice">Write your own Python</Link> — start with totals, conditions and strings.</li><li><Link prefetch={false} href="/patterns">Recognize patterns with Socrates</Link> — explain why an approach fits and where products use it.</li><li><Link prefetch={false} href="/design/learning-schema">Model data and protect it</Link> — work from entities to constraints and concurrent updates.</li><li><Link prefetch={false} href="/design">Discuss systems and architecture</Link> — defend assumptions, failures and tradeoffs.</li></ol><p>Senior-level growth also needs building, operating and improving real projects. Deeper projects, debugging interviews and evaluated mock interviews are future curriculum; finishing these introductory exercises is not a senior-readiness certification.</p></section>}
       <div className="metrics">
         <div>
           <span>
@@ -189,8 +192,7 @@ export function Dashboard({
         </section>
       )}
       <p className="storage-note">
-        Guest progress stays in this browser when local storage is available.
-        Account sync is not connected yet.
+        {user ? "Account work loads from your saved progress. Use Save to account inside each lab before leaving." : "Guest progress stays in this browser. Sign in to save labs across devices."}
       </p>
     </div>
   );
