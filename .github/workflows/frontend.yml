@@ -17,7 +17,10 @@ env:
   CI: 'true'
   NEXT_TELEMETRY_DISABLED: '1'
 jobs:
+  # Owner choice: skip runner jobs on Dependabot events, retain human CI and schedules.
+  # A maintainer can dispatch CI on an update branch before reviewing its merge.
   workflow-validation:
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -39,6 +42,7 @@ jobs:
           tar -xzf "$RUNNER_TEMP/actionlint.tar.gz" -C "$RUNNER_TEMP" actionlint
           "$RUNNER_TEMP/actionlint" -color
   quality:
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     defaults:
@@ -66,7 +70,7 @@ jobs:
         working-directory: ops
         run: npm audit --omit=dev --audit-level=high
   dependency-review:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -78,6 +82,7 @@ jobs:
           fail-on-severity: high
           comment-summary-in-pr: never
   codeql:
+    if: github.actor != 'dependabot[bot]'
     name: CodeQL (${{ matrix.language }})
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -235,7 +240,7 @@ jobs:
           retention-days: 7
           if-no-files-found: warn
   frontend-checks:
-    if: always()
+    if: always() && github.actor != 'dependabot[bot]'
     needs: [workflow-validation, quality, dependency-review, codeql, build, browser, accounts]
     runs-on: ubuntu-24.04
     timeout-minutes: 2

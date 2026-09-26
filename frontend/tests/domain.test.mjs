@@ -7,6 +7,28 @@ import { codingProblems } from "../lib/coding-problems.ts";
 import { patterns } from "../lib/patterns.ts";
 import { productLessons } from "../lib/product-lessons.ts";
 import { designChallenges } from "../lib/design-challenges.ts";
+import { beginnerLessons, parseBeginner, completeBeginnerLesson } from "../lib/beginner.ts";
+
+test("beginner progress rejects corrupt, oversized and incompatible data without unlocking later steps", () => {
+  for (const raw of [null, "{", "[]", "null", "x".repeat(513), '{"version":2,"completed":3,"practicePassed":true}', '{"version":1,"completed":99,"practicePassed":true}', '{"version":1,"completed":1.5,"practicePassed":false}']) {
+    assert.deepEqual(parseBeginner(raw), {version:1,completed:0,practicePassed:false});
+  }
+  const start = parseBeginner(null);
+  assert.deepEqual(completeBeginnerLesson(start, 2), start);
+  assert.deepEqual(completeBeginnerLesson(start, -1), start);
+  const first = completeBeginnerLesson(start, 0);
+  assert.equal(first.completed, 1);
+  assert.equal(completeBeginnerLesson(first, 0).completed, 1);
+  assert.equal(parseBeginner('{"version":1,"completed":1,"practicePassed":true}').practicePassed, false);
+  assert.equal(parseBeginner('{"version":1,"completed":3,"practicePassed":true}').practicePassed, true);
+  for (const lesson of beginnerLessons) {
+    for (const question of [lesson.prediction, lesson.transfer]) {
+      assert(question.correct >= 0 && question.correct < question.options.length);
+      assert.equal(question.feedback.length, question.options.length);
+    }
+    assert(lesson.frames.every(frame => frame.line >= 0 && frame.line < lesson.code.split("\n").length));
+  }
+});
 test("every pattern has a sourced usable lesson with a valid practice destination", () => {
   assert.deepEqual(new Set(productLessons.map(item=>item.id)),new Set(patterns.map(item=>item.id)));
   for(const lesson of productLessons) {

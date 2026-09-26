@@ -5,7 +5,8 @@ import path from "node:path";
 const base = process.env.WEB_APP_URL || "http://localhost:3001";
 const engine = {chromium,firefox,webkit}[process.env.BROWSER || "chromium"];
 const browser = await engine.launch({channel:engine===chromium&&process.platform==="win32"?"msedge":undefined});
-const page = await browser.newPage({viewport:{width:1440,height:1000}});
+const context = await browser.newContext({viewport:{width:1440,height:1000}});
+const page = await context.newPage();
 const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
 if (bypass) {
   const origin = new URL(base);
@@ -18,6 +19,33 @@ page.on("console",message=>{if(message.type()==="error")runtimeLog.push(message.
 page.on("requestfailed",request=>runtimeLog.push({url:request.url(),failure:request.failure()}));
 const errors=[]; page.on("pageerror",error=>errors.push(error.message));
 try {
+  await page.goto(base+"/start");
+  await expect(page.locator(".guest-profile")).toHaveAttribute("aria-busy", "false");
+  await page.evaluate(()=>localStorage.setItem("socratescode:beginner:v1",'{"version":1,"completed":900,"practicePassed":true}'));
+  await page.reload();
+  await expect(page.getByRole("button",{name:"04 Write it yourself"})).toBeDisabled();
+  for (const [index, prediction, transfer] of [[0,"3","1"],[1,"5","3"],[2,"3","Keep the old position and add the current step"]]) {
+    const forms=page.locator(".beginner-question");
+    await forms.first().getByRole("radio").first().check();
+    await forms.first().getByRole("button",{name:"Check my thinking"}).click();
+    await expect(page.getByRole("button",{name:"Trace the first line"})).toBeDisabled();
+    await forms.first().getByRole("radio",{name:prediction,exact:true}).check();
+    await forms.first().getByRole("button",{name:"Check my thinking"}).click();
+    await page.getByRole("button",{name:"Trace the first line"}).click();
+    const changes=[3,5,4][index];
+    for(let n=1;n<changes;n++)await page.getByRole("button",{name:"Trace the next change"}).click();
+    await forms.nth(1).getByRole("radio",{name:transfer,exact:true}).check();
+    await forms.nth(1).getByRole("button",{name:"Check my thinking"}).click();
+    if(index===0)await page.screenshot({path:path.join(artifacts,"beginner-desktop.png"),fullPage:true});
+    await page.getByRole("button",{name:index===2?"Open my independent challenge":"Save and continue"}).click();
+    await page.reload();
+    await expect(page.locator(".guest-profile")).toHaveAttribute("aria-busy", "false");
+    await expect(page.locator(".beginner-steps [aria-current=step]")).toContainText(`0${index+2}`);
+  }
+  await page.setViewportSize({width:390,height:844});
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),"beginner journey fits mobile");
+  await page.screenshot({path:path.join(artifacts,"beginner-mobile.png"),fullPage:true});
+  await page.setViewportSize({width:1440,height:1000});
   await page.goto(base+"/patterns");
   await expect(page.locator(".guest-profile")).toHaveAttribute("aria-busy", "false");
   await page.getByRole("searchbox").fill("PostgreSQL");
@@ -61,6 +89,7 @@ try {
   await editor.fill("def solve(data):\n    return sum(data)\n");
   await page.getByRole("button",{name:"Run all checks",exact:true}).click();
   await page.getByRole("status").filter({hasText:"All practice checks passed"}).waitFor({timeout:75000});
+  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem("socratescode:beginner:v1")).practicePassed),true);
   assert.equal(await page.locator('.case-result[data-passed="true"]').count(),4);
   await editor.fill("def solve(data):\n    return 0\n");
   await page.getByRole("button",{name:"Run all checks",exact:true}).click();
@@ -94,6 +123,24 @@ try {
   assert((await page.locator(".problem-statement").textContent()).includes("400"),"Leap year rules are present");
   await page.screenshot({path:path.join(artifacts,"coding-mobile.png"),fullPage:true});
   assert.deepEqual(errors,[]);
+  const unavailable=await page.context().newPage();
+  await unavailable.addInitScript(()=>{
+    const read=Storage.prototype.getItem, write=Storage.prototype.setItem;
+    Storage.prototype.getItem=function(key){if(key==="socratescode:beginner:v1")throw new DOMException("Blocked","SecurityError");return read.call(this,key);};
+    Storage.prototype.setItem=function(key,value){if(key==="socratescode:beginner:v1")throw new DOMException("Blocked","QuotaExceededError");return write.call(this,key,value);};
+  });
+  await unavailable.goto(base+"/start");
+  await expect(unavailable.getByText("Browser storage is unavailable.",{exact:false})).toBeVisible();
+  await unavailable.getByRole("radio",{name:"3",exact:true}).check();
+  await unavailable.getByRole("button",{name:"Check my thinking"}).click();
+  await unavailable.getByRole("button",{name:"Trace the first line"}).click();
+  await unavailable.getByRole("button",{name:"Trace the next change"}).click();
+  await unavailable.getByRole("button",{name:"Trace the next change"}).click();
+  await unavailable.locator(".beginner-question").nth(1).getByRole("radio",{name:"1",exact:true}).check();
+  await unavailable.locator(".beginner-question").nth(1).getByRole("button",{name:"Check my thinking"}).click();
+  await unavailable.getByRole("button",{name:"Save and continue"}).click();
+  await expect(unavailable.locator(".beginner-steps [aria-current=step]")).toContainText("02");
+  await unavailable.close();
   console.log("PASS: Socratic feedback and traces, design drafting/export, editor execution, wrong answer, timeout/recovery, persistence, opaque origin, mobile");
 } catch(error) { writeFileSync(path.join(artifacts,"runtime-errors.json"),JSON.stringify(runtimeLog,null,2)); await page.screenshot({path:path.join(artifacts,"learning-failure.png"),fullPage:true});console.error(await page.locator(".run-status").textContent().catch(()=>""));throw error; }
 finally {await browser.close();}

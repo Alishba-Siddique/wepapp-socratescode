@@ -8,7 +8,7 @@ updated: 2026-09-20
 The product serves people who can currently get code from AI but cannot yet explain or produce it independently. Assume missing vocabulary and missing mental models, not missing intelligence. Use respectful language and small, concrete examples.
 
 ## Learning loop
-1. Open `/curriculum` and start **A running total**. Predict before running the trace.
+1. Open `/start` if you are new to coding. Learn assignment, loops and debugging with predictions, guided traces and changed examples. Then write the trail-total function in the real editor. Continue to `/curriculum` and **A running total** for deeper practice.
 2. Inspect changing state. Incorrect predictions are information, not a penalty.
 3. Investigate the rule, modify the input, then explain your result.
 4. Move to `/practice` to write Python in the full editor. The simple editor is an accessible fallback. Public checks explain expected and actual values; they do not prove general correctness.
@@ -22,3 +22,5 @@ With a configured account service, sign in at `/account`, explicitly import gues
 
 ## Honest expectations
 Questions, feedback and review criteria are authored content. No live AI grading or solution generation is connected. Six design exercises are introductory interview practice, not a full senior curriculum. Learners still need implementation projects, debugging, operating systems, networking, testing, collaboration and real operational experience. See [[Learning Design]] for planned progression.
+
+First-steps progress uses its own bounded, versioned browser record. Unavailable storage falls back to tab memory with an explicit warning; it is not account sync. Only passing the full public trail-total check set after all three lessons records practice success. It does not grade the learner's explanation or establish mastery.

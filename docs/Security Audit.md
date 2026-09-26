@@ -10,7 +10,7 @@ This inventories implemented application controls. It is not a security certific
 
 | Entry point | Identity / cost | Implemented control | Remaining boundary |
 | --- | --- | --- | --- |
-| GET /, /curriculum, /progress, /patterns, /patterns/[id], /practice, /design, /design/[id] | Public / tier 4 | Local catalogs; known dynamic IDs; text rendering; drafts validated before loading | Local progress is untrusted |
+| GET /, /start, /curriculum, /progress, /patterns, /patterns/[id], /practice, /design, /design/[id] | Public / tier 4 | Local catalogs; known dynamic IDs; text rendering; drafts validated before loading | Local progress is untrusted |
 | GET /learn/[slug], /solve/[slug] | Public / tier 4 | Known IDs; unknown routes 404; visible inputs/checks | Completion is not certification |
 | GET /runner | Public / tier 4 server cost | Opaque iframe, CSP, nonce, no-store, no forms/frames; worker origin isolation | Browser execution has no hard memory quota |
 | Python worker execution | Local learner device | Separate worker, parent deadlines (60s load / 5s run), output display cap, source frame + run ID check, runtime-only network CSP | A malicious learner can alter their own results; no server judge |
@@ -33,3 +33,6 @@ Production account launch requires verified HTTPS/origin/cookies, private gatewa
 Auth now runs standard `express-rate-limit` middleware (60 requests per minute, socket IP with IPv6 grouping) before the existing HMAC-keyed PostgreSQL quota. The local store reduces database work during bursts; PostgreSQL remains authoritative across instances and process restarts. Neither layer trusts forwarded client IPs. A private proxy still shares its conservative ingress allowance; trusted client identity and edge throttling remain deployment work. Both layers return 429/retry headers. Store failures return a sanitized 503.
 
 The account browser runner emits a fixed failure message instead of logging caught exception text, which may contain environment-derived configuration. No scanner suppression or alert dismissal was added. Tests cover blocked auth requests without further DB work, spoofed forwarded IPs, shared admission in a fresh gateway, and an unavailable database.
+
+## Beginner journey boundary
+`GET /start` is a public static route (tier 4). Its original authored content performs no server mutations or model requests. Browser state accepts only version 1, an integer lesson count within the catalog and a boolean practice marker; raw input is capped at 512 characters. The progress marker remains untrusted local practice evidence. Storage errors preserve a usable tab-only lesson with a visible warning; no secrets, submitted code or prose are stored in this record. Python continues through the existing opaque worker boundary.

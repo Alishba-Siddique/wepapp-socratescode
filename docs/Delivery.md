@@ -11,6 +11,8 @@ Production: https://wepapp-socratescode.vercel.app/
 ## Checks
 Pull requests run workflow syntax validation, release-policy tests, domain tests, ESLint, TypeScript, dependency audit/review, CodeQL, production build and Chromium/Firefox/WebKit learning journeys. The stable aggregate check is frontend-checks. Actions are commit-pinned; Dependabot proposes updates. Browser jobs verify the artifact checksum and commit before using the same build.
 
+At the owner's September 27 request, Dependabot-triggered CI jobs skip without allocating runners. Human CI, scheduled scans and deployment checks remain enabled. Update PRs and security alerts remain enabled. Do not treat a skipped `frontend-checks` as a tested update or automatically merge it. Before merging an update, select **Actions > CI > Run workflow**, choose the Dependabot branch, and verify that exact head passes all jobs. Workflow dispatch does not run the PR-only dependency-review job; review the dependency diff and security alerts too. Existing bot branches need the new workflow before this policy applies. Main still runs the complete production gate before deployment.
+
 CodeQL uploads findings; a successful scanner job does not mean there are no findings. Review Security alerts and use code-scanning rules when available. Dependency review rejects high/critical additions. Deployment tooling has a separate lockfile and compatible patched overrides; audit it as well.
 
 ## Release
