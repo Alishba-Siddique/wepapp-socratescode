@@ -3,6 +3,8 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { starterCode, type CodingProblem, type JsonValue } from "@/lib/coding-problems";
+import { readBeginnerProgress, saveBeginnerProgress } from "@/lib/beginner-progress";
+import { beginnerLessons } from "@/lib/beginner";
 const CodeEditor = dynamic(() => import("./code-editor"), { ssr:false, loading:() => <p className="editor-loading">Loading the editor…</p> });
 type Result = { value?: JsonValue; error?: string };
 function equal(a: JsonValue | undefined, b: JsonValue): boolean {
@@ -67,6 +69,10 @@ export function CodingWorkspace({ problem }: { problem: CodingProblem }) {
         }):[];
         setResults(rows);setOutput(typeof data.output==="string"?data.output.slice(0,12000):"");setCheckedCode(code);
         const passed=allTests && rows.length===problem.tests.length && rows.every((row,index)=>!row.error && equal(row.value,problem.tests[index].expected));
+        if (passed && problem.slug === "trail-total") {
+          const journey = readBeginnerProgress();
+          if (journey.completed === beginnerLessons.length) saveBeginnerProgress({ ...journey, practicePassed: true });
+        }
         setMessage(allTests ? passed ? "All practice checks passed. Can you explain why your approach works?" : "Some checks need another look. Compare the expected value with your result." : "Custom run finished.");
         setPhase("idle");cleanup();
       } else if(data.type==="error") {setMessage(String(data.message||"Python could not complete this run.").slice(0,3000));setOutput(String(data.output||"").slice(0,12000));setPhase("idle");cleanup();}
@@ -75,6 +81,7 @@ export function CodingWorkspace({ problem }: { problem: CodingProblem }) {
     timeout(60,"Python could not load in time. Check your connection and try again.");
   }
   return <div className="coding-workspace page-enter">
+    {problem.slug === "trail-total" && <p className="beginner-return"><Link prefetch={false} href="/start">First steps: variables, loops and debugging</Link> · Return here after your checks to choose your next step.</p>}
     <div className="lesson-top"><Link prefetch={false} href="/practice">← Problem library</Link><span>{problem.level} / {problem.topic}</span></div>
     <div className="coding-heading"><div><p className="eyebrow">THINK IT THROUGH. WRITE IT YOURSELF.</p><h1>{problem.title}</h1></div><span className="session-tag">PYTHON</span></div>
     <div className="coding-columns">

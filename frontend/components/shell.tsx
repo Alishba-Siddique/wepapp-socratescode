@@ -25,6 +25,7 @@ export function Shell({ children }: { children: ReactNode }) {
   }, [open]);
   const links = [
     { href: "/", label: "Overview", symbol: "01" },
+    { href: "/start", label: "Start from zero", symbol: "00" },
     { href: "/curriculum", label: "Learning path", symbol: "02" },
     { href: "/progress", label: "My progress", symbol: "03" },
     { href: "/patterns", label: "Pattern library", symbol: "04" },

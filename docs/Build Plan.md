@@ -29,3 +29,6 @@ The independent root Tracker.md requires commits for completed checkboxes; this 
 The current branch implements nine PRIMM labs, twenty browser Python problems, seventeen Socratic product-pattern lessons, six design exercises, and optional Better Auth/PostgreSQL progress. See [[Platform Guide]], [[Testing]] and [[Security Audit]]. Earlier planned account and editor entries are superseded by this implementation; production configuration remains separate.
 
 Next curriculum work: richer misconception-specific prompts, graded scaffolding removal, implementation projects, debugging/testing/networking fundamentals, database exercises with actual SQL execution, deeper distributed-systems cases and evaluated mock interviews. Do not label this backlog complete or equate it with senior readiness.
+
+## September 27 beginner increment
+Implemented `/start`: three progressively scaffolded lessons on assignment, loops and debugging; prediction and transfer questions; explicit guided traces; a fourth independent Python challenge. Dashboard/curriculum and sidebar provide an entry point. Each completed lesson can be reviewed; current progress resumes locally. This increment adds no service or database schema. Validation and deployment evidence belong in [[Session Log]]. Next: durable account deployment, more targeted misconceptions and practical engineering tasks.

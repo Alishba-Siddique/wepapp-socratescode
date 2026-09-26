@@ -1,10 +1,12 @@
+# Automatic update PRs paused at the owner's request (2026-09-27).
+# Keep dependency alerts/audits. Re-enable deliberately when updates are wanted.
 version: 2
 updates:
   - package-ecosystem: npm
     directory: /frontend
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 0
     groups:
       development:
         dependency-type: development
@@ -12,13 +14,14 @@ updates:
     directory: /ops
     schedule:
       interval: weekly
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 0
   - package-ecosystem: npm
     directory: /gateway
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 0
   - package-ecosystem: github-actions
+    open-pull-requests-limit: 0
     directory: /
     schedule:
       interval: weekly

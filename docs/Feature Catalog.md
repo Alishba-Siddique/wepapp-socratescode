@@ -40,3 +40,6 @@ Choose one feature note -> define observable acceptance -> update contracts -> i
 | DSA in products | Sourced use, mechanism and tradeoff for every pattern | Illustrative designs labeled explicitly |
 | Design interviews | Six exercises across system, database and architecture | Introductory self-review, not a senior certification |
 | Design notes | Browser drafts and Markdown export | No remote synchronization |
+
+## First-steps acceptance
+`/start` provides a zero-prerequisite journey before the PRIMM catalog. Incorrect predictions do not unlock traces; learners inspect all frames and answer a changed example before moving on. The independent editor requires all visible practice checks, not a custom run alone. Progress is bounded, versioned, corruption-tolerant and browser-local. Mobile, reload, blocked storage and wrong-answer flows are exercised in the learning browser suite.
