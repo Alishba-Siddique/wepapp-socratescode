@@ -1257,6 +1257,20 @@ th {
 .problem-attribution { padding: 14px; margin: 20px 0; background: #eee5dc; font-size: 13px; }
 @media (max-width: 600px) { .lesson-actions > .button { width: 100%; } .pattern-lesson .page-heading h1 { font-size: 38px; } }
 /* Beginner lessons share the workspace palette and native scrolling. */
+.debug-coach { padding:1.3rem; margin-bottom:2rem; border:1px solid #75493440; border-radius:16px; background:#f1ece4; }
+.debug-coach h2 { font-size:1.7rem; line-height:1.2; }
+.debug-coach h3 { margin:1.4rem 0 .7rem; }
+.debug-coach pre { overflow:auto; max-width:100%; padding:1rem; background:#28231f; color:#fff5e6; border-radius:8px; line-height:1.7; }
+.debug-question fieldset { border:0; min-width:0; padding:0; margin:0 0 1rem; }
+.debug-question legend { font-weight:600; line-height:1.6; margin-bottom:.5rem; }
+.debug-question label { display:flex; align-items:center; gap:.7rem; padding:.8rem; margin:.4rem 0; border:1px solid #75493440; border-radius:8px; background:#fffdf8; cursor:pointer; }
+.debug-question input { accent-color:#754934; flex-shrink:0; width:18px; height:18px; }
+.debug-question [role="status"] { min-height:3em; }
+.debug-reflection { padding:1.2rem; margin:1rem; background:#f1ece4; border-radius:12px; }
+.debug-reflection textarea { width:100%; padding:.8rem; border:1px solid #75493460; border-radius:8px; resize:vertical; background:#fffdf8; color:#29201b; font:inherit; line-height:1.6; }
+.debug-reflection ul { padding-left:1.2rem; line-height:1.8; }
+.debug-reflection small { display:block; margin-top:1rem; line-height:1.6; }
+#python-repair { scroll-margin-top:2rem; }
 .beginner-entry { display:flex; align-items:center; gap:2rem; justify-content:space-between; padding:1.6rem; margin:1.5rem 0; border:1px solid #75493440; border-radius:18px; background:#eee5db; }
 .beginner-entry h2 { font-size:1.65rem; margin:.3rem 0 .7rem; }
 .beginner-entry p { max-width:60ch; }

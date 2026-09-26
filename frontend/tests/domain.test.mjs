@@ -40,8 +40,8 @@ test("every pattern has a sourced usable lesson with a valid practice destinatio
   }
 });
 test("licensed imports preserve provenance, runnable inputs and essential rules", () => {
-  assert.equal(codingProblems.length,20);
-  assert.equal(new Set(codingProblems.map(p=>p.slug)).size,20);
+  assert.equal(codingProblems.length,23);
+  assert.equal(new Set(codingProblems.map(p=>p.slug)).size,codingProblems.length);
   const imported=codingProblems.filter(p=>p.source);
   assert.equal(imported.length,8);
   assert.equal(imported.reduce((sum,p)=>sum+p.tests.length,0),88);

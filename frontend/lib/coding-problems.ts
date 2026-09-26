@@ -1,13 +1,70 @@
 import importedProblems from "./data/github-problems.json" with { type: "json" };
 export type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue };
+export type DebugQuestion = { prompt: string; options: string[]; correct: number; feedback: string[] };
+export type DebugExercise = {
+  code: string; scenario: string; vocabulary: string;
+  prediction: DebugQuestion; diagnosis: DebugQuestion; review: string[];
+};
 export type CodingProblem = {
   slug: string; title: string; topic: string; level: "Foundation" | "Developing";
   description: string; contract: string; constraints: string[]; hints: string[];
   tests: { name: string; input: JsonValue; expected: JsonValue }[];
   source?: { name: string; repository: string; revision: string; url: string; license: string };
+  debugging?: DebugExercise;
 };
 export const starterCode = "def solve(data):\n    # Read the problem, then explain your approach in code.\n    pass\n";
+export const debuggingProblems: CodingProblem[] = [
+  {
+    slug: "debug-basket-total", title: "The disappearing basket", topic: "Debugging", level: "Foundation",
+    description: "A shop's basket total changes to the price of its last item. Repair the function so it adds every item's price. Prices are whole cents, so there is no decimal rounding in this exercise.",
+    contract: "Return the total price in cents. An empty basket costs 0 cents.",
+    constraints: ["data contains 0–100 integer prices, each between 0 and 100,000 cents."],
+    hints: ["After two items, which information has disappeared?", "What should total describe after each item?", "Try one item, then two different items. Why can the first example hide the mistake?"],
+    tests: [{name:"Two different prices",input:[1200,500],expected:1700},{name:"One item hides the bug",input:[800],expected:800},{name:"Empty basket",input:[],expected:0},{name:"A free item at the end",input:[300,700,0],expected:1000}],
+    debugging: {
+      code: "def solve(data):\n    total = 0\n    for price in data:\n        total = price\n    return total\n",
+      scenario: "A shopper puts a 1,200-cent item and a 500-cent item in their basket. The total should be 1,700 cents. The supplied code is deliberately broken.",
+      vocabulary: "for visits each price in order. = replaces the value of a name. The indented assignment runs once per price.",
+      prediction: {prompt:"For [1200, 500], what does the original code actually return?",options:["1700","500","0"],correct:1,feedback:["That is the intended result. Is there an addition in the update?","Yes. The second assignment replaces the first price.","The loop changes total twice. Follow its most recent value."]},
+      diagnosis: {prompt:"When does total first stop matching the cost of the items seen so far?",options:["Before the loop","After the first price","After the second price"],correct:2,feedback:["An empty basket should cost zero, so the starting state is useful.","With just one price, total still matches the basket. Continue one more step.","Exactly. Compare what must be preserved with what the assignment keeps."]},
+      review: ["Explain what total means after any number of items.","Explain why one item alone cannot expose this bug.","Use the free final item to show the earlier total survives."],
+    },
+  },
+  {
+    slug:"debug-temperature-boundary", title:"Zero is not warmer", topic:"Debugging", level:"Foundation",
+    description:"A temperature dashboard reports how many days were strictly above zero. Its count is too high when a sensor reads exactly zero. Repair the decision without changing the meaning of a positive day.",
+    contract:"Return how many readings are greater than 0, not equal to 0.",
+    constraints:["data contains 0–100 integer readings between -100 and 100."],
+    hints:["Which single reading distinguishes above zero from at least zero?","Try [-1], [0] and [1] separately. Which result violates the rule?","Should the counter change for every reading, or only those that qualify?"],
+    tests:[{name:"Across the boundary",input:[-2,0,5],expected:1},{name:"Exactly zero",input:[0],expected:0},{name:"Positive readings",input:[1,2,3],expected:3},{name:"No readings",input:[],expected:0},{name:"Negative readings",input:[-3,-1],expected:0}],
+    debugging:{
+      code:"def solve(data):\n    count = 0\n    for reading in data:\n        if reading >= 0:\n            count = count + 1\n    return count\n",
+      scenario:"A dashboard receives [-2, 0, 5]. Only one day is above zero. An extra day is appearing in its report.",
+      vocabulary:"if runs its indented instruction only when a condition is true. >= means greater than or equal to. A counter records how many items qualify, not their sum.",
+      prediction:{prompt:"For [-2, 0, 5], what does the original code return?",options:["1","2","5"],correct:1,feedback:["That is the intended count. Does the written condition also accept zero?","Yes. Both zero and five pass the written condition.","The program adds one, not the reading. It counts qualifying days."]},
+      diagnosis:{prompt:"Which smallest input exposes the incorrect decision?",options:["[5]","[-2]","[0]"],correct:2,feedback:["A positive day is counted correctly. Try the boundary itself.","A negative day is rejected correctly. What about equality?","Exactly. A boundary test separates the intended rule from the written condition."]},
+      review:["State the difference between above zero and at least zero.","Explain why [0] is enough to reproduce the bug.","Check both sides of the boundary so the repair still counts positive readings."],
+    },
+  },
+  {
+    slug:"debug-inbox-return",title:"The inbox that stops early",topic:"Debugging",level:"Foundation",
+    description:"An inbox badge should count every unread message. Each true value means unread; false means already read. The supplied function stops before inspecting the full inbox.",
+    contract:"Return the number of true values in data. An empty inbox has 0 unread messages.",
+    constraints:["data contains 0–100 JSON booleans (true or false). Python receives them as True or False."],
+    hints:["Does return merely display a value, or end the function?","Which instructions are inside the loop? Compare their indentation.","What happens to a return inside the loop if there are no messages?"],
+    tests:[{name:"Unread messages later",input:[true,false,true],expected:2},{name:"First message already read",input:[false,true,true],expected:2},{name:"One unread message",input:[true],expected:1},{name:"Empty inbox",input:[],expected:0},{name:"All messages read",input:[false,false],expected:0}],
+    debugging:{
+      code:"def solve(data):\n    unread = 0\n    for message in data:\n        if message:\n            unread = unread + 1\n        return unread\n",
+      scenario:"An inbox contains [true, false, true]. Two messages are unread, but the badge says one. With an empty inbox, the function returns None instead of zero.",
+      vocabulary:"A boolean is True or False. if message checks that value. return ends the entire function immediately. Python indentation determines which instructions belong to a loop.",
+      prediction:{prompt:"For [true, false, true], what does the original function return?",options:["2","1","0"],correct:1,feedback:["That would require visiting the last message. Does the function reach it?","Yes. It returns after inspecting only the first message.","The first message is unread, so the counter changes before returning."]},
+      diagnosis:{prompt:"What explains both the missed messages and the empty-inbox result?",options:["The return is inside the loop","The counter starts at zero","The list contains false values"],correct:0,feedback:["Exactly. An early return prevents later visits; an empty loop never reaches that return.","Zero correctly describes an inbox before any unread messages are counted.","Read messages are valid input. They should be skipped without stopping the search."]},
+      review:["Explain when a function should return its final count.","Show why a one-message inbox can hide the mistake.","Explain how your fix returns zero even when the loop has no iterations."],
+    },
+  },
+];
 export const codingProblems: CodingProblem[] = [
+  ...debuggingProblems,
   { slug:"trail-total", title:"The trail total", topic:"Accumulators", level:"Foundation", description:"A walker records a signed distance for each segment: forward distances are positive and backward distances are negative. Find their final displacement from the starting point.", contract:"Return one integer: the sum of the integers in data. An empty trail ends at its starting point.", constraints:["data is a list of 0–100 integers.","Each distance is between -1,000 and 1,000."], hints:["What single piece of state describes your position after any prefix of the trail?","What should that state be before taking a step?","Can you process a negative segment with the same update as a positive one?"], tests:[{name:"Mixed directions",input:[4,-2,7],expected:9},{name:"No movement",input:[],expected:0},{name:"Backward trail",input:[-3,-6],expected:-9},{name:"Return to start",input:[8,-8,0],expected:0}] },
   { slug:"count-positive-days", title:"Days above zero", topic:"Conditions", level:"Foundation", description:"A sensor records one integer temperature each day. Count how many days were strictly above zero. A zero reading is not a positive day.", contract:"Return the count of positive integers in data.", constraints:["data contains 0–100 integer readings.","Readings are between -100 and 100."], hints:["What is the difference between counting the readings and adding them?","Should zero pass your condition?","Which counter value describes an empty record?"], tests:[{name:"Mixed readings",input:[-2,0,6,3],expected:2},{name:"Empty record",input:[],expected:0},{name:"All freezing",input:[-1,0,-4],expected:0},{name:"All positive",input:[1,1,2],expected:3}] },
   { slug:"largest-step", title:"The largest step", topic:"Adjacent comparisons", level:"Foundation", description:"An instrument gives a sequence of readings. Find the largest absolute change between consecutive readings. There is no change to measure when fewer than two readings exist.", contract:"Return the largest absolute adjacent difference, or 0 for fewer than two values.", constraints:["data is a list of 0–100 integers.","Each reading is between -1,000 and 1,000."], hints:["How many adjacent pairs are there for n readings?","Should a fall of eight count less than a rise of eight?","Which previous value is needed when the next reading arrives?"], tests:[{name:"Rise and fall",input:[2,8,3],expected:6},{name:"One reading",input:[7],expected:0},{name:"No readings",input:[],expected:0},{name:"Crossing zero",input:[-8,5,4],expected:13}] },

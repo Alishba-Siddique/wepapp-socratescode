@@ -36,3 +36,6 @@ The account browser runner emits a fixed failure message instead of logging caug
 
 ## Beginner journey boundary
 `GET /start` is a public static route (tier 4). Its original authored content performs no server mutations or model requests. Browser state accepts only version 1, an integer lesson count within the catalog and a boolean practice marker; raw input is capped at 512 characters. The progress marker remains untrusted local practice evidence. Storage errors preserve a usable tab-only lesson with a visible warning; no secrets, submitted code or prose are stored in this record. Python continues through the existing opaque worker boundary.
+
+## Debugging exercises
+The three `/solve/debug-*` routes use the existing public known-slug route and isolated Python worker. Broken starters and all cases are original local content. The reflection is capped at 2,000 characters, held in React state, rendered as text and not transmitted or persisted. A passed marker is tied to an all-cases run of the current code; it remains untrusted practice evidence and grants no server authority. No new service, external request or dependency is introduced.
