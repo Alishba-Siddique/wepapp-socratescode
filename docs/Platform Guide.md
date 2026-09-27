@@ -20,6 +20,10 @@ The product serves people who can currently get code from AI but cannot yet expl
 Guest PRIMM progress and coding/design drafts stay in this browser. Coding and design drafts are shared by users of the same browser; do not write secrets. Design answers can be exported to Markdown for Obsidian. Pattern reflections currently last only while their page is open.
 Debugging uses the same saved editor drafts. Questions always refer to the original broken program, which remains available for inspection. Explanations and question selections stay in the current page only; no prose grading, account completion, remote execution or model request is involved.
 
+Open `/debugging` or **Learn debugging** in the sidebar before the repair exercises. Four stages teach reading errors, reproducing a failure, finding the first state mismatch and checking a repair. The trace is an authored visualization, not a live Python debugger. Lesson progress resumes locally; review does not erase it.
+
+The **My debugging notebook** section below each repair workspace stores evidence and hypotheses separately from the temporary post-check reflection. Use **Save notebook** deliberately, or **Export debugging notes** to download Markdown for Obsidian. Each exercise has its own notebook. No account sync or automatic grading; the last explicit save in the same browser wins. Export before leaving if storage is unavailable.
+
 With a configured account service, sign in at `/account`, explicitly import guest PRIMM progress if wanted, and use **Save to account** in a lab. Existing account progress wins an import conflict. Account drafts are tab memory until saved; a reload loads the server version. Coding/design drafts are not yet account-synchronized.
 
 ## Honest expectations

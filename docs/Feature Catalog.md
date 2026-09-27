@@ -32,6 +32,7 @@ Choose one feature note -> define observable acceptance -> update contracts -> i
 /patterns adds 17 searchable pattern notes, family filters, expandable authored questions and external practice links. It does not claim runtime execution, AI hints or lab completion. See [[features/Interview Patterns]].
 
 ## September 20 learning expansion
+The debugging extension adds `/debugging` with four beginner teaching stages and per-exercise browser-local evidence notebooks with Markdown export. Acceptance and limitations are maintained in [[features/Debugging Workshop]].
 | Feature | Implemented scope | Limit |
 | --- | --- | --- |
 | Python editor | Monaco, 23 problems including three debugging tasks, custom input, visible tests, console, stop/deadline | Browser execution; no hidden judge or account draft sync |

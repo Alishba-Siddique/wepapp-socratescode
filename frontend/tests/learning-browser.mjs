@@ -20,6 +20,41 @@ page.on("console",message=>{if(message.type()==="error")runtimeLog.push(message.
 page.on("requestfailed",request=>runtimeLog.push({url:request.url(),failure:request.failure()}));
 const errors=[]; page.on("pageerror",error=>errors.push(error.message));
 try {
+  await page.goto(base+"/debugging");
+  await expect(page.locator(".guest-profile")).toHaveAttribute("aria-busy", "false");
+  await page.evaluate(()=>localStorage.setItem("socratescode:debugging-method:v1",'{"version":1,"completed":99}'));
+  await page.reload();
+  await expect(page.getByRole("button",{name:"04 Repair, then challenge it"})).toBeDisabled();
+  const methodAnswers = ["A runtime error: an instruction could not finish", "[4, 2]: expected 6, actual 2", "After visiting the second price", "Run the original failing case, empty and single baskets, and a basket ending in a free item"];
+  for (let index=0;index<4;index++) {
+    if(index===2) {
+      await expect(page.locator(".debug-question")).toHaveCount(0);
+      await page.getByRole("button",{name:"Next state",exact:true}).click();
+      await page.getByRole("button",{name:"Next state",exact:true}).click();
+      await expect(page.getByRole("status").filter({hasText:"Mismatch:"})).toContainText("earlier work has been lost");
+      await page.getByRole("button",{name:"Next state",exact:true}).click();
+      await expect(page.getByRole("button",{name:"Next state",exact:true})).toBeDisabled();
+      await page.getByRole("button",{name:"Previous state",exact:true}).click();
+      await expect(page.getByRole("status").filter({hasText:"After price = 2"})).toBeVisible();
+    }
+    const question=page.locator(".debug-question");
+    await question.getByRole("radio").nth(index===3?1:0).check();
+    await question.getByRole("button",{name:"Check my reasoning"}).click();
+    const next=page.getByRole("button",{name:index===3?"Finish and practise":"Save and continue",exact:true});
+    await expect(next).toBeDisabled();
+    await question.getByRole("radio",{name:methodAnswers[index],exact:true}).check();
+    await question.getByRole("button",{name:"Check my reasoning"}).click();
+    await next.focus(); await next.press("Enter");
+    await page.reload();
+    await expect(page.locator(".guest-profile")).toHaveAttribute("aria-busy", "false");
+    if(index<3) await expect(page.locator('.beginner-steps [aria-current="step"]')).toContainText(`0${index+2}`);
+  }
+  await expect(page.getByRole("heading",{name:"Now investigate a real program."})).toBeVisible();
+  await page.setViewportSize({width:390,height:844});
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),"debugging method fits mobile");
+  await page.getByRole("button",{name:"Review the method"}).click();
+  await page.screenshot({path:path.join(artifacts,"debugging-method-mobile.png"),fullPage:true,animations:"disabled"});
+  await page.setViewportSize({width:1440,height:1000});
   await page.goto(base+"/start");
   await expect(page.locator(".guest-profile")).toHaveAttribute("aria-busy", "false");
   await page.evaluate(()=>localStorage.setItem("socratescode:beginner:v1",'{"version":1,"completed":900,"practicePassed":true}'));
@@ -164,6 +199,25 @@ try {
     await expect(page.locator(".guest-profile")).toHaveAttribute("aria-busy", "false");
     await page.getByRole("button",{name:"Use simple editor"}).click();
     await expect(editor).toHaveValue(task.repair+"# Changed since the last check\n");
+    if (task.slug === "debug-basket-total") {
+      const notebook=page.getByRole("region",{name:"Debugging notebook"});
+      await notebook.getByText("My debugging notebook",{exact:true}).click();
+      await notebook.getByRole("textbox",{name:/Smallest input/}).fill("[4, 2]");
+      await notebook.getByRole("textbox",{name:/Expected behavior/}).fill("6");
+      await notebook.getByRole("textbox",{name:/Observed behavior/}).fill("2");
+      await notebook.getByRole("textbox",{name:/My hypothesis/}).fill("The old total disappears after the second price.");
+      await notebook.getByRole("button",{name:"Save notebook"}).click();
+      await expect(notebook.getByRole("status")).toHaveText("Notebook saved on this browser.");
+      await page.reload();
+      await notebook.getByText("My debugging notebook",{exact:true}).click();
+      await expect(notebook.getByRole("textbox",{name:/My hypothesis/})).toHaveValue("The old total disappears after the second price.");
+      const exported=page.waitForEvent("download");
+      await notebook.getByRole("button",{name:"Export debugging notes"}).click();
+      const file=await exported;
+      assert.equal(file.suggestedFilename(),"debug-basket-total-debugging-notebook.md");
+      const stream=await file.createReadStream();const chunks=[];for await(const chunk of stream)chunks.push(chunk);
+      assert(Buffer.concat(chunks).toString("utf8").includes("    The old total disappears after the second price."));
+    }
     await page.setViewportSize({width:390,height:844});
     assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`debug exercise fits mobile: ${task.slug}`);
     if (task.slug === "debug-basket-total") await page.screenshot({path:path.join(artifacts,"debugging-mobile.png"),fullPage:true,animations:"disabled"});
@@ -180,8 +234,9 @@ try {
   const unavailable=await page.context().newPage();
   await unavailable.addInitScript(()=>{
     const read=Storage.prototype.getItem, write=Storage.prototype.setItem;
-    Storage.prototype.getItem=function(key){if(key==="socratescode:beginner:v1")throw new DOMException("Blocked","SecurityError");return read.call(this,key);};
-    Storage.prototype.setItem=function(key,value){if(key==="socratescode:beginner:v1")throw new DOMException("Blocked","QuotaExceededError");return write.call(this,key,value);};
+    const blocked=key=>key==="socratescode:beginner:v1"||key==="socratescode:debugging-method:v1"||key.startsWith("socratescode:debug-notebook:");
+    Storage.prototype.getItem=function(key){if(blocked(key))throw new DOMException("Blocked","SecurityError");return read.call(this,key);};
+    Storage.prototype.setItem=function(key,value){if(blocked(key))throw new DOMException("Blocked","QuotaExceededError");return write.call(this,key,value);};
   });
   await unavailable.goto(base+"/start");
   await expect(unavailable.getByText("Browser storage is unavailable.",{exact:false})).toBeVisible();
@@ -194,6 +249,22 @@ try {
   await unavailable.locator(".beginner-question").nth(1).getByRole("button",{name:"Check my thinking"}).click();
   await unavailable.getByRole("button",{name:"Save and continue"}).click();
   await expect(unavailable.locator(".beginner-steps [aria-current=step]")).toContainText("02");
+  await unavailable.goto(base+"/debugging");
+  await expect(unavailable.getByText("Browser storage is unavailable.",{exact:false})).toBeVisible();
+  await unavailable.getByRole("radio",{name:methodAnswers[0],exact:true}).check();
+  await unavailable.getByRole("button",{name:"Check my reasoning"}).click();
+  await unavailable.getByRole("button",{name:"Save and continue"}).click();
+  await expect(unavailable.locator(".beginner-steps [aria-current=step]")).toContainText("02");
+  await unavailable.goto(base+"/solve/debug-basket-total");
+  const localNotebook=unavailable.getByRole("region",{name:"Debugging notebook"});
+  await localNotebook.getByText("My debugging notebook",{exact:true}).click();
+  await localNotebook.getByRole("textbox",{name:/My hypothesis/}).fill("I can still record my evidence.");
+  await localNotebook.getByRole("button",{name:"Save notebook"}).click();
+  await expect(localNotebook.getByRole("status")).toContainText("Could not save");
+  await expect(localNotebook.getByRole("textbox",{name:/My hypothesis/})).toHaveValue("I can still record my evidence.");
+  const localDownload=unavailable.waitForEvent("download");
+  await localNotebook.getByRole("button",{name:"Export debugging notes"}).click();
+  assert.equal((await localDownload).suggestedFilename(),"debug-basket-total-debugging-notebook.md");
   await unavailable.close();
   console.log("PASS: Socratic feedback and traces, design drafting/export, editor execution, wrong answer, timeout/recovery, persistence, opaque origin, mobile");
 } catch(error) { writeFileSync(path.join(artifacts,"runtime-errors.json"),JSON.stringify(runtimeLog,null,2)); await page.screenshot({path:path.join(artifacts,"learning-failure.png"),fullPage:true});console.error(await page.locator(".run-status").textContent().catch(()=>""));throw error; }

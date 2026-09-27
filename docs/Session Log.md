@@ -70,3 +70,8 @@ PR #26's final revision passed CI run 36267378056 and merged as 954dc2e78d5b628d
 
 ## 2026-09-27 - Practical debugging
 Implemented [[features/Debugging Workshop]] with three product-motivated tasks and real editor repairs. Updated the practice catalog, first-steps handoff, README, browser journeys, smoke inventory and route audit. No new dependencies. The user will run local npm/npx commands; direct Node domain checks (10) and browser-script syntax checks passed. Build, lint and browser verification remain CI gates; do not label the feature released until they pass.
+
+Workshop release verified: PR #27 passed all checks in 36330949263, merged as 573d25a39a929bff0f25ccef40a18cd69102deb5, and production run 36331206590 passed. All three public debugging exercise routes returned HTTP 200 with the expected content.
+
+## Debugging instruction and investigation notes
+The user asked to teach debugging explicitly and explain how an experienced engineer approaches it. Implemented a four-stage teaching route, authored state comparison, sequential local progress and an explicit-save evidence notebook with Markdown export. Connected the route from navigation, curriculum, practice and repair exercises. The notebook is independent of the temporary post-check reflection and has no account sync or model calls. Eleven direct Node domain checks and browser-script syntax checks passed locally; local npm/npx commands remain reserved for the user. CI must verify the new teaching and notebook journeys before release.

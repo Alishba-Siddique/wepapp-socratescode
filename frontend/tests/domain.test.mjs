@@ -8,6 +8,19 @@ import { patterns } from "../lib/patterns.ts";
 import { productLessons } from "../lib/product-lessons.ts";
 import { designChallenges } from "../lib/design-challenges.ts";
 import { beginnerLessons, parseBeginner, completeBeginnerLesson } from "../lib/beginner.ts";
+import { basketTrace, emptyDebugNotebook, notebookMarkdown, parseDebugNotebook, parseDebuggingProgress } from "../lib/debugging-method.ts";
+
+test("debugging lesson progress and notebooks reject corrupt or oversized browser data", () => {
+  for (const raw of [null, "{", "[]", "null", "x".repeat(129), '{"version":1,"completed":99}', '{"version":1,"completed":-1}', '{"version":1,"completed":2.5}', '{"version":2,"completed":4}']) assert.equal(parseDebuggingProgress(raw), 0);
+  assert.equal(parseDebuggingProgress('{"version":1,"completed":4}'), 4);
+  const notes = { ...emptyDebugNotebook(), input: "[4, 2]", expected: "6", actual: "2", hypothesis: "The old total is overwritten." };
+  assert.deepEqual(parseDebugNotebook(JSON.stringify({version:1, notes})), notes);
+  for (const raw of [null, "[]", "{", "x".repeat(40001), JSON.stringify({version:2,notes}), JSON.stringify({version:1,notes:{...notes,input:42}}), JSON.stringify({version:1,notes:{...notes,outcome:"x".repeat(1001)}})]) assert.deepEqual(parseDebugNotebook(raw), emptyDebugNotebook());
+  const exported = notebookMarkdown("Basket", {...notes,hypothesis:"<img src=x>\n# injected heading\n```"});
+  assert(exported.includes("    <img src=x>\n    # injected heading\n    ```"));
+  assert.equal(basketTrace.findIndex(frame => frame.actual !== frame.expected), 2);
+  assert.equal(basketTrace[2].expected, 4 + 2);
+});
 
 test("beginner progress rejects corrupt, oversized and incompatible data without unlocking later steps", () => {
   for (const raw of [null, "{", "[]", "null", "x".repeat(513), '{"version":2,"completed":3,"practicePassed":true}', '{"version":1,"completed":99,"practicePassed":true}', '{"version":1,"completed":1.5,"practicePassed":false}']) {

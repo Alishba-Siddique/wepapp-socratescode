@@ -35,3 +35,5 @@ Implemented `/start`: three progressively scaffolded lessons on assignment, loop
 
 ## Debugging workshop
 Implemented three original repair exercises within `/practice` and `/solve/[slug]`: accumulation, strict boundaries and early return. Deliberately broken starter programs, misconception feedback, an existing real Python editor, regression cases and an ungraded explanation review make the full learning loop usable. No new dependency or hosted service. Acceptance and verification: [[features/Debugging Workshop]].
+
+Expanded with `/debugging`: error literacy, small reproductions, guided state comparisons and regression reasoning. A per-exercise notebook records evidence, hypothesis, experiment and outcome and exports to Obsidian. This is a beginner method, not a live interactive debugger or production incident console. Further curriculum can introduce actual breakpoints, stack-frame inspection and multi-service incidents only with runnable examples and verified tooling.
