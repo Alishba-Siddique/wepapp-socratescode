@@ -6,6 +6,7 @@ import { starterCode, type CodingProblem, type JsonValue } from "@/lib/coding-pr
 import { readBeginnerProgress, saveBeginnerProgress } from "@/lib/beginner-progress";
 import { beginnerLessons } from "@/lib/beginner";
 import { DebuggingCoach, DebuggingReflection } from "./debugging-coach";
+import { DebuggingNotebook } from "./debugging-notebook";
 const CodeEditor = dynamic(() => import("./code-editor"), { ssr:false, loading:() => <p className="editor-loading">Loading the editor…</p> });
 type Result = { value?: JsonValue; error?: string };
 function equal(a: JsonValue | undefined, b: JsonValue): boolean {
@@ -100,5 +101,6 @@ export function CodingWorkspace({ problem }: { problem: CodingProblem }) {
         <details className="stdout" open={!!output}><summary>Console output</summary><pre>{output||"print() output will appear here."}</pre></details><p className="runner-note">Python runs on your device in a separate worker. Checks are visible practice cases, not a verified assessment. Standard-library exercises only; package installation and access to application services are blocked.</p>
       </section>
     </div>
+    {problem.debugging && <DebuggingNotebook key={problem.slug} slug={problem.slug} title={problem.title} />}
   </div>;
 }

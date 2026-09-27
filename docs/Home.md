@@ -38,6 +38,7 @@ Baseline copies are preserved in [[reference/PRD]], [[reference/TRD]] and [[refe
 - [[templates/Decision]] and [[templates/Incident]] - decisions and operational learning.
 
 - [[features/Interview Patterns]] - searchable pattern reference, Socratic questions and practice sources.
+- [[features/Debugging Workshop]] - debugging lessons, real Python repairs and exportable investigation notes.
 
 ## Current delivery
 - [[Development Workflow]] - how the vault, implementation, tests and releases stay synchronized.

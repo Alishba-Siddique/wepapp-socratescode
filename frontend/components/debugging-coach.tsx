@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import type { DebugExercise, DebugQuestion } from "@/lib/coding-problems";
 
-function Check({ question, onCorrect }: { question: DebugQuestion; onCorrect: () => void }) {
+export function DebugQuestionCheck({ question, onCorrect }: { question: DebugQuestion; onCorrect: () => void }) {
   const [choice, setChoice] = useState(-1);
   const [checked, setChecked] = useState(-1);
   return <form className="debug-question" onSubmit={event => { event.preventDefault(); if (choice < 0) return; setChecked(choice); if (choice === question.correct) onCorrect(); }}>
@@ -17,10 +18,11 @@ export function DebuggingCoach({ exercise }: { exercise: DebugExercise }) {
   const [diagnosed, setDiagnosed] = useState(false);
   return <section className="debug-coach" aria-label="Debug with Socrates">
     <p className="eyebrow">DEBUG WITH SOCRATES</p><h2>Find the cause before the fix.</h2>
+    <p><Link prefetch={false} href="/debugging">New to debugging? Learn the method first.</Link></p>
     <p>{exercise.scenario}</p><details><summary>Words you need for this exercise</summary><p>{exercise.vocabulary}</p></details>
     <details><summary>Inspect the original broken program</summary><pre><code>{exercise.code}</code></pre><p>These questions refer to this original program. Your editor draft may already have changes.</p></details>
-    <h3>1. Predict the mistake</h3><Check question={exercise.prediction} onCorrect={() => setPredicted(true)} />
-    {predicted && <><h3>2. Narrow it down</h3><Check question={exercise.diagnosis} onCorrect={() => setDiagnosed(true)} /></>}
+    <h3>1. Predict the mistake</h3><DebugQuestionCheck question={exercise.prediction} onCorrect={() => setPredicted(true)} />
+    {predicted && <><h3>2. Narrow it down</h3><DebugQuestionCheck question={exercise.diagnosis} onCorrect={() => setDiagnosed(true)} /></>}
     {diagnosed && <div className="debug-next" role="status"><h3>3. Make one deliberate change</h3><p>Repair the Python in the editor, then run all checks. If a case still fails, compare its input, expected result and actual result. The questions identify the cause; you write the repair.</p><a href="#python-repair" className="button secondary">Go to my editor</a></div>}
   </section>;
 }
