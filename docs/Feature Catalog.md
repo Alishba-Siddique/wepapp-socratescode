@@ -34,7 +34,7 @@ Choose one feature note -> define observable acceptance -> update contracts -> i
 ## September 20 learning expansion
 | Feature | Implemented scope | Limit |
 | --- | --- | --- |
-| Python editor | Monaco, 20 problems, custom input, visible tests, console, stop/deadline | Browser execution; no hidden judge or account draft sync |
+| Python editor | Monaco, 23 problems including three debugging tasks, custom input, visible tests, console, stop/deadline | Browser execution; no hidden judge or account draft sync |
 | GitHub exercises | Eight MIT-licensed Exercism specs, 88 selected public cases | Pinned revision and reviewed adapters |
 | Socratic pattern lessons | 17 prediction/trace/reflection sequences | Authored feedback; no automatic prose grading |
 | DSA in products | Sourced use, mechanism and tradeoff for every pattern | Illustrative designs labeled explicitly |

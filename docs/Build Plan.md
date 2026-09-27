@@ -32,3 +32,6 @@ Next curriculum work: richer misconception-specific prompts, graded scaffolding 
 
 ## September 27 beginner increment
 Implemented `/start`: three progressively scaffolded lessons on assignment, loops and debugging; prediction and transfer questions; explicit guided traces; a fourth independent Python challenge. Dashboard/curriculum and sidebar provide an entry point. Each completed lesson can be reviewed; current progress resumes locally. This increment adds no service or database schema. Validation and deployment evidence belong in [[Session Log]]. Next: durable account deployment, more targeted misconceptions and practical engineering tasks.
+
+## Debugging workshop
+Implemented three original repair exercises within `/practice` and `/solve/[slug]`: accumulation, strict boundaries and early return. Deliberately broken starter programs, misconception feedback, an existing real Python editor, regression cases and an ungraded explanation review make the full learning loop usable. No new dependency or hosted service. Acceptance and verification: [[features/Debugging Workshop]].

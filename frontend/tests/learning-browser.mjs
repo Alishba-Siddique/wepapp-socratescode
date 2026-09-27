@@ -2,6 +2,7 @@ import { chromium, firefox, webkit, expect } from "@playwright/test";
 import assert from "node:assert/strict";
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { codingProblems } from "../lib/coding-problems.ts";
 const base = process.env.WEB_APP_URL || "http://localhost:3001";
 const engine = {chromium,firefox,webkit}[process.env.BROWSER || "chromium"];
 const browser = await engine.launch({channel:engine===chromium&&process.platform==="win32"?"msedge":undefined});
@@ -80,7 +81,7 @@ try {
   const download=page.waitForEvent("download");await page.getByRole("button",{name:"Export my reasoning as Markdown"}).click();assert.equal((await download).suggestedFilename(),"learning-schema-my-reasoning.md");
   await page.goto(base+"/practice");
   await expect(page.locator(".guest-profile")).toHaveAttribute("aria-busy", "false");
-  await expect(page.locator(".native-problem")).toHaveCount(20);
+  await expect(page.locator(".native-problem")).toHaveCount(codingProblems.length);
   await page.goto(base+"/solve/trail-total");
   await expect(page.locator(".guest-profile")).toHaveAttribute("aria-busy", "false");
   await page.locator(".monaco-editor").waitFor({timeout:30000});
@@ -115,6 +116,59 @@ try {
   assert((await page.locator(".case-result pre").first().textContent()).includes('"blocked":true'));
   assert.equal(responses,0,"private API must never return a response to the runner");
   assert(blockedRequests.length>0 || runtimeLog.some(entry=>typeof entry==="string"&&entry.includes("/api/private-probe")&&/connect-src|Content-Security-Policy/.test(entry)),"CSP must reject the private API request");
+  await page.goto(base+"/practice");
+  await page.getByRole("button",{name:"Debugging",exact:true}).click();
+  await expect(page.locator(".native-problem")).toHaveCount(3);
+  for (const task of [
+    {slug:"debug-basket-total", prediction:"500", diagnosis:"After the second price", fragment:"total = price", repair:"def solve(data):\n    total = 0\n    for price in data:\n        total = total + price\n    return total\n", cases:4},
+    {slug:"debug-temperature-boundary", prediction:"2", diagnosis:"[0]", fragment:"reading >= 0", repair:"def solve(data):\n    count = 0\n    for reading in data:\n        if reading > 0:\n            count = count + 1\n    return count\n", cases:5},
+    {slug:"debug-inbox-return", prediction:"1", diagnosis:"The return is inside the loop", fragment:"        return unread", repair:"def solve(data):\n    unread = 0\n    for message in data:\n        if message:\n            unread = unread + 1\n    return unread\n", cases:5},
+  ]) {
+    await page.goto(base+"/solve/"+task.slug);
+    await expect(page.locator(".guest-profile")).toHaveAttribute("aria-busy", "false");
+    await page.getByRole("button",{name:"Use simple editor"}).click();
+    await expect(editor).toHaveValue(new RegExp(task.fragment.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")));
+    const questions=page.locator(".debug-question");
+    await questions.first().getByRole("radio").first().check();
+    await questions.first().getByRole("button",{name:"Check my reasoning"}).click();
+    await expect(questions).toHaveCount(1);
+    await questions.first().getByRole("radio",{name:task.prediction,exact:true}).check();
+    await questions.first().getByRole("button",{name:"Check my reasoning"}).click();
+    await questions.nth(1).getByRole("radio",{name:task.diagnosis,exact:true}).check();
+    await questions.nth(1).getByRole("button",{name:"Check my reasoning"}).click();
+    await expect(page.getByRole("link",{name:"Go to my editor"})).toBeVisible();
+    await page.getByRole("button",{name:"Run all checks",exact:true}).click();
+    await page.locator(".run-status").filter({hasText:"Some checks need another look"}).waitFor({timeout:75000});
+    await expect(page.getByRole("region",{name:"Explain your repair"})).toHaveCount(0);
+    await editor.fill(task.repair);
+    await page.getByRole("button",{name:"Run all checks",exact:true}).click();
+    await page.locator(".run-status").filter({hasText:"All practice checks passed"}).waitFor({timeout:75000});
+    await expect(page.locator('.case-result[data-passed="true"]')).toHaveCount(task.cases);
+    const reflection=page.getByRole("region",{name:"Explain your repair"});
+    await reflection.getByRole("textbox").fill("I reproduced the mistake, changed the cause, and tested the boundary and empty cases.");
+    await reflection.getByRole("button",{name:"Review my explanation"}).click();
+    await expect(reflection.getByRole("status")).toContainText("self-review, not an AI grade");
+    if (task.slug === "debug-basket-total") {
+      await page.screenshot({path:path.join(artifacts,"debugging-desktop.png"),fullPage:true,animations:"disabled"});
+      await page.getByText("Try your own input",{exact:true}).click();
+      await page.getByRole("button",{name:"Run custom input",exact:true}).click();
+      await page.locator(".run-status").filter({hasText:"Custom run finished"}).waitFor({timeout:75000});
+      await expect(reflection).toHaveCount(0);
+      await page.getByRole("button",{name:"Run all checks",exact:true}).click();
+      await page.locator(".run-status").filter({hasText:"All practice checks passed"}).waitFor({timeout:75000});
+      await expect(reflection).toBeVisible();
+    }
+    await editor.fill(task.repair+"# Changed since the last check\n");
+    await expect(reflection).toHaveCount(0);
+    await page.reload();
+    await expect(page.locator(".guest-profile")).toHaveAttribute("aria-busy", "false");
+    await page.getByRole("button",{name:"Use simple editor"}).click();
+    await expect(editor).toHaveValue(task.repair+"# Changed since the last check\n");
+    await page.setViewportSize({width:390,height:844});
+    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`debug exercise fits mobile: ${task.slug}`);
+    if (task.slug === "debug-basket-total") await page.screenshot({path:path.join(artifacts,"debugging-mobile.png"),fullPage:true,animations:"disabled"});
+    await page.setViewportSize({width:1440,height:1000});
+  }
   for (const route of ["/patterns/sliding-window","/design/learning-schema","/solve/exercism-leap"]) {
     await page.goto(base+route);
   await expect(page.locator(".guest-profile")).toHaveAttribute("aria-busy", "false");await page.setViewportSize({width:390,height:844});
