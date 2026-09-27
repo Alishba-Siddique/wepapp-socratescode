@@ -2,6 +2,7 @@ import { chromium, firefox, webkit, expect } from "@playwright/test";
 import assert from "node:assert/strict";
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { codingProblems } from "../lib/coding-problems.ts";
 const base = process.env.WEB_APP_URL || "http://localhost:3001";
 const engine = {chromium,firefox,webkit}[process.env.BROWSER || "chromium"];
 const browser = await engine.launch({channel:engine===chromium&&process.platform==="win32"?"msedge":undefined});
@@ -80,7 +81,7 @@ try {
   const download=page.waitForEvent("download");await page.getByRole("button",{name:"Export my reasoning as Markdown"}).click();assert.equal((await download).suggestedFilename(),"learning-schema-my-reasoning.md");
   await page.goto(base+"/practice");
   await expect(page.locator(".guest-profile")).toHaveAttribute("aria-busy", "false");
-  await expect(page.locator(".native-problem")).toHaveCount(20);
+  await expect(page.locator(".native-problem")).toHaveCount(codingProblems.length);
   await page.goto(base+"/solve/trail-total");
   await expect(page.locator(".guest-profile")).toHaveAttribute("aria-busy", "false");
   await page.locator(".monaco-editor").waitFor({timeout:30000});
