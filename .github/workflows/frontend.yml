@@ -61,6 +61,12 @@ jobs:
       - run: npm test
       - run: npm run lint
       - run: npm run typecheck
+      - name: Verify the Chrome companion and downloadable package
+        working-directory: .
+        run: |
+          node extension/build.mjs
+          node --test extension/tests/model.test.mjs
+          python3 extension/package.py --check
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
       - name: Verify portable delivery install
@@ -170,6 +176,13 @@ jobs:
         env:
           BROWSER: ${{ matrix.browser }}
           TEST_ARTIFACT_DIR: ${{ github.workspace }}/test-results/${{ matrix.browser }}
+      - name: Verify the installed Chrome companion
+        if: matrix.browser == 'chromium'
+        run: |
+          node extension/build.mjs
+          node extension/tests/browser.mjs
+        env:
+          TEST_ARTIFACT_DIR: ${{ github.workspace }}/test-results/extension
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:

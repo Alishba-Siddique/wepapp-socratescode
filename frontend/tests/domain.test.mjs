@@ -9,6 +9,15 @@ import { productLessons } from "../lib/product-lessons.ts";
 import { designChallenges } from "../lib/design-challenges.ts";
 import { beginnerLessons, parseBeginner, completeBeginnerLesson } from "../lib/beginner.ts";
 import { basketTrace, emptyDebugNotebook, notebookMarkdown, parseDebugNotebook, parseDebuggingProgress } from "../lib/debugging-method.ts";
+import { parsePersonalTests, parseTestValue } from "../lib/personal-tests.ts";
+
+test("personal test cases preserve false/null and reject unbounded or invalid inputs", () => {
+  for (const raw of ["", "[1,]", "1e999", '"'+"x".repeat(1500)+'"', '['.repeat(14)+'0'+']'.repeat(14)]) assert.throws(()=>parseTestValue(raw));
+  assert.deepEqual(parseTestValue('[0,false,null]'),[0,false,null]);
+  const cases=[{name:"False is a value",input:false,expected:null}];
+  assert.deepEqual(parsePersonalTests(JSON.stringify({version:1,cases})),cases);
+  for(const raw of [null,"{","[]",JSON.stringify({version:2,cases}),JSON.stringify({version:1,cases:Array(7).fill(cases[0])}),JSON.stringify({version:1,cases:[{name:"Missing result",input:0}]}),JSON.stringify({version:1,cases:[{...cases[0],name:""}]})])assert.deepEqual(parsePersonalTests(raw),[]);
+});
 
 test("debugging lesson progress and notebooks reject corrupt or oversized browser data", () => {
   for (const raw of [null, "{", "[]", "null", "x".repeat(129), '{"version":1,"completed":99}', '{"version":1,"completed":-1}', '{"version":1,"completed":2.5}', '{"version":2,"completed":4}']) assert.equal(parseDebuggingProgress(raw), 0);

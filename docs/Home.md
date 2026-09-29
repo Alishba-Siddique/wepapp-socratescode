@@ -39,6 +39,8 @@ Baseline copies are preserved in [[reference/PRD]], [[reference/TRD]] and [[refe
 
 - [[features/Interview Patterns]] - searchable pattern reference, Socratic questions and practice sources.
 - [[features/Debugging Workshop]] - debugging lessons, real Python repairs and exportable investigation notes.
+- [[features/Personal Regression Tests]] - predict, save and run your own Python test cases.
+- [[features/Chrome Companion]] - question-led LeetCode practice in a local Chrome side panel.
 
 ## Current delivery
 - [[Development Workflow]] - how the vault, implementation, tests and releases stay synchronized.
