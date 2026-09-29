@@ -32,12 +32,16 @@ The learning loop is **Predict → Run → Investigate → Modify → Make**. Co
 | **Debug with Socrates** | Predict three broken programs, isolate the cause, repair real Python and explain your fix |
 | **Learn the debugging method** | Identify error types, reproduce failures, compare traced state and plan regression tests |
 | **Debugging notebooks** | Record evidence and hypotheses, save locally, and export Markdown to Obsidian |
+| **Personal regression tests** | Save up to six cases per coding problem, predict outputs and investigate mismatches |
+| **Chrome companion preview** | Think through LeetCode problems with authored questions, local notes and Markdown export |
 | **17 pattern lessons** | Connect algorithms to real products, trace decisions and challenge assumptions |
 | **6 design exercises** | Practise system design, database constraints and architecture tradeoffs |
 | **54 external references** | Find further practice by topic and source |
 | **Your notes** | Resume browser drafts and export design reasoning to Markdown |
 
 Feedback is authored and deterministic. No live AI tutor or automatic prose grading is connected. Eight coding exercises are adapted from MIT-licensed Exercism specifications with pinned provenance.
+
+[Install the Chrome companion preview](https://wepapp-socratescode.vercel.app/companion) or read its [source and permission guide](extension/README.md). The extension uses explicit title/URL capture, not problem scraping or automatic submissions. No API key is required.
 
 ## Try it locally
 

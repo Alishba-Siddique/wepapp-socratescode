@@ -44,3 +44,9 @@ The debugging extension adds `/debugging` with four beginner teaching stages and
 
 ## First-steps acceptance
 `/start` provides a zero-prerequisite journey before the PRIMM catalog. Incorrect predictions do not unlock traces; learners inspect all frames and answer a changed example before moving on. The independent editor requires all visible practice checks, not a custom run alone. Progress is bounded, versioned, corruption-tolerant and browser-local. Mobile, reload, blocked storage and wrong-answer flows are exercised in the learning browser suite.
+
+## Testing and browser companion
+| Feature | User outcome | Acceptance boundary |
+| --- | --- | --- |
+| [[features/Personal Regression Tests]] | Design and run six local test cases per Python problem | Real worker comparisons, validation, edit/delete/reload/failure paths; never grants platform completion |
+| [[features/Chrome Companion]] | Reason beside a LeetCode problem and export notes | Explicit title/URL capture, local storage, authored questions; developer preview with manual toolbar verification still required |

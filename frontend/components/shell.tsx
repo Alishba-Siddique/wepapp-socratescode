@@ -31,6 +31,7 @@ export function Shell({ children }: { children: ReactNode }) {
     { href: "/patterns", label: "Pattern library", symbol: "04" },
     { href: "/practice", label: "Practice bank", symbol: "05" },
     { href: "/debugging", label: "Learn debugging", symbol: "D" },
+    { href: "/companion", label: "Chrome companion", symbol: "C" },
     { href: "/design", label: "Design practice", symbol: "06" },
     { href: "/account", label: "My account", symbol: "07" },
   ];

@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "socratescode — Think it through",
+  "description": "A local Socratic thinking companion for LeetCode: guiding questions, problem notes and Markdown export.",
+  "version": "0.1.0",
+  "minimum_chrome_version": "116",
+  "permissions": ["activeTab", "sidePanel", "storage"],
+  "action": {"default_title": "Think with socratescode"},
+  "background": {"service_worker": "background.js", "type": "module"},
+  "side_panel": {"default_path": "panel.html"},
+  "content_security_policy": {"extension_pages": "script-src 'self'; object-src 'none'; connect-src 'none'; base-uri 'none'; form-action 'none'"}
+}

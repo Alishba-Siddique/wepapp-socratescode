@@ -7,6 +7,8 @@ import { readBeginnerProgress, saveBeginnerProgress } from "@/lib/beginner-progr
 import { beginnerLessons } from "@/lib/beginner";
 import { DebuggingCoach, DebuggingReflection } from "./debugging-coach";
 import { DebuggingNotebook } from "./debugging-notebook";
+import { PersonalTests } from "./personal-tests";
+import type { PersonalTest } from "@/lib/personal-tests";
 const CodeEditor = dynamic(() => import("./code-editor"), { ssr:false, loading:() => <p className="editor-loading">Loading the editor…</p> });
 type Result = { value?: JsonValue; error?: string };
 function equal(a: JsonValue | undefined, b: JsonValue): boolean {
@@ -23,6 +25,8 @@ export function CodingWorkspace({ problem }: { problem: CodingProblem }) {
   const [results,setResults] = useState<Result[]>([]); const [checkedCode,setCheckedCode] = useState("");
   const [hints,setHints] = useState(0); const [custom,setCustom] = useState(JSON.stringify(problem.tests[0].input));
   const [customRun,setCustomRun] = useState(false); const [saved,setSaved] = useState("");
+  const [checkedCases, setCheckedCases] = useState<PersonalTest[]>([]);
+  const [personalRun, setPersonalRun] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const stopRef = useRef<(() => void) | null>(null);
   const key = `socratescode:code:v1:${problem.slug}`;
@@ -38,11 +42,13 @@ export function CodingWorkspace({ problem }: { problem: CodingProblem }) {
     setCode(value);
     try { localStorage.setItem(key,value); setSaved("Draft saved on this browser"); } catch { setSaved("Draft is open in this tab; browser storage is unavailable"); }
   }
-  function run(allTests: boolean) {
+  function run(allTests: boolean, personalTests?: PersonalTest[]) {
     if(phase!=="idle")return;
     let inputs: JsonValue[];
-    if(allTests)inputs=problem.tests.map(test=>test.input);
+    if(personalTests)inputs=personalTests.map(test=>test.input);
+    else if(allTests)inputs=problem.tests.map(test=>test.input);
     else { try { if(custom.length>5000)throw new Error(); inputs=[JSON.parse(custom)]; } catch { setMessage("Enter valid JSON for the custom input (up to 5,000 characters)."); return; } }
+    setCheckedCases(personalTests ?? (allTests ? problem.tests : [])); setPersonalRun(!!personalTests);
     setCustomRun(!allTests); setResults([]); setOutput(""); setMessage("Loading Python. The first run downloads the local runtime."); setPhase("loading");
     const iframe=document.createElement("iframe"); iframe.title="Isolated Python execution"; iframe.hidden=true; iframe.setAttribute("sandbox","allow-scripts"); iframe.src="/runner";
     const id=crypto.randomUUID(); let started=false; let ready=false;
@@ -76,7 +82,7 @@ export function CodingWorkspace({ problem }: { problem: CodingProblem }) {
           const journey = readBeginnerProgress();
           if (journey.completed === beginnerLessons.length) saveBeginnerProgress({ ...journey, practicePassed: true });
         }
-        setMessage(allTests ? passed ? "All practice checks passed. Can you explain why your approach works?" : "Some checks need another look. Compare the expected value with your result." : "Custom run finished.");
+        setMessage(allTests ? passed ? "All practice checks passed. Can you explain why your approach works?" : "Some checks need another look. Compare the expected value with your result." : personalTests ? "Your test run finished. Compare with your own expected values; these are not the platform checks." : "Custom run finished.");
         setPhase("idle");cleanup();
       } else if(data.type==="error") {setMessage(String(data.message||"Python could not complete this run.").slice(0,3000));setOutput(String(data.output||"").slice(0,12000));setPhase("idle");cleanup();}
     }
@@ -95,8 +101,9 @@ export function CodingWorkspace({ problem }: { problem: CodingProblem }) {
         <div className="editor-footer"><small>{saved||"Write Python; return your answer from solve(data)."}</small><small>{code.length.toLocaleString()} / 20,000 characters</small></div>
         <div className="run-toolbar"><button className="button primary" disabled={phase!=="idle"} onClick={()=>run(true)}>{phase==="loading"?"Loading Python…":phase==="running"?"Running…":"Run all checks"}</button>{phase!=="idle"&&<button className="button secondary" onClick={()=>{stopRef.current?.();setPhase("idle");setMessage("Execution stopped. Your code is unchanged.");}}>Stop execution</button>}</div>
         <details className="custom-input"><summary>Try your own input</summary><label className="field">Custom input (JSON)<textarea rows={3} value={custom} maxLength={5000} onChange={event=>setCustom(event.target.value)}/></label><button className="button secondary" disabled={phase!=="idle"} onClick={()=>run(false)}>Run custom input</button></details>
+        <PersonalTests slug={problem.slug} busy={phase!=="idle"} onRun={tests=>run(false,tests)} onChange={()=>{if(personalRun){setResults([]);setMessage("Your test suite changed. Run your tests again.");}}} />
         <div className="run-status" role="status">{message}</div>{results.length>0&&checkedCode!==code&&<p className="changed-code">You have changed your code. Run again to check this version.</p>}
-        <div className="case-results">{results.map((result,index)=><div className="case-result" key={index} data-passed={!customRun&&!result.error&&equal(result.value,problem.tests[index]?.expected)}><strong>{customRun?"Custom input":problem.tests[index]?.name||"Execution"}</strong><span>{result.error?"Error":customRun?"Returned":equal(result.value,problem.tests[index]?.expected)?"Passed":"Needs attention"}</span><pre>{result.error||`Returned: ${JSON.stringify(result.value)}${customRun?"":`\nExpected: ${JSON.stringify(problem.tests[index]?.expected)}`}`}</pre></div>)}</div>
+        <div className="case-results">{results.map((result,index)=><div className="case-result" key={index} data-passed={(!customRun||personalRun)&&!result.error&&equal(result.value,checkedCases[index]?.expected)}><strong>{customRun&&!personalRun?"Custom input":checkedCases[index]?.name||"Execution"}</strong><span>{result.error?"Error":customRun&&!personalRun?"Returned":equal(result.value,checkedCases[index]?.expected)?"Passed":"Needs attention"}</span><pre>{result.error||`Returned: ${JSON.stringify(result.value)}${customRun&&!personalRun?"":`\nExpected: ${JSON.stringify(checkedCases[index]?.expected)}`}`}</pre></div>)}</div>
         {problem.debugging && currentChecksPassed && <DebuggingReflection exercise={problem.debugging} />}
         <details className="stdout" open={!!output}><summary>Console output</summary><pre>{output||"print() output will appear here."}</pre></details><p className="runner-note">Python runs on your device in a separate worker. Checks are visible practice cases, not a verified assessment. Standard-library exercises only; package installation and access to application services are blocked.</p>
       </section>

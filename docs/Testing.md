@@ -25,3 +25,8 @@ See [[Session Log]] for the exact results of this change. Production SMTP, resto
 The gateway commits `.npmrc` with `legacy-peer-deps=false`. Generate its lockfile with the same peer resolution used by `npm ci`; a local global legacy-peer setting previously hid missing React peers from Prisma tooling. Verify with an isolated clean install, not just an existing node_modules tree. CI continues to use `npm ci` and does not bypass peer checks.
 
 Gateway integration coverage now includes ten checks, including actual auth route throttling, shared admission and sanitized store outages. Candidate releases run both browser journey scripts, including actual Python execution and design drafts. Smoke checks include practice, solver, pattern lesson and design routes.
+
+## Chrome companion and personal tests
+The existing quality job runs `node extension/build.mjs`, `node --test extension/tests/model.test.mjs` and `python3 extension/package.py --check`. The existing Chromium browser job runs `node extension/tests/browser.mjs` with the real unpacked MV3 extension. It covers real extension storage, URL rejection, stage guidance, note export, deletion, failed writes and narrow layout. Tab capture is mocked; manually verify the real toolbar gesture and activeTab grant on a LeetCode problem before wider distribution.
+
+The learning browser suite covers personal test validation, failing/passing code, edits that clear old results, reload/removal, storage failure and no award of platform completion. Local npm/npx commands remain reserved for the owner; remote CI performs frontend lint/type/build and browser gates. No extra CI workflow or scheduled runs were added for these features.

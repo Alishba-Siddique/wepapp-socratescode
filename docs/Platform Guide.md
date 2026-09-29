@@ -30,3 +30,9 @@ With a configured account service, sign in at `/account`, explicitly import gues
 Questions, feedback and review criteria are authored content. No live AI grading or solution generation is connected. Six design exercises are introductory interview practice, not a full senior curriculum. Learners still need implementation projects, debugging, operating systems, networking, testing, collaboration and real operational experience. See [[Learning Design]] for planned progression.
 
 First-steps progress uses its own bounded, versioned browser record. Unavailable storage falls back to tab memory with an explicit warning; it is not account sync. Only passing the full public trail-total check set after all three lessons records practice success. It does not grade the learner's explanation or establish mastery.
+
+## Build your own regression suite
+In any Python problem, expand **Build my own test cases**. Name a case, enter its JSON input and predict its JSON result before running. Save up to six cases, edit or remove them, and use **Run my tests**. A mismatch may be a bug or a mistaken expectation. These cases save in this browser and do not replace the platform checks. A failed save leaves the cases usable in the current tab. See [[features/Personal Regression Tests]].
+
+## Think beside LeetCode
+Open **Chrome companion** in the navigation for the downloadable preview and installation instructions. Load it unpacked in Chrome, open a problem, invoke the extension, then explicitly select the current problem or paste its URL. Work through five thinking stages, choose a topic for authored questions, save local notes, or export Markdown to this vault. No API key is needed. This is not an AI solver, a Web Store release or account-synced storage. See [[features/Chrome Companion]].

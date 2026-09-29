@@ -75,3 +75,10 @@ Workshop release verified: PR #27 passed all checks in 36330949263, merged as 57
 
 ## Debugging instruction and investigation notes
 The user asked to teach debugging explicitly and explain how an experienced engineer approaches it. Implemented a four-stage teaching route, authored state comparison, sequential local progress and an explicit-save evidence notebook with Markdown export. Connected the route from navigation, curriculum, practice and repair exercises. The notebook is independent of the temporary post-check reflection and has no account sync or model calls. Eleven direct Node domain checks and browser-script syntax checks passed locally; local npm/npx commands remain reserved for the user. CI must verify the new teaching and notebook journeys before release.
+
+Debugging instruction release verified: PR #28 passed CI 36332318725, merged as b2f4205da4567b4e33327cc002a040614cb33097, and production run 36332676009 succeeded. Public `/debugging` and `/solve/debug-basket-total` returned HTTP 200 with the expected teaching/notebook content.
+
+## 2026-09-29: personal tests and Chrome companion
+Implemented [[features/Personal Regression Tests]] and [[features/Chrome Companion]], linked from the app and README. Added a static installation page and reproducible preview ZIP. Guidance remains authored, tests execute locally, and neither feature requires API keys or a backend. Updated route/privacy boundaries and the linked Obsidian feature notes.
+
+Local verification: 12 frontend domain checks, three extension domain checks, strict extension TypeScript build, reproducible ZIP check, browser-script syntax and actionlint passed. Frontend lint/types/build and browser execution are deferred to CI under the owner's local npm/npx preference. Native extension toolbar permission granting is explicitly a remaining manual smoke check; the automated capture fixture is not proof of it. Remote CI and deployment have not yet been verified for this increment.
