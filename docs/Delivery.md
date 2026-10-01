@@ -13,7 +13,7 @@ Pull requests run workflow syntax validation, release-policy tests, domain tests
 
 At the owner's September 27 request, Dependabot-triggered CI jobs skip without allocating runners. Human CI, scheduled scans and deployment checks remain enabled. Update PRs and security alerts remain enabled. Do not treat a skipped `frontend-checks` as a tested update or automatically merge it. Before merging an update, select **Actions > CI > Run workflow**, choose the Dependabot branch, and verify that exact head passes all jobs. Workflow dispatch does not run the PR-only dependency-review job; review the dependency diff and security alerts too. Existing bot branches need the new workflow before this policy applies. Main still runs the complete production gate before deployment.
 
-CodeQL uploads findings; a successful scanner job does not mean there are no findings. Review Security alerts and use code-scanning rules when available. Dependency review rejects high/critical additions. Deployment tooling has a separate lockfile and compatible patched overrides; audit it as well.
+CodeQL uploads findings; a successful scanner job does not mean there are no findings. Review Security alerts and use code-scanning rules when available. Dependency review rejects high/critical additions. Deployment scripts use Node built-ins and the scoped Vercel API; they have no npm runtime dependencies.
 
 ## Release
 Only trusted main commits can deploy. PR jobs receive no deployment secrets. A green main run asks the project-scoped Vercel API to build the exact verified Git commit without assigning public domains, checks project ID/commit/readiness, smoke-tests routes and runs the deployed learning journey. It then promotes that same candidate. Obsolete candidates whose commit is no longer main are rejected. Release and rollback serialize.
@@ -34,8 +34,8 @@ Hobby plan rollback may be restricted to the previous production deployment. Do 
 ## Credentials
 Rotate the project-scoped CI token before expiry; update both environments, validate a candidate, then revoke the old token. Tokens and bypass values never belong in docs. Use existing account access for provisioning; do not store a broad personal CLI token in the repository.
 
-### Portable tooling lockfile
-Vercel includes optional WASM bindings whose transitive emnapi packages are omitted by npm on Windows. ops/package.json lists those three runtime packages explicitly as optional dependencies; keep them pinned until upstream lockfile generation is portable. The quality gate now runs a clean ops install on Linux before allowing a release.
+### Retired CLI installation
+The October 2 review confirmed that candidate creation, promotion and rollback use only Node built-ins and direct Vercel API calls. The former `ops` Vercel CLI manifests, CI installation/audit steps and obsolete Dependabot directory entry were removed together. No active release dependency is excluded from auditing. The release job caches the frontend lockfile used by its browser verification. Source/ownership checks, contract tests, application audits, candidate browser tests and promotion gates are unchanged.
 
 ## Project-scoped API delivery
 Vercel CLI 59.16 pull performs an owning-team lookup which a project-scoped credential cannot authorize. The delivery adapter uses Vercel project/deployment APIs directly, retaining the existing project-only token. It pins both Git ref and SHA, validates the linked repository, requires frontend + Next.js settings, disables automatic domain assignment, waits for READY, checks ownership, and promotes the same tested candidate. Promotion and rollback wait until the project production target matches the requested deployment. No team-wide credential is provisioned. Mutations are not automatically retried after an ambiguous network failure.

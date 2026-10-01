@@ -92,3 +92,5 @@ PR #30 implements the project. Initial CI found a JSX quotation escaping error, 
 
 ## 2026-10-02: resume the product release
 Found the regenerated frontend lockfile in the workspace. Reviewed the exact Next.js/eslint-config-next 16.3.8 and DOMPurify 3.4.16 pins and platform package changes. Thirteen domain tests and browser-script syntax pass. Pushing the package pair for clean-install, audit, build and browser validation; the feature is not yet released.
+
+Run 36918062277 verified frontend lint/types and the patched production audit, then exposed advisories in the unused Vercel CLI tree. Verified all release modes use Node built-ins and the API adapter. Removed both ops manifests and their obsolete CI/Dependabot/CODEOWNERS references; retained all checks for active components. Updated the delivery runbook. This avoids maintaining an unused dependency tree solely to pass its own audit.
