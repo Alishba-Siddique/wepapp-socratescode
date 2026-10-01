@@ -87,3 +87,8 @@ PR #29 passed all required checks in run 36504898801, with no open PR CodeQL fin
 
 ## 2026-10-01: from patterns to a product
 Implemented [[features/Product Projects]] with an original notification-inbox contract, six visible tests, a prerequisite identity question and delivery trace, embedded Python workspace, current-code review gating, local notes and Markdown export. Added sidebar/practice entry points, a standalone problem and smoke coverage. Updated the README, route audit and linked vault notes; included the previous extension release evidence in this documentation batch. Thirteen direct Node domain tests and browser-script syntax passed locally. Required frontend and browser checks remain CI gates before release.
+
+PR #30 implements the project. Initial CI found a JSX quotation escaping error, corrected in e8b34cd; lint, TypeScript and CodeQL then passed. Run 36889319757 was blocked by the production dependency audit: Next.js 16.3.4 is covered by GHSA-vcvr-r3jv-pc5j (critical), and DOMPurify 3.4.15 by GHSA-p98j-92pf-mc4p (low). Prepared Next.js/eslint-config-next 16.3.8 and DOMPurify 3.4.16, verified their registry availability. Lockfile regeneration is pending the owner's choice because local npm/npx commands were reserved for the owner. No audit suppression or merge bypass was used.
+
+## 2026-10-02: resume the product release
+Found the regenerated frontend lockfile in the workspace. Reviewed the exact Next.js/eslint-config-next 16.3.8 and DOMPurify 3.4.16 pins and platform package changes. Thirteen domain tests and browser-script syntax pass. Pushing the package pair for clean-install, audit, build and browser validation; the feature is not yet released.
