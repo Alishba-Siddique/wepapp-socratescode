@@ -11,6 +11,19 @@ import { beginnerLessons, parseBeginner, completeBeginnerLesson } from "../lib/b
 import { basketTrace, emptyDebugNotebook, notebookMarkdown, parseDebugNotebook, parseDebuggingProgress } from "../lib/debugging-method.ts";
 import { parsePersonalTests, parseTestValue } from "../lib/personal-tests.ts";
 
+import { emptyProjectDraft, parseProjectDraft, projectMarkdown, inboxProblem, inboxTrace } from "../lib/product-project.ts";
+
+test("product project validates local milestones and exports notes without markup execution", () => {
+  const draft={...emptyProjectDraft(),briefAccepted:true,traceSeen:3,plan:"Remember IDs",review:"<img src=x>\n# literal"};
+  assert.deepEqual(parseProjectDraft(JSON.stringify(draft)),draft);
+  for (const row of [null,"{",JSON.stringify({...draft,version:2}),JSON.stringify({...draft,traceSeen:4}),JSON.stringify({...draft,traceSeen:1.5}),JSON.stringify({...draft,briefAccepted:false}),JSON.stringify({...draft,plan:"x".repeat(1501)}),"x".repeat(20001)]) assert.deepEqual(parseProjectDraft(row),emptyProjectDraft());
+  assert(projectMarkdown(draft).includes("    <img src=x>\n    # literal"));
+  assert.deepEqual(inboxTrace.at(-1).ids,["a","b"]);
+  assert.equal(inboxTrace.at(-1).unread,1);
+  assert.equal(codingProblems.filter(p=>p.slug===inboxProblem.slug).length,1);
+  assert.equal(inboxProblem.tests.length,6);
+});
+
 test("personal test cases preserve false/null and reject unbounded or invalid inputs", () => {
   for (const raw of ["", "[1,]", "1e999", '"'+"x".repeat(1500)+'"', '['.repeat(14)+'0'+']'.repeat(14)]) assert.throws(()=>parseTestValue(raw));
   assert.deepEqual(parseTestValue('[0,false,null]'),[0,false,null]);
@@ -62,7 +75,7 @@ test("every pattern has a sourced usable lesson with a valid practice destinatio
   }
 });
 test("licensed imports preserve provenance, runnable inputs and essential rules", () => {
-  assert.equal(codingProblems.length,23);
+  assert.equal(codingProblems.length,24);
   assert.equal(new Set(codingProblems.map(p=>p.slug)).size,codingProblems.length);
   const imported=codingProblems.filter(p=>p.source);
   assert.equal(imported.length,8);

@@ -55,3 +55,5 @@ Baseline copies are preserved in [[reference/PRD]], [[reference/TRD]] and [[refe
 - [[DSA in Products]] ? researched applications and evidence levels.
 - [[Testing]] ? browser, runtime and account verification.
 - [[Production Configuration]] - required hosting, secret names, email setup and automation boundaries.
+
+- [[features/Product Projects]] - turn data structures, debugging and tests into a small product feature.

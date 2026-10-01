@@ -28,10 +28,11 @@ The learning loop is **Predict → Run → Investigate → Modify → Make**. Co
 | --- | --- |
 | **Start from zero** | Learn variables, loops and debugging, then write a function in the Python editor |
 | **9 logic labs** | Predict results, inspect state, change assumptions and explain your reasoning |
-| **23 coding problems** | Use Monaco or the simple editor, run Python, inspect public checks and try custom inputs |
+| **24 coding problems** | Use Monaco or the simple editor, run Python, inspect public checks and try custom inputs |
 | **Debug with Socrates** | Predict three broken programs, isolate the cause, repair real Python and explain your fix |
 | **Learn the debugging method** | Identify error types, reproduce failures, compare traced state and plan regression tests |
 | **Debugging notebooks** | Record evidence and hypotheses, save locally, and export Markdown to Obsidian |
+| **Build a product** | Implement a notification inbox: requirements, duplicate-delivery trace, Python checks and engineering review |
 | **Personal regression tests** | Save up to six cases per coding problem, predict outputs and investigate mismatches |
 | **Chrome companion preview** | Think through LeetCode problems with authored questions, local notes and Markdown export |
 | **17 pattern lessons** | Connect algorithms to real products, trace decisions and challenge assumptions |

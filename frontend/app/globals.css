@@ -1330,3 +1330,13 @@ th {
 .beginner-return { line-height:1.7; margin-bottom:1rem; }
 .beginner-return a { text-decoration:underline; text-underline-offset:3px; }
 @media(max-width:650px) { .beginner-entry { align-items:flex-start; flex-direction:column; gap:1rem; } .beginner-steps { grid-template-columns:repeat(2,minmax(0,1fr)); } .beginner-lesson { min-width:0; } }
+
+.product-project .project-milestone { margin-top:2rem; }
+.product-project .project-actions { display:flex; flex-wrap:wrap; gap:.75rem; }
+.product-project .field { display:block; margin:1.5rem 0; line-height:1.7; }
+.product-project .field textarea { display:block; width:100%; max-width:100%; min-width:0; border:1px solid #75493450; border-radius:10px; padding:1rem; background:#fffdf8; color:inherit; font:inherit; resize:vertical; margin-top:.5rem; }
+.product-project .coding-workspace { padding-inline:0; }
+.product-project .project-storage { margin-top:1rem; line-height:1.7; }
+.product-project > small { display:block; line-height:1.7; }
+.product-project details { margin:1.5rem 0; }
+.product-project summary { cursor:pointer; color:#754934; font-weight:600; }
