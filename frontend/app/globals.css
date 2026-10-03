@@ -118,7 +118,16 @@ em {
   border-right: 1px solid var(--line);
   background: #f4f0e9;
   z-index: 10;
+  height: 100dvh;
+  min-height: 0;
+  gap: 16px;
+  overflow: hidden;
 }
+.sidebar > .brand, .sidebar > .guest-profile { flex-shrink: 0; }
+.sidebar-scroll { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-gutter: stable; scrollbar-width: thin; scrollbar-color: var(--brand) var(--soft); padding: 4px; margin: 0 -4px; }
+.sidebar-scroll .sidebar-label { margin-top: 12px; }
+.sidebar-scroll .sidebar-note { margin-top: 28px; }
+.navigation-backdrop { display: none; }
 .brand {
   display: flex;
   align-items: center;
@@ -928,7 +937,12 @@ th {
     transition: transform 0.2s;
     width: 238px;
     box-shadow: 10px 0 40px #0001;
+    top: 65px;
+    height: calc(100dvh - 65px);
+    width: min(300px, calc(100vw - 48px));
+    padding: 20px 18px max(16px, env(safe-area-inset-bottom));
   }
+  .navigation-backdrop { display: block; position: fixed; inset: 65px 0 0; z-index: 9; border: 0; padding: 0; background: #24221f66; touch-action: none; }
   .sidebar.is-open {
     transform: translateX(0);
     visibility: visible;
@@ -975,7 +989,7 @@ th {
     display: none;
   }
   .lab-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .learning-columns {
     grid-template-columns: 1fr 1fr;
@@ -1372,3 +1386,30 @@ th {
 .foundations-page :focus-visible { outline:2px solid #b28161; outline-offset:3px; }
 @media(max-width:850px) { .foundation-navigation { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media(max-width:550px) { .command-guide { grid-template-columns:1fr; } .sim-terminal { padding:1rem; } .foundations-page .button { max-width:100%; white-space:normal; } }
+
+/* Reflow content instead of masking document overflow. Code and tables retain local scroll. */
+.app-main, main, .page-heading > *, .coding-heading > *, .section-heading > *, .guest-profile > div { min-width: 0; }
+.brand-mark, .guest-avatar { flex-shrink: 0; }
+.page-heading, .coding-heading, .section-heading, .lesson-heading, .lesson-top { flex-wrap: wrap; }
+.page-heading h1, .coding-heading h1, .lesson-heading h1, .native-problem, .account-card, .beginner-lesson { overflow-wrap: anywhere; }
+.field, .table-scroll, .case-result, .notebook-fields > *, .test-case-fields > * { min-width: 0; }
+.button { max-width: 100%; white-space: normal; text-align: center; }
+.case-result { grid-template-columns: minmax(0, 1fr) auto; }
+.topbar > span:first-of-type { min-width: 0; overflow-wrap: anywhere; }
+.guest-badge { flex-shrink: 0; }
+@media (max-width: 900px) { .learning-columns { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 820px) {
+  .field input, .field select, .field textarea, .search-label input, .pattern-tools input, .personal-tests input, .personal-tests textarea, .foundations-page .field input { font-size: 16px; }
+  .sidebar nav a { min-height: 44px; }
+  .topbar { padding-inline: 12px; gap: 8px; }
+}
+@media (max-width: 400px) {
+  .dashboard, .workspace { padding-inline: 16px; }
+  .page-heading h1, .lesson-heading h1, .pattern-library .page-heading h1, .pattern-lesson .page-heading h1 { font-size: 34px; }
+  .beginner-lesson, .activity-pane, .pattern-card, .native-problem { padding: 18px; }
+  .foundation-navigation { gap: 8px; }
+  .foundation-navigation button { padding: 12px; }
+  .section-heading { align-items: flex-start; }
+  .stage-navigation button { font-size: 10px; overflow-wrap: anywhere; min-width: 0; }
+  .run-toolbar, .editor-toolbar, .editor-footer { padding-inline: 12px; gap: 8px; }
+}

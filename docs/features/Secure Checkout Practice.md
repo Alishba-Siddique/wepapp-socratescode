@@ -1,6 +1,6 @@
 ---
 type: feature
-status: implemented-awaiting-ci
+status: live
 updated: 2026-10-03
 ---
 # Secure Checkout Practice
@@ -30,3 +30,6 @@ Existing domain suite and browser script syntax pass locally. Extended three-bro
 A stock check alone cannot prevent concurrent overselling. A successful function return does not charge a card, reserve stock, authorize a real request or make retries idempotent. The reflection prompts explicitly separate this exercise from transactional production checkout.
 
 Primary references: [OWASP business logic security](https://cheatsheetseries.owasp.org/cheatsheets/Business_Logic_Security_Cheat_Sheet.html), [OWASP object authorization](https://api-security.owasp.org/editions/2023/en/0xa1-broken-object-level-authorization/), [Python boolean and integer types](https://docs.python.org/3/library/stdtypes.html#boolean-type-bool). Scenario, prompts and cases are authored for this platform.
+
+## Verification evidence
+PR #36 head `bc102c7` passed CI run `37104405195`: quality, build, dependency review, CodeQL, all three browsers and accounts/persistence. No open PR CodeQL findings. The WebKit mobile artifact was inspected. Merged as `bae9548`; production run `37104711842` passed all gates including candidate and promotion. The public page returned HTTP 200 with its title, guard contract and nosniff header.

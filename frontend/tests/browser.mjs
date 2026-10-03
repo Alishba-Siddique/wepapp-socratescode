@@ -103,9 +103,42 @@ if (!engine) throw new Error("Unsupported browser");
   await page.keyboard.press('Escape');
   assert(await page.locator('.sidebar').isHidden());
   assert.equal(await page.evaluate(()=>document.activeElement?.getAttribute('aria-label')),'Open navigation');
+  // A short screen must still reach the final link without moving the page.
+  await page.setViewportSize({width:390,height:480});await menu.click();
+  await expect(page.locator('main')).toHaveAttribute('inert','');
+  assert.equal(await page.evaluate(()=>document.body.style.overflow),'hidden');
+  const sidebarScroll=page.locator('.sidebar-scroll');
+  assert(await sidebarScroll.evaluate(el=>el.scrollHeight>el.clientHeight),'mobile navigation has independent overflow');
+  await page.getByRole('navigation',{name:'Workspace navigation'}).getByRole('link',{name:/My account/}).focus();
+  assert(await sidebarScroll.evaluate(el=>el.scrollTop>0),'keyboard focus scrolls the final link into view');
+  const lastLink=await page.getByRole('navigation',{name:'Workspace navigation'}).getByRole('link',{name:/My account/}).boundingBox();
+  assert(lastLink.y>=65&&lastLink.y+lastLink.height<=480,'last navigation link is inside the viewport');
+  await page.keyboard.press('Tab');await expect(page.getByRole('button',{name:'Close navigation',exact:true})).toBeFocused();
+  await page.keyboard.press('Shift+Tab');await expect(page.getByRole('navigation',{name:'Workspace navigation'}).getByRole('link',{name:/My account/})).toBeFocused();
+  await page.getByRole('button',{name:'Close navigation overlay'}).click({position:{x:370,y:100}});
+  await expect(page.locator('main')).not.toHaveAttribute('inert','');assert.equal(await page.evaluate(()=>document.body.style.overflow),'');
+  await menu.click();await page.setViewportSize({width:1024,height:600});
+  await expect(page.locator('main')).not.toHaveAttribute('inert','');
+  await expect(page.locator('.sidebar')).toBeVisible();
+  assert(await sidebarScroll.evaluate(el=>el.scrollHeight>el.clientHeight),'desktop sidebar also scrolls on short screens');
+  const pageY=await page.evaluate(()=>scrollY);await sidebarScroll.evaluate(el=>{el.scrollTop=el.scrollHeight;});assert.equal(await page.evaluate(()=>scrollY),pageY);
+  await page.screenshot({path:path.join(artifactDir,'sidebar-short-desktop.png')});
+  await page.setViewportSize({width:390,height:844});
   await menu.click();
   await page.getByRole("link",{name:/Learning path/}).first().click();
   await page.getByRole("heading",{name:"Your learning path."}).waitFor();
+  for (const route of ['/', '/start', '/curriculum', '/progress', '/patterns', '/patterns/sliding-window', '/practice', '/debugging', '/projects', '/foundations', '/companion', '/design', '/design/learning-schema', '/account', '/account/reset', '/learn/a-running-total', '/solve/secure-checkout']) {
+    await page.goto(baseURL+route);await expect(page.locator('.guest-profile')).toHaveAttribute('aria-busy','false');
+    for(const viewport of [{width:320,height:568},{width:768,height:600},{width:1024,height:768},{width:1440,height:900}]) {
+      await page.setViewportSize(viewport);
+      assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${route} overflows at ${viewport.width}`);
+    }
+  }
+  await page.setViewportSize({width:568,height:320});await page.getByRole('button',{name:'Open navigation'}).click();
+  await page.getByRole('navigation',{name:'Workspace navigation'}).getByRole('link',{name:/My account/}).focus();
+  const landscapeLink=await page.getByRole('navigation',{name:'Workspace navigation'}).getByRole('link',{name:/My account/}).boundingBox();assert(landscapeLink.y>=65&&landscapeLink.y+landscapeLink.height<=320,'landscape navigation stays usable');
+  await page.screenshot({path:path.join(artifactDir,'sidebar-mobile-landscape.png')});await page.keyboard.press('Escape');
+  await page.goto(baseURL+'/curriculum');
   await page.evaluate(()=>localStorage.setItem("socratescode:lessons:v1","broken json"));
   await page.reload();
   await expect(page.locator(".guest-profile")).toHaveAttribute("aria-busy", "false");

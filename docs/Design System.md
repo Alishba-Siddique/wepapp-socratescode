@@ -18,3 +18,6 @@ The app should feel related to the landing page without behaving like a marketin
 - A user can proceed with keyboard only. Label every input.
 - Prefer real progress and helpful empty states over decorative metrics.
 - On phones, stack lesson and trace panes and keep stage navigation reachable.
+
+## Responsive workspace navigation
+The logo and profile remain visible while `.sidebar-scroll` owns navigation scrolling. At <=820px the drawer uses the remaining dynamic viewport below the 65px top bar, a dismissible backdrop, inert page content and locked background scroll. Escape/overlay close returns focus to the menu; Tab stays within navigation controls. Resizing to desktop closes the mobile state and restores scrolling. Tablet labs use wider cards and learning panes stack; small-screen inputs use 16px text. Content reflows rather than hiding global overflow.
