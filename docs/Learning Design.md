@@ -34,3 +34,5 @@ The supplied 50-pattern PDF and longer notes are a curriculum backlog, not a cla
 
 ## Engineering fundamentals
 [[features/Engineering Foundations]] connects tools to mental models: location, streams, snapshots, machine identity and server-enforced business invariants. Completion requires a prediction, observable practice goal and transfer answer. Fictional command execution and authored feedback are explicitly labeled.
+
+Secure checkout extends security vocabulary into implementation: predict unsafe pricing, identify the trust boundary, write ordered guards, then explain remaining concurrency and retry concerns. The learner writes the repair; no finished solution is supplied in the lesson. [[features/Secure Checkout Practice]]

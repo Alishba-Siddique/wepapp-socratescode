@@ -21,6 +21,7 @@ function FoundationPractice({lesson,onComplete}:{lesson:FoundationLesson;onCompl
     <div className="foundation-actions"><button className="button secondary" onClick={()=>{setState(initialTerminal());setHistory([]);setCommand("");setFinished(false);}}>Reset this simulation</button><button className="button secondary" disabled={hint>=lesson.hints.length} onClick={()=>setHint(hint+1)}>Ask Socrates for a hint</button></div>{lesson.hints.slice(0,hint).map(text=><p className="foundation-hint" key={text}>{text}</p>)}<p role="status" className="foundation-goal">{achieved?"Practice objective reached. Now explain the idea in a different situation.":"Keep investigating. The practice objective is not reached yet."}</p>
     {achieved && <><h3>3. Transfer your understanding</h3><DebugQuestionCheck question={lesson.transfer} onCorrect={()=>{setFinished(true);onComplete();}}/>{finished&&<p role="status" className="foundation-complete">Lesson recorded on this browser. You can revisit it or choose another lesson above.</p>}</>}
     </>}
+    {lesson.id==="security"&&<p className="beginner-return"><Link href="/solve/secure-checkout">Next: write the checkout guards yourself in Python</Link>. Use the real editor to test ownership, trusted prices and stock boundaries.</p>}
     <p className="foundation-source">Reference: <a href={lesson.source.url} target="_blank" rel="noopener noreferrer">{lesson.source.title} (opens in a new tab)</a>. Guidance is authored; the simulator does not assess professional readiness.</p>
   </article>;
 }

@@ -213,7 +213,7 @@ try {
   assert(blockedRequests.length>0 || runtimeLog.some(entry=>typeof entry==="string"&&entry.includes("/api/private-probe")&&/connect-src|Content-Security-Policy/.test(entry)),"CSP must reject the private API request");
   await page.goto(base+"/practice");
   await page.getByRole("button",{name:"Debugging",exact:true}).click();
-  await expect(page.locator(".native-problem")).toHaveCount(3);
+  await expect(page.locator(".native-problem")).toHaveCount(4);
   for (const task of [
     {slug:"debug-basket-total", prediction:"500", diagnosis:"After the second price", fragment:"total = price", repair:"def solve(data):\n    total = 0\n    for price in data:\n        total = total + price\n    return total\n", cases:4},
     {slug:"debug-temperature-boundary", prediction:"2", diagnosis:"[0]", fragment:"reading >= 0", repair:"def solve(data):\n    count = 0\n    for reading in data:\n        if reading > 0:\n            count = count + 1\n    return count\n", cases:5},
@@ -283,6 +283,19 @@ try {
     if (task.slug === "debug-basket-total") await page.screenshot({path:path.join(artifacts,"debugging-mobile.png"),fullPage:true,animations:"disabled"});
     await page.setViewportSize({width:1440,height:1000});
   }
+  await page.goto(base+"/solve/secure-checkout");
+  await page.getByRole("radio",{name:"2400 cents",exact:true}).check();await page.getByRole("button",{name:"Check my reasoning",exact:true}).click();
+  await expect(page.getByRole("radio",{name:"Return forbidden after comparing the verified identity with the stored owner",exact:true})).toHaveCount(0);
+  await page.getByRole("radio",{name:"2 cents",exact:true}).check();await page.getByRole("button",{name:"Check my reasoning",exact:true}).click();
+  const diagnosis=page.locator(".debug-question").nth(1);await diagnosis.getByRole("radio",{name:"Return forbidden after comparing the verified identity with the stored owner",exact:true}).check();await diagnosis.getByRole("button",{name:"Check my reasoning"}).click();
+  await page.getByRole("button",{name:"Use simple editor"}).click();
+  await page.getByRole("button",{name:"Run all checks",exact:true}).click();await page.locator(".run-status").filter({hasText:"Some checks need another look"}).waitFor({timeout:75000});
+  await expect(page.getByRole("region",{name:"Explain your repair"})).toHaveCount(0);
+  const checkoutSolution='def solve(data):\n    if data["sessionUserId"] is None:\n        return {"status": 401, "error": "sign_in_required"}\n    if data["sessionUserId"] != data["order"]["ownerId"]:\n        return {"status": 403, "error": "forbidden"}\n    quantity = data["request"].get("quantity")\n    if type(quantity) is not int or quantity < 1:\n        return {"status": 400, "error": "invalid_quantity"}\n    if quantity > data["order"]["stock"]:\n        return {"status": 409, "error": "out_of_stock"}\n    return {"status": 200, "totalCents": quantity * data["order"]["catalogPriceCents"]}\n';
+  await editor.fill(checkoutSolution);await page.getByRole("button",{name:"Run all checks",exact:true}).click();await page.locator(".run-status").filter({hasText:"All practice checks passed"}).waitFor({timeout:75000});await expect(page.locator('.case-result[data-passed="true"]')).toHaveCount(18);
+  await expect(page.getByRole("region",{name:"Explain your repair"})).toBeVisible();
+  await page.setViewportSize({width:390,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),"checkout exercise fits mobile");await page.screenshot({path:path.join(artifacts,"secure-checkout-mobile.png"),fullPage:true});
+  await editor.fill(checkoutSolution+'# changed\n');await expect(page.getByRole("region",{name:"Explain your repair"})).toHaveCount(0);await page.reload();await page.getByRole("button",{name:"Use simple editor"}).click();await expect(editor).toHaveValue(checkoutSolution+'# changed\n');await expect(page.getByRole("region",{name:"Explain your repair"})).toHaveCount(0);await page.setViewportSize({width:1440,height:1000});
   for (const route of ["/patterns/sliding-window","/design/learning-schema","/solve/exercism-leap"]) {
     await page.goto(base+route);
   await expect(page.locator(".guest-profile")).toHaveAttribute("aria-busy", "false");await page.setViewportSize({width:390,height:844});

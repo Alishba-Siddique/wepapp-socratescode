@@ -120,3 +120,5 @@ One question at a time. More understanding with every step.
 
 ### Understand the tools beneath the code
 Engineering basics at [`/foundations`](https://wepapp-socratescode.vercel.app/foundations) teaches files, Bash pipelines, Git snapshots, SSH and secure business rules through five interactive simulated lessons. Predict, investigate command output, then explain why. Includes a searchable command reference; no commands run on your computer. [Feature documentation](docs/features/Engineering%20Foundations.md).
+
+Practice business logic in [Secure checkout](https://wepapp-socratescode.vercel.app/solve/secure-checkout): repair unsafe Python using 18 cases for ownership, trusted prices, quantity types and stock boundaries. [Exercise scope and documentation](docs/features/Secure%20Checkout%20Practice.md).

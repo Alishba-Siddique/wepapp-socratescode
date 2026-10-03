@@ -59,3 +59,7 @@ Baseline copies are preserved in [[reference/PRD]], [[reference/TRD]] and [[refe
 - [[features/Product Projects]] - turn data structures, debugging and tests into a small product feature.
 
 - [[features/Engineering Foundations]] ? five hands-on terminal, Git, SSH and secure business-rule lessons at `/foundations`.
+
+- [[Threat Model]] ? assets, trust boundaries, abuse cases, verified controls and remaining launch work.
+
+- [[features/Secure Checkout Practice]] ? implement and challenge business-security guards in the Python editor.

@@ -97,3 +97,10 @@ Run 36918062277 verified frontend lint/types and the patched production audit, t
 
 ## 2026-10-03 ? foundations and business security
 PR #30 merged as `00849ca`; main run `37082423151` passed all checks and release candidate/promotion. Built five Engineering Foundations lessons, a bounded simulated terminal and 27 command references; added frontend security headers. Direct Node domain tests: 19/19 passed. New browser flow and deployment are pending CI; no local npm/npx commands were run. Existing user-staged PDF and Obsidian settings are excluded.
+
+PR #35 merged as `fa2e5f7` after run `37083884705` passed all required checks. No open PR CodeQL findings. Public `/projects` returned 200 with project content after prior promotion. Security dependency overrides are prepared locally awaiting user-run lockfile regeneration. Production verification for `/foundations` is pending.
+
+Production run `37084250757` succeeded, including candidate and promotion. Public `/foundations` and `/runner` verified HTTP 200; new page headers and independent runner sandbox CSP confirmed. `/api/account/status` still reports `available: false`, accurately reflecting the optional gateway deployment boundary. Release evidence notes remain local for the next documentation/dependency batch, avoiding a documentation-only deployment.
+
+## 2026-10-03 ? runnable business security
+Added `/solve/secure-checkout`: the 25th Python problem, 18 authored contract cases, ordered identity/ownership/quantity/stock guards, misconception prompts, and links from security foundations. Existing editor, notebook and personal cases are reused. Local domain tests and browser-script syntax pass; browser CI and promotion pending. User-staged reference/settings and incomplete dependency manifests are excluded from the feature commit.

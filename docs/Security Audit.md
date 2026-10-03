@@ -66,3 +66,7 @@ Added nosniff, same-origin framing, referrer policy, restricted unused browser p
 The foundations simulator does not execute shell commands or contact hosts. Inputs/outputs render as text, commands and transcript are bounded, progress is untrusted local data. Shop authorization/pricing rules are teaching fixtures, not new production endpoints.
 
 Outstanding before optional gateway launch: resolve the documented multer and development esbuild dependency alerts, provision isolated database/hosting/email, and validate production ingress/rate limits. The gateway currently has no upload consumer. Security remains an ongoing review, not a guarantee against every attack.
+
+October 3 dependency recheck: four open alerts remain: frontend development-only brace-expansion 1.1.18 and 5.0.9 (patches 1.1.21 and 5.0.12), gateway multer 2.3.0 (patch 2.4.0), and gateway development esbuild 0.27.7 (patch 0.28.1). Targeted package overrides are prepared locally, not released; the user reserves npm commands and has been asked to regenerate both lockfiles. Do not claim these alerts are resolved until the new locks, clean install and CI are verified.
+
+`GET /solve/secure-checkout` is another static practice page under the existing page CSP/header policy. Its decision function processes fictional input inside the existing isolated browser runner. It adds no real auth/payment/inventory endpoint or privileged capability. Guard logic taught in the exercise must not be represented as new production checkout security.
