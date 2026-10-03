@@ -17,7 +17,7 @@ function equal(a: JsonValue | undefined, b: JsonValue): boolean {
   if (a && b && typeof a === "object" && typeof b === "object" && !Array.isArray(a) && !Array.isArray(b)) return Object.keys(a).length === Object.keys(b).length && Object.keys(a).every(key => equal(a[key],b[key]));
   return false;
 }
-export function CodingWorkspace({ problem }: { problem: CodingProblem }) {
+export function CodingWorkspace({ problem, onChecksChanged }: { problem: CodingProblem; onChecksChanged?: (passed: boolean) => void }) {
   const initialCode = problem.debugging?.code ?? starterCode;
   const [code,setCode] = useState(initialCode); const [simple,setSimple] = useState(false);
   const [phase,setPhase] = useState<"idle"|"loading"|"running">("idle");
@@ -90,7 +90,9 @@ export function CodingWorkspace({ problem }: { problem: CodingProblem }) {
     timeout(60,"Python could not load in time. Check your connection and try again.");
   }
   const currentChecksPassed = !customRun && checkedCode === code && results.length === problem.tests.length && results.every((result, index) => !result.error && equal(result.value, problem.tests[index].expected));
+  useEffect(() => { onChecksChanged?.(currentChecksPassed); }, [currentChecksPassed, onChecksChanged]);
   return <div className="coding-workspace page-enter">
+    {problem.slug === "project-notification-inbox" && !onChecksChanged && <p className="beginner-return"><Link href="/projects">Follow the full notification-inbox project</Link>: requirements, trace, implementation and engineering review.</p>}
     {problem.slug === "trail-total" && <p className="beginner-return"><Link prefetch={false} href="/start">First steps: variables, loops and debugging</Link> · Return here after your checks to choose your next step.</p>}
     <div className="lesson-top"><Link prefetch={false} href="/practice">← Problem library</Link><span>{problem.level} / {problem.topic}</span></div>
     <div className="coding-heading"><div><p className="eyebrow">THINK IT THROUGH. WRITE IT YOURSELF.</p><h1>{problem.title}</h1></div><span className="session-tag">PYTHON</span></div>

@@ -50,3 +50,6 @@ The debugging extension adds `/debugging` with four beginner teaching stages and
 | --- | --- | --- |
 | [[features/Personal Regression Tests]] | Design and run six local test cases per Python problem | Real worker comparisons, validation, edit/delete/reload/failure paths; never grants platform completion |
 | [[features/Chrome Companion]] | Reason beside a LeetCode problem and export notes | Explicit title/URL capture, local storage, authored questions; developer preview with manual toolbar verification still required |
+
+## Product engineering project
+[[features/Product Projects]] adds a notification-inbox implementation journey and the 24th Python problem. Acceptance covers incorrect requirement answers, trace milestones, wrong and correct code, stale-code review gating, draft reload, export and unavailable browser storage. The final review is authored self-assessment, not an AI grade or senior-readiness certification.

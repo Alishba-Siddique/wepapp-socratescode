@@ -1,6 +1,6 @@
 ---
 type: feature
-status: implemented-awaiting-ci
+status: released
 updated: 2026-09-29
 ---
 # Chrome companion
@@ -22,3 +22,7 @@ Practice independent reasoning beside a LeetCode problem. A Chrome MV3 side pane
 `extension/src/model.ts` owns validated state, prompts and exports; `panel.ts` owns interactions; `background.ts` configures toolbar behavior. Only activeTab, sidePanel and storage permissions are requested. No content script, host permission, server route or model is added. CI builds strict TypeScript, tests domain boundaries and checks the committed ZIP against its source. The existing Chromium job tests a real loaded extension and storage; tab capture is a deterministic API fixture. A real Chrome toolbar gesture still needs manual smoke verification.
 
 Local build and three domain tests passed. CI and public deployment evidence will be recorded in [[Session Log]]. See [extension setup](../../extension/README.md).
+
+PR #29 passed CI run 36504898801 (including Chromium, Firefox, WebKit, accounts and the installed extension) and merged as `2a8f8f7422d405d265c373ecfbcac96ce41f35c2`. See [[Session Log]] for production verification.
+
+Production run 36505307048 passed candidate and promotion checks; the public feature routes were verified on September 29, 2026. Extension toolbar user-gesture verification remains manual; the preview is not a Web Store release.

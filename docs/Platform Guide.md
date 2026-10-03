@@ -36,3 +36,6 @@ In any Python problem, expand **Build my own test cases**. Name a case, enter it
 
 ## Think beside LeetCode
 Open **Chrome companion** in the navigation for the downloadable preview and installation instructions. Load it unpacked in Chrome, open a problem, invoke the extension, then explicitly select the current problem or paste its URL. Work through five thinking stages, choose a topic for authored questions, save local notes, or export Markdown to this vault. No API key is needed. This is not an AI solver, a Web Store release or account-synced storage. See [[features/Chrome Companion]].
+
+## Build a small product
+Choose **Build a product** in the sidebar. Decide how to identify a repeated notification, inspect three deliveries, write a plan, and implement the inbox in the embedded Python editor. After all platform checks pass, explain your design and its limits. Changing code or reloading requires a new passing run. Notes and code drafts are browser-local; export project notes as Markdown for Obsidian. The same original coding problem is available in the practice bank (now 24 problems).

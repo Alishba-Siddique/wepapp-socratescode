@@ -40,3 +40,6 @@ Expanded with `/debugging`: error literacy, small reproductions, guided state co
 
 ## September 29: reasoning beyond the lesson
 Implemented [[features/Personal Regression Tests]] inside every Python workspace and [[features/Chrome Companion]] for LeetCode. Both use authored teaching and local persistence, with no model provider or new backend. The companion is an unpacked developer preview, not a store release. CI and deployment remain verification gates; see [[Session Log]]. Next: use learner feedback to improve misconception-specific prompts, then add practical implementation tasks and progressively remove scaffolding.
+
+## October 1: first product project
+Implemented `/projects`: a notification inbox with identity reasoning, an authored delivery trace, real Python implementation, six contract checks, local planning/review notes and Markdown export. The engineering review requires a passing run of the current code. This is an in-memory transformation exercise, not a deployed notification service. See [[features/Product Projects]]. Next projects can introduce explicit persistence and concurrency after these foundations.
