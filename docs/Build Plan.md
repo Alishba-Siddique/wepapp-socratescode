@@ -46,3 +46,6 @@ Implemented `/projects`: a notification inbox with identity reasoning, an author
 
 ## 2026-10-03 increment
 Implemented `/foundations`: five terminal/Git/SSH/business-security lessons and searchable command references, plus frontend response-header hardening. Local domain tests pass; CI and deployment verification are pending. Continue with product invariants, concurrency and deeper operational practice after this increment. [[features/Engineering Foundations]]
+
+## Secure business-rule implementation
+Added the 25th Python problem, `/solve/secure-checkout`, with authored Socratic feedback and 18 public security/business cases. Foundations is already live (release run `37084250757`); checkout browser/release checks are pending. Remaining dependency patches still await user-run npm lockfile regeneration.

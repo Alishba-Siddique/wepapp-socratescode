@@ -1,5 +1,6 @@
 import importedProblems from "./data/github-problems.json" with { type: "json" };
 import { inboxProblem } from "./product-project.ts";
+import { secureCheckoutProblem } from "./secure-checkout.ts";
 export type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue };
 export type DebugQuestion = { prompt: string; options: string[]; correct: number; feedback: string[] };
 export type DebugExercise = {
@@ -80,5 +81,6 @@ export const codingProblems: CodingProblem[] = [
   { slug:"fewest-tokens", title:"The fewest tokens", topic:"Dynamic programming", level:"Developing", description:"A machine accepts tokens with specified positive values. You have an unlimited supply of each token. Find the fewest tokens whose values add up exactly to the requested amount.", contract:"data has coins and amount. Return the minimum token count, or -1 if impossible. Amount zero needs zero tokens.", constraints:["coins contains 1–10 positive integers.","0 <= amount <= 100."], hints:["Can choosing the biggest token first miss a better combination?","What smaller amount remains after choosing the last token?","How will you distinguish an unreachable amount from one requiring zero tokens?"], tests:[{name:"Greedy trap",input:{coins:[1,3,4],amount:6},expected:2},{name:"Impossible amount",input:{coins:[2,4],amount:7},expected:-1},{name:"No tokens needed",input:{coins:[3],amount:0},expected:0},{name:"Repeated token",input:{coins:[2,5],amount:10},expected:2}] },
   ...importedProblems.map(problem => ({ ...problem, level: "Foundation" as const })),
   inboxProblem,
+  secureCheckoutProblem,
 ];
 export function getCodingProblem(slug: string) { return codingProblems.find(problem => problem.slug === slug); }

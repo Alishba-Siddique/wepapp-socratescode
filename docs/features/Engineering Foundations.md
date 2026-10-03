@@ -1,6 +1,6 @@
 ---
 type: feature
-status: implemented-awaiting-ci
+status: live
 updated: 2026-10-03
 ---
 # Engineering Foundations
@@ -34,3 +34,6 @@ General response headers remove framework disclosure, prohibit MIME sniffing, re
 - [OWASP business logic security](https://cheatsheetseries.owasp.org/cheatsheets/Business_Logic_Security_Cheat_Sheet.html)
 
 Next depth: multi-step product requirements, abuse-case reviews, real disposable terminal exercises, transactions/concurrency and operational incident practice. These are not yet implemented by this simulator.
+
+## Release evidence
+PR #35 head `d610083` passed run `37083884705`: quality, build, dependency review, both CodeQL languages, Chromium/Firefox/WebKit, and accounts/persistence. No open PR CodeQL findings were returned. WebKit mobile artifact inspected; no horizontal overflow. Merged as `fa2e5f7`; production run `37084250757` passed candidate validation and promotion. Public `/foundations` returned 200 with the expected content/security headers; `/runner` retained its sandbox CSP.

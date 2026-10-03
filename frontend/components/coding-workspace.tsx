@@ -93,6 +93,7 @@ export function CodingWorkspace({ problem, onChecksChanged }: { problem: CodingP
   useEffect(() => { onChecksChanged?.(currentChecksPassed); }, [currentChecksPassed, onChecksChanged]);
   return <div className="coding-workspace page-enter">
     {problem.slug === "project-notification-inbox" && !onChecksChanged && <p className="beginner-return"><Link href="/projects">Follow the full notification-inbox project</Link>: requirements, trace, implementation and engineering review.</p>}
+    {problem.slug === "secure-checkout" && <p className="beginner-return"><Link href="/foundations">Learn the business-security concepts first</Link>. This exercise runs on fictional data in your browser; it does not protect a real checkout service.</p>}
     {problem.slug === "trail-total" && <p className="beginner-return"><Link prefetch={false} href="/start">First steps: variables, loops and debugging</Link> · Return here after your checks to choose your next step.</p>}
     <div className="lesson-top"><Link prefetch={false} href="/practice">← Problem library</Link><span>{problem.level} / {problem.topic}</span></div>
     <div className="coding-heading"><div><p className="eyebrow">THINK IT THROUGH. WRITE IT YOURSELF.</p><h1>{problem.title}</h1></div><span className="session-tag">PYTHON</span></div>

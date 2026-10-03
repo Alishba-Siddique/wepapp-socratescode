@@ -42,3 +42,6 @@ Choose **Build a product** in the sidebar. Decide how to identify a repeated not
 
 ## Engineering basics
 Open **Engineering basics** in the navigation (`/foundations`). Predict what a command does, inspect simulated output, then explain the concept in another situation. Start with files, then pipelines, Git, SSH and secure business rules. No software installation, real shell or credentials are needed. The command reference labels tools beyond the supported simulator subset.
+
+## Put business security into code
+After the security foundations lesson, open **A checkout that protects the rules** in the practice bank. Predict the unsafe starter, repair its Python and test all 18 cases. The inputs represent fictional server facts; this is not a live shop. Code drafts, regression tests, notebook and review use the existing learning workspace.

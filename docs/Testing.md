@@ -36,3 +36,5 @@ The learning browser suite exercises wrong identity reasoning, trace-gated edito
 
 ## Engineering foundations
 Domain tests exercise five complete lesson sequences, rejected commands, staged Git versions, SSH context, shop access/price/quantity rules and bounded storage parsing. The existing three-browser learning suite now covers wrong-answer gating, all five lessons, persistence, storage failure, reset, searchable references, mobile width and text-only rendering. It asserts frontend security headers and keeps existing opaque Python-runner execution coverage. No additional scheduled workflow or paid service was added.
+
+Secure checkout browser coverage checks incorrect prediction, correct diagnosis, deliberately unsafe starter failure, all 18 contract cases under actual Python, review invalidation, code persistence and mobile width. It runs inside the existing three-browser learning suite; no extra workflow or schedule.

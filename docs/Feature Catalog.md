@@ -56,3 +56,6 @@ The debugging extension adds `/debugging` with four beginner teaching stages and
 
 ## Engineering foundations
 `/foundations` ? five prediction/practice/transfer lessons with a bounded terminal simulator and 27 searchable command references. Includes object ownership, trusted prices and quantity validation. See [[features/Engineering Foundations]] for acceptance criteria and simulation limits.
+
+## Secure checkout repair
+`/solve/secure-checkout` adds an original Python exercise with 18 visible cases for authentication/authorization order, trusted pricing, quantity validation and stock boundaries. Discover through `/practice` or the security foundations lesson. [[features/Secure Checkout Practice]]
