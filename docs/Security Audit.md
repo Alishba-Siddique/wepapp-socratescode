@@ -59,3 +59,10 @@ October 1 release audit: [GHSA-vcvr-r3jv-pc5j](https://github.com/advisories/GHS
 October 2: the frontend lockfile now matches the patched package pins. CI will verify the clean install and audit before release; no gate is bypassed.
 
 October 2 CI follow-up: run 36918062277 passed the frontend production audit but failed the unused ops CLI audit on brace-expansion (high) and reported fast-uri (moderate). Release and rollback source inspection confirmed there are no CLI imports or invocations: the adapter uses Node built-ins and direct Vercel API requests. Removed the obsolete CLI manifests and only their install/audit/configuration references, eliminating that dependency tree. Active frontend/gateway audits, CodeQL, dependency review, release contract tests and deployment gates remain enabled. This change does not dismiss gateway alerts or weaken their launch requirements.
+
+## 2026-10-03 frontend hardening
+Added nosniff, same-origin framing, referrer policy, restricted unused browser permissions, production HSTS and disabled X-Powered-By. Application pages receive base/object/frame/form CSP directives; no full script-source policy is claimed. The Python runner retains its independent restrictive CSP. Three-browser execution is a required regression gate.
+
+The foundations simulator does not execute shell commands or contact hosts. Inputs/outputs render as text, commands and transcript are bounded, progress is untrusted local data. Shop authorization/pricing rules are teaching fixtures, not new production endpoints.
+
+Outstanding before optional gateway launch: resolve the documented multer and development esbuild dependency alerts, provision isolated database/hosting/email, and validate production ingress/rate limits. The gateway currently has no upload consumer. Security remains an ongoing review, not a guarantee against every attack.

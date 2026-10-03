@@ -10,6 +10,35 @@ import { designChallenges } from "../lib/design-challenges.ts";
 import { beginnerLessons, parseBeginner, completeBeginnerLesson } from "../lib/beginner.ts";
 import { basketTrace, emptyDebugNotebook, notebookMarkdown, parseDebugNotebook, parseDebuggingProgress } from "../lib/debugging-method.ts";
 import { parsePersonalTests, parseTestValue } from "../lib/personal-tests.ts";
+import { initialTerminal, runTerminal, terminalGoal } from "../lib/terminal-simulator.ts";
+import { foundationLessons, parseFoundationProgress } from "../lib/engineering-foundations.ts";
+
+test("all engineering lessons reach their objective through the documented commands",()=>{
+  for(const lesson of foundationLessons){let state=initialTerminal();assert.equal(terminalGoal(lesson.id,state),false);for(const command of lesson.commands){const result=runTerminal(state,command);assert.equal(result.code,0,command+": "+result.output);state=result.state;}assert(terminalGoal(lesson.id,state),lesson.id);}
+});
+test("Git commits the reviewed staged snapshot while later edits remain local",()=>{
+  let state=initialTerminal();for(const command of ['echo "reviewed" > notes.txt','git add notes.txt','echo "later" > notes.txt','git diff --staged','git commit -m "Review snapshot"'])state=runTerminal(state,command).state;
+  assert.equal(state.committed,"reviewed\n");assert.equal(state.notes,"later\n");assert.equal(state.staged,null);assert.match(runTerminal(state,"git status").output,/Changes not staged/);assert.equal(state.commits.length,1);
+});
+test("terminal rejects execution, expansion, unknown hosts and paths without changing state",()=>{
+  const state=initialTerminal();for(const command of ['rm -rf /','pwd; whoami','echo $(id)','echo "${SECRET}"','cat ../../etc/passwd','ssh root@example.com','curl -i https://example.com','echo "oops','echo x > ../README.md','pwd | cd logs','cat logs/app.log |','x'.repeat(241),'pwd\nls']){const result=runTerminal(state,command);assert.notEqual(result.code,0,command);assert.deepEqual(result.state,state);}
+  assert.equal(runTerminal(state,`echo '<script>alert(1)</script>'`).output,'<script>alert(1)</script>\n');
+  assert.equal(runTerminal(state,`echo 'a | b > c'`).output,'a | b > c\n');
+  assert.equal(runTerminal(state,'grep -F missing logs/app.log').code,1);
+  const empty=runTerminal(state,'grep -F missing logs/app.log | wc -l');assert.equal(empty.code,0);assert.equal(empty.output,'0\n');
+});
+test("simulated shop checks ownership and validates quantity using a trusted price",()=>{
+  const state=initialTerminal();assert.match(runTerminal(state,'curl -i https://shop.test/orders/someone-else').output,/403/);
+  for(const quantity of [-1,0,6,1.5,'1',null])assert.match(runTerminal(state,`curl -i -X POST https://shop.test/checkout -d '${JSON.stringify({quantity})}'`).output,/400/);
+  const result=runTerminal(state,`curl -i -X POST https://shop.test/checkout -d '{"quantity":2,"unitPrice":1}'`);assert.match(result.output,/"totalCents":2400/);assert.equal(result.code,0);
+});
+test("SSH changes only the fictional context and restores the local directory",()=>{
+  let state=runTerminal(initialTerminal(),'cd logs').state;state=runTerminal(state,'ssh learner@practice.test').state;assert.equal(state.cwd,'/srv/project');assert.match(runTerminal(state,'cat logs/app.log').output,/database connection refused/);state=runTerminal(state,'exit').state;assert.equal(state.cwd,'/workspace/project/logs');assert.equal(state.remote,false);
+});
+test("foundation progress accepts known lessons only and bounds browser data",()=>{
+  assert.deepEqual(parseFoundationProgress('{"version":1,"completed":["git","git"]}'),['git']);
+  for(const raw of [null,'{','null','[]','x'.repeat(1001),'{"version":2,"completed":["git"]}','{"version":1,"completed":["admin"]}','{"version":1,"completed":[42]}'])assert.deepEqual(parseFoundationProgress(raw),[]);
+});
 
 import { emptyProjectDraft, parseProjectDraft, projectMarkdown, inboxProblem, inboxTrace } from "../lib/product-project.ts";
 

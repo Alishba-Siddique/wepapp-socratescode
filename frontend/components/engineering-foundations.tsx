@@ -1,0 +1,41 @@
+"use client";
+import Link from "next/link";
+import { useEffect, useState, type FormEvent } from "react";
+import { DebugQuestionCheck } from "./debugging-coach";
+import { commandGuide, foundationLessons, parseFoundationProgress, type FoundationLesson } from "@/lib/engineering-foundations";
+import { initialTerminal, runTerminal, terminalGoal } from "@/lib/terminal-simulator";
+
+const storageKey="socratescode:foundations:v1";
+function FoundationPractice({lesson,onComplete}:{lesson:FoundationLesson;onComplete:()=>void}) {
+  const [predicted,setPredicted]=useState(false);const [state,setState]=useState(initialTerminal);
+  const [command,setCommand]=useState("");const [history,setHistory]=useState<{command:string;output:string;code:number}[]>([]);
+  const [hint,setHint]=useState(0);const [finished,setFinished]=useState(false);
+  const achieved=terminalGoal(lesson.id,state);
+  function run(event:FormEvent){event.preventDefault();const result=runTerminal(state,command);setState(result.state);setHistory(rows=>[...rows.slice(-39),{command,output:result.output,code:result.code}]);setCommand("");}
+  return <article className="beginner-lesson foundations-lesson"><p className="eyebrow">UNDERSTAND BEFORE YOU AUTOMATE</p><h2>{lesson.title}</h2><p>{lesson.idea}</p><p className="foundation-vocabulary">{lesson.vocabulary}</p>
+    <h3>1. Predict</h3><DebugQuestionCheck question={lesson.prediction} onCorrect={()=>setPredicted(true)}/>
+    {predicted && <><h3>2. Practise and inspect</h3><p>{lesson.task}</p><p className="simulation-label"><strong>Simulation only.</strong> These commands act on fictional files and hosts in this tab. They never run on your computer, contact a server, or read real credentials. This is a small command subset, not a full Bash shell. Do not enter secrets.</p>
+    <details><summary>Command examples and supported syntax</summary><p>Type a command below. Simple single/double quotes, read-only pipes with cat/grep -F/wc -l, and echo redirection to the local notes.txt are supported. No variables, globbing, escapes, chaining, scripts, installs, real network or arbitrary filesystem access.</p><ul className="command-examples">{lesson.commands.map(example=><li key={example}><code>{example}</code></li>)}</ul></details>
+    <div className="sim-terminal"><p className="terminal-prompt">learner@{state.remote?"practice.test":"local"}:{state.cwd}</p><div role="log" aria-label="Simulated terminal transcript" aria-live="polite" className="terminal-history">{history.length?history.map((row,index)=><div key={index}><pre>{"$ "+row.command}</pre><pre>{row.output||"(no output)"}</pre><small>Exit status: {row.code}</small></div>):<p>Your simulated command output will appear here.</p>}</div><form onSubmit={run}><label className="field">Command<input autoComplete="off" autoCapitalize="none" spellCheck={false} maxLength={240} value={command} onChange={event=>setCommand(event.target.value)} placeholder="Type a command, then press Enter"/></label><button className="button primary" disabled={!command.trim()} type="submit">Run simulated command</button></form></div>
+    {lesson.id==="git" && <details><summary>Inspect the three versions of notes.txt</summary><p>Working tree</p><pre className="beginner-code">{state.notes}</pre><p>Staging area (falls back to the last commit when no change is staged)</p><pre className="beginner-code">{state.staged??state.committed}</pre><p>Last commit</p><pre className="beginner-code">{state.committed}</pre></details>}
+    <div className="foundation-actions"><button className="button secondary" onClick={()=>{setState(initialTerminal());setHistory([]);setCommand("");setFinished(false);}}>Reset this simulation</button><button className="button secondary" disabled={hint>=lesson.hints.length} onClick={()=>setHint(hint+1)}>Ask Socrates for a hint</button></div>{lesson.hints.slice(0,hint).map(text=><p className="foundation-hint" key={text}>{text}</p>)}<p role="status" className="foundation-goal">{achieved?"Practice objective reached. Now explain the idea in a different situation.":"Keep investigating. The practice objective is not reached yet."}</p>
+    {achieved && <><h3>3. Transfer your understanding</h3><DebugQuestionCheck question={lesson.transfer} onCorrect={()=>{setFinished(true);onComplete();}}/>{finished&&<p role="status" className="foundation-complete">Lesson recorded on this browser. You can revisit it or choose another lesson above.</p>}</>}
+    </>}
+    <p className="foundation-source">Reference: <a href={lesson.source.url} target="_blank" rel="noopener noreferrer">{lesson.source.title} (opens in a new tab)</a>. Guidance is authored; the simulator does not assess professional readiness.</p>
+  </article>;
+}
+export function EngineeringFoundations(){
+  const [selected,setSelected]=useState(0);const [completed,setCompleted]=useState<string[]>([]);const [ready,setReady]=useState(false);const [status,setStatus]=useState("Loading local progress…");const [query,setQuery]=useState("");
+  useEffect(()=>{let saved:string[]=[];let message="Progress saves in this browser; command history is not persisted.";try{saved=parseFoundationProgress(localStorage.getItem(storageKey));}catch{message="Browser storage is unavailable. Progress stays in this tab until you leave.";}
+    // Read browser-owned progress after hydration.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCompleted(saved);setReady(true);setStatus(message);
+  },[]);
+  function complete(){const next=[...new Set([...completed,foundationLessons[selected].id])];setCompleted(next);try{localStorage.setItem(storageKey,JSON.stringify({version:1,completed:next}));setStatus("Lesson progress saved in this browser.");}catch{setStatus("Could not save. Your lesson progress stays in this tab until you leave.");}}
+  const matches=commandGuide.filter(row=>row.join(" ").toLowerCase().includes(query.toLowerCase().trim()));
+  return <div className="dashboard foundations-page page-enter"><div className="page-heading"><div><p className="eyebrow">UNDERSTAND WHAT YOUR TOOLS ARE DOING.</p><h1>Own the fundamentals.<br/><em>Then use the shortcuts.</em></h1><p>Build the knowledge underneath coding tools: files, Bash commands, Git snapshots, SSH sessions, business rules and access control. Start with one command and explain what changed.</p></div></div><p className="beginner-return"><Link href="/start">New to coding? Start from zero</Link> · <Link href="/projects">Apply your reasoning in a product project</Link></p>
+    <nav className="foundation-navigation" aria-label="Engineering lessons">{foundationLessons.map((lesson,index)=><button key={lesson.id} disabled={!ready} aria-current={selected===index?"step":undefined} onClick={()=>setSelected(index)}><span>{String(index+1).padStart(2,"0")} / {completed.includes(lesson.id)?"Practised":"To practise"}</span>{lesson.title}</button>)}</nav><p role="status" className="foundation-storage">{status} {completed.length} / {foundationLessons.length} lessons recorded.</p>
+    {ready&&<FoundationPractice key={foundationLessons[selected].id} lesson={foundationLessons[selected]} onComplete={complete}/>}
+    <section className="beginner-lesson command-reference" aria-label="Bash and engineering command reference"><p className="eyebrow">LOOK UP, UNDERSTAND, THEN TYPE</p><h2>Your command reference.</h2><p>These examples describe real tools. Only the subset shown inside an exercise runs in the simulation. In a real terminal, confirm the host, directory and effect before running a command; use a disposable practice folder when learning file changes.</p><label className="field">Find a command<input type="search" maxLength={120} value={query} onChange={event=>setQuery(event.target.value)} placeholder="Try git, file, or directory"/></label><p role="status">{matches.length} commands match.</p><div className="command-guide">{matches.map(([example,explanation])=><article key={example}><code>{example}</code><p>{explanation}</p></article>)}</div>{!matches.length&&<button className="button secondary" onClick={()=>setQuery("")}>Clear command search</button>}<p><a href="https://www.gnu.org/software/coreutils/manual/coreutils.html" target="_blank" rel="noopener noreferrer">GNU command reference</a> · <a href="https://git-scm.com/docs" target="_blank" rel="noopener noreferrer">Git manuals</a></p></section>
+  </div>;
+}

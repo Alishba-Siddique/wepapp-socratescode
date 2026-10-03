@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { codingProblems } from "../lib/coding-problems.ts";
+import { foundationLessons } from "../lib/engineering-foundations.ts";
 const base = process.env.WEB_APP_URL || "http://localhost:3001";
 const engine = {chromium,firefox,webkit}[process.env.BROWSER || "chromium"];
 const browser = await engine.launch({channel:engine===chromium&&process.platform==="win32"?"msedge":undefined});
@@ -20,6 +21,31 @@ page.on("console",message=>{if(message.type()==="error")runtimeLog.push(message.
 page.on("requestfailed",request=>runtimeLog.push({url:request.url(),failure:request.failure()}));
 const errors=[]; page.on("pageerror",error=>errors.push(error.message));
 try {
+  const foundationsResponse=await page.goto(base+"/foundations");
+  const headers=foundationsResponse.headers();
+  assert.equal(headers["x-content-type-options"],"nosniff");assert.equal(headers["x-frame-options"],"SAMEORIGIN");assert.equal(headers["x-powered-by"],undefined);
+  assert.match(headers["content-security-policy"],/object-src 'none'/);assert.match(headers["permissions-policy"],/camera=\(\)/);
+  const runnerProbe=await context.newPage();const runnerResponse=await runnerProbe.goto(base+"/runner");assert.match(runnerResponse.headers()["content-security-policy"],/default-src 'none'/);assert.match(runnerResponse.headers()["content-security-policy"],/sandbox allow-scripts/);await runnerProbe.close();
+  const network=[];page.on("request",request=>{if(/https:\/\/(shop|practice)\.test/.test(request.url()))network.push(request.url());});
+  for(const lesson of foundationLessons){
+    await page.getByRole("navigation",{name:"Engineering lessons"}).getByRole("button",{name:new RegExp(lesson.title)}).click();
+    const prediction=page.locator(".foundations-lesson .debug-question").first();
+    await prediction.getByRole("radio",{name:lesson.prediction.options[(lesson.prediction.correct+1)%3],exact:true}).check();await prediction.getByRole("button",{name:"Check my reasoning"}).click();
+    await expect(page.getByRole("textbox",{name:"Command",exact:true})).toHaveCount(0);
+    await prediction.getByRole("radio",{name:lesson.prediction.options[lesson.prediction.correct],exact:true}).check();await prediction.getByRole("button",{name:"Check my reasoning"}).click();
+    for(const command of lesson.commands){await page.getByRole("textbox",{name:"Command",exact:true}).fill(command);await page.getByRole("textbox",{name:"Command",exact:true}).press("Enter");}
+    await expect(page.locator(".foundation-goal")).toContainText("Practice objective reached");
+    const transfer=page.locator(".foundations-lesson .debug-question").nth(1);
+    await transfer.getByRole("radio",{name:lesson.transfer.options[(lesson.transfer.correct+1)%3],exact:true}).check();await transfer.getByRole("button",{name:"Check my reasoning"}).click();await expect(page.locator(".foundation-complete")).toHaveCount(0);
+    await transfer.getByRole("radio",{name:lesson.transfer.options[lesson.transfer.correct],exact:true}).check();await transfer.getByRole("button",{name:"Check my reasoning"}).click();await expect(page.locator(".foundation-complete")).toBeVisible();
+  }
+  assert.deepEqual(network,[]);
+  await page.setViewportSize({width:390,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),"foundations fits mobile");await page.screenshot({path:path.join(artifacts,"foundations-mobile.png"),fullPage:true});
+  await page.getByRole("textbox",{name:"Command",exact:true}).fill(`echo '<img src=x onerror=alert(1)>'`);await page.getByRole("textbox",{name:"Command",exact:true}).press("Enter");await expect(page.locator(".terminal-history img")).toHaveCount(0);
+  await page.getByRole("button",{name:"Reset this simulation"}).click();await expect(page.locator(".foundation-goal")).toContainText("not reached yet");
+  await page.reload();await expect(page.locator(".foundation-storage")).toContainText("5 / 5");
+  await page.getByRole("searchbox",{name:"Find a command"}).fill("no-such-command");await expect(page.getByRole("button",{name:"Clear command search"})).toBeVisible();await page.getByRole("button",{name:"Clear command search"}).click();await expect(page.locator(".command-guide article")).toHaveCount(27);
+  await page.setViewportSize({width:1440,height:1000});
   await page.goto(base+"/debugging");
   await expect(page.locator(".guest-profile")).toHaveAttribute("aria-busy", "false");
   await page.evaluate(()=>localStorage.setItem("socratescode:debugging-method:v1",'{"version":1,"completed":99}'));
@@ -311,10 +337,14 @@ try {
   const unavailable=await page.context().newPage();
   await unavailable.addInitScript(()=>{
     const read=Storage.prototype.getItem, write=Storage.prototype.setItem;
-    const blocked=key=>key==="socratescode:beginner:v1"||key==="socratescode:debugging-method:v1"||key.startsWith("socratescode:debug-notebook:")||key.startsWith("socratescode:personal-tests:")||key.startsWith("socratescode:project:");
+    const blocked=key=>key==="socratescode:foundations:v1"||key==="socratescode:beginner:v1"||key==="socratescode:debugging-method:v1"||key.startsWith("socratescode:debug-notebook:")||key.startsWith("socratescode:personal-tests:")||key.startsWith("socratescode:project:");
     Storage.prototype.getItem=function(key){if(blocked(key))throw new DOMException("Blocked","SecurityError");return read.call(this,key);};
     Storage.prototype.setItem=function(key,value){if(blocked(key))throw new DOMException("Blocked","QuotaExceededError");return write.call(this,key,value);};
   });
+  await unavailable.goto(base+"/foundations");await expect(unavailable.locator(".foundation-storage")).toContainText("Browser storage is unavailable");
+  await unavailable.getByRole("radio",{name:foundationLessons[0].prediction.options[1],exact:true}).check();await unavailable.getByRole("button",{name:"Check my reasoning"}).click();
+  for(const command of foundationLessons[0].commands){await unavailable.getByRole("textbox",{name:"Command",exact:true}).fill(command);await unavailable.getByRole("textbox",{name:"Command",exact:true}).press("Enter");}
+  await unavailable.locator(".debug-question").nth(1).getByRole("radio",{name:foundationLessons[0].transfer.options[1],exact:true}).check();await unavailable.locator(".debug-question").nth(1).getByRole("button",{name:"Check my reasoning"}).click();await expect(unavailable.locator(".foundation-storage")).toContainText("Could not save");
   await unavailable.goto(base+"/start");
   await expect(unavailable.getByText("Browser storage is unavailable.",{exact:false})).toBeVisible();
   await unavailable.getByRole("radio",{name:"3",exact:true}).check();

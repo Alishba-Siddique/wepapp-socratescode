@@ -43,3 +43,6 @@ Implemented [[features/Personal Regression Tests]] inside every Python workspace
 
 ## October 1: first product project
 Implemented `/projects`: a notification inbox with identity reasoning, an authored delivery trace, real Python implementation, six contract checks, local planning/review notes and Markdown export. The engineering review requires a passing run of the current code. This is an in-memory transformation exercise, not a deployed notification service. See [[features/Product Projects]]. Next projects can introduce explicit persistence and concurrency after these foundations.
+
+## 2026-10-03 increment
+Implemented `/foundations`: five terminal/Git/SSH/business-security lessons and searchable command references, plus frontend response-header hardening. Local domain tests pass; CI and deployment verification are pending. Continue with product invariants, concurrency and deeper operational practice after this increment. [[features/Engineering Foundations]]

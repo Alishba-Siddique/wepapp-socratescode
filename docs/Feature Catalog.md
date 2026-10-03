@@ -53,3 +53,6 @@ The debugging extension adds `/debugging` with four beginner teaching stages and
 
 ## Product engineering project
 [[features/Product Projects]] adds a notification-inbox implementation journey and the 24th Python problem. Acceptance covers incorrect requirement answers, trace milestones, wrong and correct code, stale-code review gating, draft reload, export and unavailable browser storage. The final review is authored self-assessment, not an AI grade or senior-readiness certification.
+
+## Engineering foundations
+`/foundations` ? five prediction/practice/transfer lessons with a bounded terminal simulator and 27 searchable command references. Includes object ownership, trusted prices and quantity validation. See [[features/Engineering Foundations]] for acceptance criteria and simulation limits.

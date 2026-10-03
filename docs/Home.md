@@ -57,3 +57,5 @@ Baseline copies are preserved in [[reference/PRD]], [[reference/TRD]] and [[refe
 - [[Production Configuration]] - required hosting, secret names, email setup and automation boundaries.
 
 - [[features/Product Projects]] - turn data structures, debugging and tests into a small product feature.
+
+- [[features/Engineering Foundations]] ? five hands-on terminal, Git, SSH and secure business-rule lessons at `/foundations`.
