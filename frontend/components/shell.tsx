@@ -21,7 +21,14 @@ export function Shell({ children }: { children: ReactNode }) {
   const navigation = useRef<HTMLElement>(null);
   const menu = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    if (open) navigation.current?.querySelector<HTMLAnchorElement>("nav a")?.focus();
+    if (!open) return;
+    navigation.current?.querySelector<HTMLAnchorElement>("nav a")?.focus();
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const desktop = window.matchMedia("(min-width: 821px)");
+    const closeOnDesktop = () => { if (desktop.matches) { setOpen(false); navigation.current?.querySelector<HTMLAnchorElement>('a[aria-current="page"]')?.focus(); } };
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => { document.body.style.overflow = previousOverflow; desktop.removeEventListener("change", closeOnDesktop); };
   }, [open]);
   const links = [
     { href: "/", label: "Overview", symbol: "01" },
@@ -40,10 +47,19 @@ export function Shell({ children }: { children: ReactNode }) {
   return (
     <div className="app-shell" onKeyDown={(event) => {
       if (event.key === "Escape" && open) { setOpen(false); menu.current?.focus(); }
+      if (event.key === "Tab" && open) {
+        const targets = [menu.current, ...Array.from(navigation.current?.querySelectorAll<HTMLElement>("a[href], button:not([disabled])") ?? [])].filter((target): target is HTMLElement => target !== null);
+        const first = targets[0], last = targets.at(-1);
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (event.shiftKey && document.activeElement === targets[1]) { event.preventDefault(); first?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+        else if (document.activeElement === menu.current && !event.shiftKey) { event.preventDefault(); targets[1]?.focus(); }
+      }
     }}>
       <a className="skip-link" href="#content">
         Skip to content
       </a>
+      {open && <button className="navigation-backdrop" aria-label="Close navigation overlay" tabIndex={-1} onClick={() => { setOpen(false); menu.current?.focus(); }} />}
       <aside id="workspace-navigation" ref={navigation} className={"sidebar " + (open ? "is-open" : "")}>
         <Link prefetch={false} href="/" className="brand" onClick={() => setOpen(false)}>
           <span className="brand-mark">
@@ -51,6 +67,7 @@ export function Shell({ children }: { children: ReactNode }) {
           </span>
           socratescode
         </Link>
+        <div className="sidebar-scroll">
         <p className="sidebar-label">YOUR THINKING SPACE</p>
         <nav aria-label="Workspace navigation">
           {links.map((link) => (
@@ -80,6 +97,7 @@ export function Shell({ children }: { children: ReactNode }) {
             <br />A clearer mind.
           </p>
           <small>Progress begins with understanding.</small>
+        </div>
         </div>
         <div className="guest-profile" aria-busy={loading}>
           <span className="guest-avatar">{user?.name.slice(0, 1).toUpperCase() || "G"}</span>
@@ -113,7 +131,7 @@ export function Shell({ children }: { children: ReactNode }) {
             <i /> {user ? "ACCOUNT WORKSPACE" : "GUEST EDITION"}
           </span>
         </header>
-        <main id="content" tabIndex={-1}>
+        <main id="content" tabIndex={-1} inert={open}>
           {children}
         </main>
       </div>

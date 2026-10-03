@@ -3,7 +3,8 @@
   "version": "0.2.0",
   "private": true,
   "overrides": {
-    "multer": "2.3.0",
+    "multer": "2.4.0",
+    "esbuild": "0.28.1",
     "deepmerge-ts": "8.0.0",
     "mysql2": "3.24.0"
   },

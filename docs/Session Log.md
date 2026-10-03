@@ -104,3 +104,10 @@ Production run `37084250757` succeeded, including candidate and promotion. Publi
 
 ## 2026-10-03 ? runnable business security
 Added `/solve/secure-checkout`: the 25th Python problem, 18 authored contract cases, ordered identity/ownership/quantity/stock guards, misconception prompts, and links from security foundations. Existing editor, notebook and personal cases are reused. Local domain tests and browser-script syntax pass; browser CI and promotion pending. User-staged reference/settings and incomplete dependency manifests are excluded from the feature commit.
+
+Secure checkout PR #36 merged as `bae9548` after CI `37104405195` passed every required job. Actual Python execution passed all 18 cases across Chromium, Firefox and WebKit. No open PR CodeQL findings; mobile evidence inspected. Production verification pending.
+
+Production run `37104711842` passed candidate validation and promotion. Verified public `/solve/secure-checkout` HTTP 200 with exercise title, guard contract and security header. Post-release evidence remains local for the next documentation batch rather than triggering a documentation-only deployment. Dependency lockfiles remain unchanged; their prepared overrides are not released.
+
+## Responsive workspace and dependency patches
+Added a scrollable navigation area with fixed logo/profile, mobile backdrop/focus containment/inert content/body scroll lock, and responsive tablet/phone refinements. Audited the live route surfaces in Edge at 320/768/1024px; no baseline document overflow, but the fixed sidebar lacked scrolling. Added a broader 17-route/4-width regression matrix and short-screen navigation tests. User-generated security lockfiles reviewed and included for CI; local domain tests and browser-script syntax passed.

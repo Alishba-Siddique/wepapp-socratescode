@@ -38,3 +38,6 @@ The learning browser suite exercises wrong identity reasoning, trace-gated edito
 Domain tests exercise five complete lesson sequences, rejected commands, staged Git versions, SSH context, shop access/price/quantity rules and bounded storage parsing. The existing three-browser learning suite now covers wrong-answer gating, all five lessons, persistence, storage failure, reset, searchable references, mobile width and text-only rendering. It asserts frontend security headers and keeps existing opaque Python-runner execution coverage. No additional scheduled workflow or paid service was added.
 
 Secure checkout browser coverage checks incorrect prediction, correct diagnosis, deliberately unsafe starter failure, all 18 contract cases under actual Python, review invalidation, code persistence and mobile width. It runs inside the existing three-browser learning suite; no extra workflow or schedule.
+
+## Responsive workspace regression matrix
+The existing three-browser suite now checks 17 routes at 320, 768, 1024 and 1440px. It also verifies independent sidebar scrolling at short desktop height, the final link at 390x480 and 568x320, Tab/Shift+Tab containment, Escape/overlay dismissal, inert content and scroll restoration on desktop resize. Existing editor/learning flow tests remain enabled. CSS preview inspected in Edge before CI.
