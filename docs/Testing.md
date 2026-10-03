@@ -33,3 +33,6 @@ The learning browser suite covers personal test validation, failing/passing code
 
 ## Product project journey
 The learning browser suite exercises wrong identity reasoning, trace-gated editor access, retained progress when reviewing an earlier frame, failing and passing Python, six contract cases, review hiding after edits/reload, mobile width, note export, persistence and failed storage. Domain tests reject impossible/corrupt milestones and overlong notes. User-owned npm/npx commands remain reserved locally; CI runs frontend lint, types, build and all browsers.
+
+## Engineering foundations
+Domain tests exercise five complete lesson sequences, rejected commands, staged Git versions, SSH context, shop access/price/quantity rules and bounded storage parsing. The existing three-browser learning suite now covers wrong-answer gating, all five lessons, persistence, storage failure, reset, searchable references, mobile width and text-only rendering. It asserts frontend security headers and keeps existing opaque Python-runner execution coverage. No additional scheduled workflow or paid service was added.

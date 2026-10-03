@@ -94,3 +94,6 @@ PR #30 implements the project. Initial CI found a JSX quotation escaping error, 
 Found the regenerated frontend lockfile in the workspace. Reviewed the exact Next.js/eslint-config-next 16.3.8 and DOMPurify 3.4.16 pins and platform package changes. Thirteen domain tests and browser-script syntax pass. Pushing the package pair for clean-install, audit, build and browser validation; the feature is not yet released.
 
 Run 36918062277 verified frontend lint/types and the patched production audit, then exposed advisories in the unused Vercel CLI tree. Verified all release modes use Node built-ins and the API adapter. Removed both ops manifests and their obsolete CI/Dependabot/CODEOWNERS references; retained all checks for active components. Updated the delivery runbook. This avoids maintaining an unused dependency tree solely to pass its own audit.
+
+## 2026-10-03 ? foundations and business security
+PR #30 merged as `00849ca`; main run `37082423151` passed all checks and release candidate/promotion. Built five Engineering Foundations lessons, a bounded simulated terminal and 27 command references; added frontend security headers. Direct Node domain tests: 19/19 passed. New browser flow and deployment are pending CI; no local npm/npx commands were run. Existing user-staged PDF and Obsidian settings are excluded.

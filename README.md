@@ -117,3 +117,6 @@ Feature work follows: define acceptance · implement · test failures · update 
 
 **Built by [Alishba Siddique](https://github.com/Alishba-Siddique).**
 One question at a time. More understanding with every step.
+
+### Understand the tools beneath the code
+Engineering basics at [`/foundations`](https://wepapp-socratescode.vercel.app/foundations) teaches files, Bash pipelines, Git snapshots, SSH and secure business rules through five interactive simulated lessons. Predict, investigate command output, then explain why. Includes a searchable command reference; no commands run on your computer. [Feature documentation](docs/features/Engineering%20Foundations.md).

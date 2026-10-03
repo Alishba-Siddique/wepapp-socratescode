@@ -39,3 +39,6 @@ Open **Chrome companion** in the navigation for the downloadable preview and ins
 
 ## Build a small product
 Choose **Build a product** in the sidebar. Decide how to identify a repeated notification, inspect three deliveries, write a plan, and implement the inbox in the embedded Python editor. After all platform checks pass, explain your design and its limits. Changing code or reloading requires a new passing run. Notes and code drafts are browser-local; export project notes as Markdown for Obsidian. The same original coding problem is available in the practice bank (now 24 problems).
+
+## Engineering basics
+Open **Engineering basics** in the navigation (`/foundations`). Predict what a command does, inspect simulated output, then explain the concept in another situation. Start with files, then pipelines, Git, SSH and secure business rules. No software installation, real shell or credentials are needed. The command reference labels tools beyond the supported simulator subset.

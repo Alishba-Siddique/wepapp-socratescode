@@ -31,3 +31,6 @@ Build independent reasoning and coding, then progressively prepare learners to d
 | Senior interview preparation | Defend alternatives, migration plans, incidents, leadership and operational tradeoffs | Planned deeper cases and evaluated mock interviews; not certified by this increment |
 
 The supplied 50-pattern PDF and longer notes are a curriculum backlog, not a claim that all 50 patterns are taught today. Review broad claims before authoring: BFS shortest-path guarantees require unweighted/equal-cost edges; sliding windows need the right monotonicity or removable aggregate; a pattern title alone does not establish a production implementation.
+
+## Engineering fundamentals
+[[features/Engineering Foundations]] connects tools to mental models: location, streams, snapshots, machine identity and server-enforced business invariants. Completion requires a prediction, observable practice goal and transfer answer. Fictional command execution and authored feedback are explicitly labeled.
