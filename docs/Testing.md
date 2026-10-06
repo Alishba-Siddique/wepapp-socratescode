@@ -41,3 +41,6 @@ Secure checkout browser coverage checks incorrect prediction, correct diagnosis,
 
 ## Responsive workspace regression matrix
 The existing three-browser suite now checks 17 routes at 320, 768, 1024 and 1440px. It also verifies independent sidebar scrolling at short desktop height, the final link at 390x480 and 568x320, Tab/Shift+Tab containment, Escape/overlay dismissal, inert content and scroll restoration on desktop resize. Existing editor/learning flow tests remain enabled. CSS preview inspected in Edge before CI.
+
+## 2026-10-07 responsive audit reliability
+The October 3 main run failed on a WebKit RSC-prefetch teardown error during rapid full-page navigations, after the PR had passed. The later scheduled run passed but could not deploy because scheduled events intentionally do not release. Each route in the viewport audit now gets its own page; it remains mounted for all widths, drains requests before closing, and captures its own failure screenshot. All page-error, HTTP status, viewport and navigation assertions remain enforced. Landscape evidence disables screenshot transitions to capture the settled drawer.

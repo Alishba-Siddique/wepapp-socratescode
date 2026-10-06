@@ -127,17 +127,30 @@ if (!engine) throw new Error("Unsupported browser");
   await menu.click();
   await page.getByRole("link",{name:/Learning path/}).first().click();
   await page.getByRole("heading",{name:"Your learning path."}).waitFor();
+  // Keep each responsive route mounted while resizing. Hard-navigating the same
+  // page cancels Next prefetches and can surface teardown errors in WebKit.
+  // Network idle here drains requests before teardown; DOM assertions establish readiness.
+  await page.waitForLoadState('networkidle');
   for (const route of ['/', '/start', '/curriculum', '/progress', '/patterns', '/patterns/sliding-window', '/practice', '/debugging', '/projects', '/foundations', '/companion', '/design', '/design/learning-schema', '/account', '/account/reset', '/learn/a-running-total', '/solve/secure-checkout']) {
-    await page.goto(baseURL+route);await expect(page.locator('.guest-profile')).toHaveAttribute('aria-busy','false');
-    for(const viewport of [{width:320,height:568},{width:768,height:600},{width:1024,height:768},{width:1440,height:900}]) {
-      await page.setViewportSize(viewport);
-      assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${route} overflows at ${viewport.width}`);
-    }
+    const auditPage=await context.newPage();
+    auditPage.on('pageerror',error=>errors.push(`${route}: ${error.message}`));
+    try {
+      const response=await auditPage.goto(baseURL+route);assert.equal(response.status(),200,route);
+      await expect(auditPage.locator('.guest-profile')).toHaveAttribute('aria-busy','false');
+      for(const viewport of [{width:320,height:568},{width:768,height:600},{width:1024,height:768},{width:1440,height:900}]) {
+        await auditPage.setViewportSize(viewport);
+        assert(await auditPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${route} overflows at ${viewport.width}`);
+      }
+      await auditPage.waitForLoadState('networkidle');
+    } catch(error) {
+      await auditPage.screenshot({path:path.join(artifactDir,'responsive-failure.png'),animations:'disabled'}).catch(()=>{});
+      throw error;
+    } finally { await auditPage.close(); }
   }
   await page.setViewportSize({width:568,height:320});await page.getByRole('button',{name:'Open navigation'}).click();
   await page.getByRole('navigation',{name:'Workspace navigation'}).getByRole('link',{name:/My account/}).focus();
   const landscapeLink=await page.getByRole('navigation',{name:'Workspace navigation'}).getByRole('link',{name:/My account/}).boundingBox();assert(landscapeLink.y>=65&&landscapeLink.y+landscapeLink.height<=320,'landscape navigation stays usable');
-  await page.screenshot({path:path.join(artifactDir,'sidebar-mobile-landscape.png')});await page.keyboard.press('Escape');
+  await page.screenshot({path:path.join(artifactDir,'sidebar-mobile-landscape.png'),animations:'disabled'});await page.keyboard.press('Escape');
   await page.goto(baseURL+'/curriculum');
   await page.evaluate(()=>localStorage.setItem("socratescode:lessons:v1","broken json"));
   await page.reload();
