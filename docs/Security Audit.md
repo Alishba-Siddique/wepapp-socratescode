@@ -74,3 +74,12 @@ October 3 dependency recheck: four open alerts remain: frontend development-only
 Dependency patch follow-up: the user regenerated both lockfiles. Reviewed changes pin brace-expansion to 1.1.21/5.0.12, multer to 2.4.0 and esbuild to 0.28.1; removed gateway transitive packages belong to the old multer dependency tree. These patches are now included with the responsive-workspace increment for clean-install, audit and account regression validation. Earlier pending-lockfile notes are historical; resolution awaits verified CI/deployment.
 
 Verified dependency closure: responsive PR #37 passed CI `37106283601`, including clean installs, dependency review, CodeQL and account regressions. Merged as `438076e`; GitHub Dependabot API returned zero open alerts afterward. Earlier four-alert/awaiting-lockfile entries are resolved historical findings. This is dependency-alert closure, not a general security certification.
+
+## 2026-10-07 newly blocking advisories
+CI `37526685427` failed its production audit on sharp <0.35.5 (GHSA-wq5f-xc86-pv6w) and source-map-js <1.2.2 (GHSA-68fv-2mgg-jv7q), whose reviewed advisories changed October 6/5. Existing four-alert closure remains historical. Prepared exact frontend overrides for sharp 0.35.5 and source-map-js 1.2.2, within the existing parent dependency ranges. The user owns local npm commands; lockfile regeneration and clean CI are pending. Do not bypass the audit to deploy the responsive change.
+
+Sources: https://github.com/advisories/GHSA-wq5f-xc86-pv6w and https://github.com/advisories/GHSA-68fv-2mgg-jv7q.
+
+October 7 patch follow-up: the owner explicitly authorized the single frontend lockfile command; it completed successfully. Reviewed lock changes update sharp and its matching image binaries, bundled libvips, and source-map-js only. Clean-install production audit verification remains a CI gate.
+
+The install also reports five high-severity package findings from the remaining development-only braces advisory [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm). The lock marks braces 3.0.3 and its micromatch parent as dev dependencies. The advisory lists no patched version: nested untrusted glob patterns can exhaust the parser stack. Track upstream remediation and avoid processing untrusted glob patterns in development tooling; do not force an unrelated major upgrade or represent this as a resolved finding. Production dependency patches do not certify the development toolchain as advisory-free.
