@@ -111,3 +111,14 @@ Production run `37104711842` passed candidate validation and promotion. Verified
 
 ## Responsive workspace and dependency patches
 Added a scrollable navigation area with fixed logo/profile, mobile backdrop/focus containment/inert content/body scroll lock, and responsive tablet/phone refinements. Audited the live route surfaces in Edge at 320/768/1024px; no baseline document overflow, but the fixed sidebar lacked scrolling. Added a broader 17-route/4-width regression matrix and short-screen navigation tests. User-generated security lockfiles reviewed and included for CI; local domain tests and browser-script syntax passed.
+
+Responsive PR #37 head `4b06ee5` passed CI `37106283601` across all required jobs, including 17 routes at four viewport widths, landscape/short-screen sidebar and keyboard tests. Merged as `438076e`; zero open CodeQL findings on the PR and zero open repository Dependabot alerts after merge. Main release `37106611485` is in progress; final live visual verification pending.
+
+## 2026-10-07 ? complete responsive delivery
+Live verification found `.sidebar-scroll` absent: main run `37106611485` had failed in WebKit and skipped release. Its error was a cancelled Next RSC prefetch during rapid route navigation. Scheduled run `37329214044` passed the same commit but was not release-eligible. Isolated viewport-audit pages now avoid that teardown race without suppressing application errors. The layout itself remains as reviewed in PR #37. New validation and production delivery pending.
+
+PR #39 / CI `37526685427`: workflow validation, dependency review, both CodeQL jobs and code checks passed; production dependency audit stopped on two newly reviewed high-severity advisories. Exact patched overrides prepared; awaiting owner-run frontend lockfile regeneration or explicit permission to run that command. Browser tests and release cannot proceed until quality passes.
+
+October 7: ran the one explicitly authorized `npm install --package-lock-only --ignore-scripts --prefix frontend` command. Reviewed the generated sharp/source-map-js patch tree; no unrelated upgrade was introduced. Remaining install warnings trace to development-only braces with no published fix, recorded in [[Security Audit]]. Pushing the production fixes to PR #39 for clean-install audit and browser validation.
+
+CI 37527671514 passed frontend quality/audit, build, CodeQL and Chromium. Gateway audit found two additional advisories; authorized lockfile update now reports zero vulnerabilities. Firefox exposed cached HTTP 304 in the new route matrix: each route now gets an isolated browser context, retaining preview protection and strict HTTP 200, hydration, overflow and runtime-error assertions. This checks cold loads without inheriting cache or learner storage. Browser-script syntax passes; new CI pending.
