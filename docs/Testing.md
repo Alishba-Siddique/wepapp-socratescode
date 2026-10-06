@@ -44,3 +44,5 @@ The existing three-browser suite now checks 17 routes at 320, 768, 1024 and 1440
 
 ## 2026-10-07 responsive audit reliability
 The October 3 main run failed on a WebKit RSC-prefetch teardown error during rapid full-page navigations, after the PR had passed. The later scheduled run passed but could not deploy because scheduled events intentionally do not release. Each route in the viewport audit now gets its own page; it remains mounted for all widths, drains requests before closing, and captures its own failure screenshot. All page-error, HTTP status, viewport and navigation assertions remain enforced. Landscape evidence disables screenshot transitions to capture the settled drawer.
+
+Responsive route audits use one fresh browser context per route. This prevents prior visits from returning Firefox cache-revalidation status 304 and isolates guest storage. Preview bypass headers remain restricted to the verified HTTPS Vercel origin. Each route must return HTTP 200, hydrate, fit four viewport widths, and finish outstanding requests before context teardown; application errors remain failures.

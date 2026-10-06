@@ -11,11 +11,14 @@ if (!engine) throw new Error("Unsupported browser");
  const browser = await engine.launch({ channel: engine === chromium && process.platform === "win32" ? "msedge" : undefined, headless: true });
  const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
  const bypass=process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+ const configurePreview = async (targetContext) => {
  if(bypass){
   const origin=new URL(baseURL);
   if(origin.protocol!=="https:" || !origin.hostname.endsWith(".vercel.app"))throw new Error("Unsupported protected preview host");
-  await context.route(origin.origin+"/**",route=>route.continue({headers:{...route.request().headers(),"x-vercel-protection-bypass":bypass}}));
+  await targetContext.route(origin.origin+"/**",route=>route.continue({headers:{...route.request().headers(),"x-vercel-protection-bypass":bypass}}));
  }
+ };
+ await configurePreview(context);
  // Authenticated preview traces can contain protection headers; never persist them.
  if(!bypass)await context.tracing.start({screenshots:true,snapshots:true});
  const page=await context.newPage();
@@ -132,7 +135,11 @@ if (!engine) throw new Error("Unsupported browser");
   // Network idle here drains requests before teardown; DOM assertions establish readiness.
   await page.waitForLoadState('networkidle');
   for (const route of ['/', '/start', '/curriculum', '/progress', '/patterns', '/patterns/sliding-window', '/practice', '/debugging', '/projects', '/foundations', '/companion', '/design', '/design/learning-schema', '/account', '/account/reset', '/learn/a-running-total', '/solve/secure-checkout']) {
-    const auditPage=await context.newPage();
+    // A fresh context also avoids Firefox revalidation responses (304) from
+    // earlier visits and keeps this a cold-load check with no inherited storage.
+    const auditContext=await browser.newContext({viewport:{width:1440,height:1000}});
+    await configurePreview(auditContext);
+    const auditPage=await auditContext.newPage();
     auditPage.on('pageerror',error=>errors.push(`${route}: ${error.message}`));
     try {
       const response=await auditPage.goto(baseURL+route);assert.equal(response.status(),200,route);
@@ -145,7 +152,7 @@ if (!engine) throw new Error("Unsupported browser");
     } catch(error) {
       await auditPage.screenshot({path:path.join(artifactDir,'responsive-failure.png'),animations:'disabled'}).catch(()=>{});
       throw error;
-    } finally { await auditPage.close(); }
+    } finally { await auditContext.close(); }
   }
   await page.setViewportSize({width:568,height:320});await page.getByRole('button',{name:'Open navigation'}).click();
   await page.getByRole('navigation',{name:'Workspace navigation'}).getByRole('link',{name:/My account/}).focus();
