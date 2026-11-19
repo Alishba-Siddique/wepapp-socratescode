@@ -1,7 +1,7 @@
 ---
 type: audit
 status: current
-updated: 2026-09-20
+updated: 2026-11-19
 ---
 # Route and attack-surface audit
 [[Home]] ? [[Architecture]] ? [[Engineering Standards]] ? [[Testing]]
@@ -18,6 +18,7 @@ This inventories implemented application controls. It is not a security certific
 | GET /api/account/status | Public / tier 4 | Fixed upstream proxy; unconfigured service reported explicitly | Does not imply DB health; use private gateway /health |
 | /api/auth/* allowlist | Public/session / tier 3 | Better Auth; origin checks; same-origin proxy; secure production cookies; production verification; process-local burst limit before shared atomic admission | SMTP/HTTPS/private ingress must be configured |
 | POST /api/graphql ? gateway /graphql | Session / tier 3 | Ownership from session; 64 KiB body; bounded AST; one root; no batching/introspection; shared per-user admission; validated state; revisions | Admission currently shares a conservative proxy-IP bucket |
+| User-supplied URL fetch, webhook test, link preview, image/PDF import | Not implemented | No handler accepts a client-controlled upstream URL; the account proxy has a fixed route allowlist and server-configured gateway destination | A future feature needs the safe-fetch design in [[Handoff/04 Security and SSRF]] before implementation |
 | Gateway GET /health | Private operational / tier 4 | DB readiness probe; sanitized 503 | Keep gateway private; edge protection not configured here |
 | Password reset and verification | Token / tier 3 | Better Auth tokens, configured mail transport, reset session revocation | Production mail delivery and abuse monitoring need deployment verification |
 
@@ -25,6 +26,10 @@ This inventories implemented application controls. It is not a security certific
 Account progress is separate from guest browser progress. Import is explicit and idempotent; existing account records win. Coding/design drafts are device-local and visible to others using the same browser. Account work is tab memory until explicitly saved. No learner code or prose is sent to a model or remote judge.
 
 The proxy bounds streamed request bodies and uses a fixed service URL with a 15-second timeout. Gateway auth preserves Better Auth's stream; direct gateway ingress must enforce a 64 KiB body limit too (including chunked requests) and remain private. The gateway does not trust forwarded client-IP headers. Its HMAC-keyed PostgreSQL admission counter is atomic and fails closed on store failure. Valkey-based distribution and trusted per-client ingress limits are future deployment work.
+
+## SSRF boundary
+
+The application intentionally has no generic server-side URL fetch capability. A user-controlled URL must never become an upstream request through the account proxy: its path allowlist is fixed and `GATEWAY_URL` is an operator-owned server setting. Any future URL ingestion, preview, webhook test, remote image/PDF import, or callback feature needs a purpose-built HTTPS-only fetch boundary that validates every DNS result and redirect, blocks non-public address space at network egress, uses a trusted-domain allowlist where possible, and applies size, timeout, concurrency, rate-limit, and audit controls. See [[Handoff/04 Security and SSRF]] for the required acceptance tests.
 
 ## Release gates still open
 Production account launch requires verified HTTPS/origin/cookies, private gateway ingress/body limits, SMTP delivery/verification/reset checks, PostgreSQL backups and restore evidence, connection limits, monitoring and retention/deletion procedures. The browser runner is local practice only. A trusted remote judge needs a separately isolated resource-bounded execution service and admission contract. Live AI, organizations, RabbitMQ and webhooks are not exposed.
@@ -85,3 +90,7 @@ October 7 patch follow-up: the owner explicitly authorized the single frontend l
 The install also reports five high-severity package findings from the remaining development-only braces advisory [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm). The lock marks braces 3.0.3 and its micromatch parent as dev dependencies. The advisory lists no patched version: nested untrusted glob patterns can exhaust the parser stack. Track upstream remediation and avoid processing untrusted glob patterns in development tooling; do not force an unrelated major upgrade or represent this as a resolved finding. Production dependency patches do not certify the development toolchain as advisory-free.
 
 Gateway audit follow-up: CI 37527671514 found proxy-addr 2.0.7 ([GHSA-jqcg-44mw-7w3h](https://github.com/advisories/GHSA-jqcg-44mw-7w3h), critical) and fast-uri 3.1.7 ([GHSA-hrr3-gc8f-f4qj](https://github.com/advisories/GHSA-hrr3-gc8f-f4qj), moderate). Added compatible exact overrides 2.0.8 and 3.1.8; the separately authorized gateway lockfile update reported zero vulnerabilities. Reviewed the diff: only these two packages changed. Current ingress limits use socket.remoteAddress rather than forwarded headers, and the gateway remains optional/undeployed; this limits observed exposure without excusing the patch. Clean CI still required.
+
+## 2026-11-19 scheduled audit follow-up
+
+The November 16 scheduled main run failed the frontend production audit because Next.js 16.3.8 is affected by [GHSA-2464-fhr4-w9xw](https://github.com/advisories/GHSA-2464-fhr4-w9xw), [GHSA-p3m5-59mp-jv5r](https://github.com/advisories/GHSA-p3m5-59mp-jv5r), and [GHSA-673q-mjm6-r5xr](https://github.com/advisories/GHSA-673q-mjm6-r5xr), while DOMPurify 3.4.16 is affected by [GHSA-cg2g-xh64-v4q7](https://github.com/advisories/GHSA-cg2g-xh64-v4q7), [GHSA-mrv2-3pqr-j5jr](https://github.com/advisories/GHSA-mrv2-3pqr-j5jr), and [GHSA-c6gr-qvv4-5v3f](https://github.com/advisories/GHSA-c6gr-qvv4-5v3f). The prepared remediation pins Next.js and eslint-config-next 16.4.6, and DOMPurify 3.4.17. Its regenerated lockfile passes `npm audit --omit=dev --audit-level=high` locally; CI and candidate delivery remain required before calling the patch released. The full install still reports development-only advisories, which are tracked separately and not suppressed.

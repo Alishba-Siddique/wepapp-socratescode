@@ -8,6 +8,7 @@ updated: 2026-09-12
 A learning lab that helps developers understand their code and reason independently.
 
 ## Start here
+- [[Handoff/README|Handoff]] - a single-folder product, implementation, security, roadmap, testing, and operations brief for a new contributor.
 - [[Product Rules]] - audience, teaching principles, and honest product behavior.
 - [[Architecture]] - boundaries, current implementation, and planned services.
 - [[Design System]] - brand, readability, responsive layout, and interaction.
